@@ -1,0 +1,47 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/../../config/database.php';
+require __DIR__ . '/../../lib/Response.php';
+require __DIR__ . '/../../lib/AdminSession.php';
+require __DIR__ . '/../../lib/Validate.php';
+require __DIR__ . '/../../lib/RateLimit.php';
+
+header('Access-Control-Allow-Origin: same-origin');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
+
+// login.php es el único endpoint admin que NO requiere sesión previa.
+// El CSRF se obtiene primero con GET /admin/auth/me.php y luego se envía aquí.
+ds_admin_session_start();
+
+$body = ds_read_json_body();
+ds_admin_csrf_check($body['csrf_token'] ?? null);
+
+$email = ds_validate_email((string)($body['email'] ?? ''));
+$pass  = (string)($body['password'] ?? '');
+
+if ($email === null || $pass === '') {
+    ds_json_error('Email o contraseña inválidos', 400);
+}
+
+$ip = ds_client_ip();
+ds_login_throttle_check('admin', $email, $ip);
+
+$pdo  = ds_get_pdo();
+$stmt = $pdo->prepare('SELECT id, nombre, email, password_hash FROM admins WHERE email = ?');
+$stmt->execute([$email]);
+$admin = $stmt->fetch();
+
+if (!$admin || !password_verify($pass, $admin['password_hash'])) {
+    ds_login_record('admin', $email, $ip, false);
+    ds_json_error('Credenciales incorrectas', 401);
+}
+
+ds_login_record('admin', $email, $ip, true);
+ds_login_admin((int) $admin['id']);
+
+ds_json_success([
+    'id'     => (int) $admin['id'],
+    'nombre' => $admin['nombre'],
+    'email'  => $admin['email'],
+]);

@@ -1,0 +1,2 @@
+# Evita listado de directorio si algún endpoint se elimina y la carpeta queda vacía/visible.
+Options -Indexes

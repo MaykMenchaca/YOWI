@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Imagen de producto próximamente">
+  <rect width="400" height="400" fill="#EEF3FF"/>
+  <!-- sombra suave -->
+  <ellipse cx="200" cy="330" rx="92" ry="16" fill="#185FA5" opacity="0.10"/>
+  <!-- tapa -->
+  <rect x="146" y="70" width="108" height="34" rx="10" fill="#185FA5"/>
+  <rect x="158" y="60" width="84" height="18" rx="8" fill="#0F4C86"/>
+  <!-- cuerpo del bote -->
+  <rect x="132" y="104" width="136" height="216" rx="22" fill="#D4E3FF" stroke="#185FA5" stroke-width="3"/>
+  <!-- etiqueta -->
+  <rect x="150" y="150" width="100" height="128" rx="10" fill="#FFFFFF" stroke="#B5D4F4" stroke-width="2"/>
+  <!-- rayo atlético -->
+  <path d="M212 168 l-26 40 h18 l-8 34 30 -46 h-18 z" fill="#378ADD"/>
+  <!-- marca DS -->
+  <text x="200" y="250" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="34" font-weight="700" fill="#185FA5" letter-spacing="1">DS</text>
+  <!-- líneas simulando texto -->
+  <rect x="168" y="262" width="64" height="5" rx="2.5" fill="#B5D4F4"/>
+  <text x="200" y="356" text-anchor="middle" font-family="Barlow, sans-serif" font-size="15" font-weight="500" fill="#5B6472" letter-spacing="0.5">Imagen próximamente</text>
+</svg>

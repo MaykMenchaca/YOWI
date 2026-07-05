@@ -1,0 +1,9 @@
+# Bloquea el acceso HTTP directo a esta carpeta (credenciales de BD).
+# Segunda capa de defensa: env.php tampoco se sube por git (ver .gitignore).
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Deny from all
+</IfModule>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Misión y Contacto - [DS] Sports Supplements</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Montserrat:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#c6dbff",
+                    "surface-container-high": "#dde9ff",
+                    "on-secondary-fixed": "#001c38",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#006d2f",
+                    "tertiary-fixed-dim": "#3de273",
+                    "on-secondary-container": "#003d6d",
+                    "surface-bright": "#f9f9ff",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#1960a6",
+                    "secondary-fixed-dim": "#a1c9ff",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "on-tertiary-fixed-variant": "#005322",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#005222",
+                    "on-primary-container": "#c1d9ff",
+                    "surface": "#f9f9ff",
+                    "outline-variant": "#c2c6d2",
+                    "on-primary": "#ffffff",
+                    "on-background": "#001c3a",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004880",
+                    "on-secondary": "#ffffff",
+                    "outline": "#727782",
+                    "inverse-primary": "#a4c9ff",
+                    "surface-variant": "#d4e3ff",
+                    "surface-container-highest": "#d4e3ff",
+                    "on-primary-fixed": "#001c39",
+                    "on-tertiary-fixed": "#002109",
+                    "inverse-surface": "#0c3158",
+                    "error-container": "#ffdad6",
+                    "secondary": "#0060a8",
+                    "primary-fixed": "#d4e3ff",
+                    "on-primary-fixed-variant": "#004883",
+                    "primary": "#004782",
+                    "on-tertiary-container": "#54f483",
+                    "surface-container": "#e6eeff",
+                    "secondary-container": "#5da9fe",
+                    "on-surface-variant": "#424751",
+                    "on-surface": "#001c3a",
+                    "surface-container-low": "#eff3ff",
+                    "primary-container": "#185fa5",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed": "#66ff8e",
+                    "secondary-fixed": "#d2e4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "section-padding": "80px",
+                    "gutter": "24px",
+                    "stack-lg": "32px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "8px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Montserrat"],
+                    "label-bold": ["Inter"],
+                    "headline-xl": ["Montserrat"],
+                    "body-lg": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "price-display": ["Montserrat"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Montserrat"],
+                    "headline-sm": ["Montserrat"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700"}],
+                    "label-bold": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "price-display": ["22px", {"lineHeight": "1", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-sm": ["18px", {"lineHeight": "1.2", "fontWeight": "700"}]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-ambient-shadow {
+            box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low text-on-surface font-body-md text-body-md antialiased pt-20">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-on-secondary-fixed/80 backdrop-blur-md border-b border-outline-variant dark:border-on-secondary-fixed-variant shadow-sm">
+<div class="flex justify-between items-center h-20 px-gutter max-w-container-max mx-auto">
+<!-- Brand Logo -->
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed scale-102 active:scale-98 transition-transform duration-200 hover:opacity-80 transition-opacity cursor-pointer">
+                [DS]
+            </div>
+<!-- Navigation Links -->
+<div class="hidden md:flex space-x-8">
+<a class="font-headline-sm text-headline-sm font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:opacity-80 transition-opacity" href="#">
+                    Shop
+                </a>
+<a class="font-headline-sm text-headline-sm font-body-md text-body-md text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 hover:opacity-80 transition-opacity" href="#">
+                    Mission
+                </a>
+<a class="font-headline-sm text-headline-sm font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:opacity-80 transition-opacity" href="#">
+                    Support
+                </a>
+<a class="font-headline-sm text-headline-sm font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors hover:opacity-80 transition-opacity" href="#">
+                    Contact
+                </a>
+</div>
+<!-- Trailing Icons -->
+<div class="flex space-x-4">
+<button class="text-primary dark:text-primary-fixed scale-102 active:scale-98 transition-transform duration-200 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="text-primary dark:text-primary-fixed scale-102 active:scale-98 transition-transform duration-200 hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main>
+<!-- Hero Section: Nuestra Misión -->
+<section class="py-section-padding px-gutter max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-stack-lg">
+<h1 class="font-headline-xl text-headline-xl text-primary-container">NUESTRA MISIÓN</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        En [DS] Sports Supplements, nos dedicamos a potenciar el rendimiento humano a través de la nutrición científica. Comercializamos exclusivamente suplementos deportivos de marcas importadas y nacionales de la más alta calidad, garantizando pureza, eficacia y transparencia total en cada producto que ofrecemos. Tu cuerpo es una máquina; nosotros proporcionamos el combustible óptimo.
+                    </p>
+</div>
+<div class="h-96 rounded-lg overflow-hidden border border-surface-variant custom-ambient-shadow">
+<img class="w-full h-full object-cover" data-alt="A high-end, dramatic photography shot of a sleek, dark metallic shaker bottle and a tub of premium sports supplement powder resting on a clean concrete surface in a modern gym environment. The lighting is moody and cinematic, highlighting the athletic minimalism and corporate modern aesthetic of the [DS] brand. Color palette dominated by deep navy, crisp white, and subtle metallic accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByC823sIJjh6miZj4Z5V6dm5M_QXbcKU70hreBsG405GVcT17_QY1pZ6h9m6Ta2f0EaHmHQdHD9VzZgioK8hgHvYM2D9iLBJ9oezL8vYNcLuSbFXjCQh6XEYMzYH6J4V8K27Y12kky1YqKpFnV4HUU8wNMsFp7o_WGgNAFocsjckxYZHl8JBOPXQf_YCic-8dDWosuWA72ekj5Idhf1nBqTiqmVoGY5a2DxtIzFA24oryN_tDvMNfb"/>
+</div>
+</div>
+</section>
+<!-- Values Cards Section -->
+<section class="py-section-padding px-gutter max-w-container-max mx-auto bg-surface">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-gutter custom-ambient-shadow flex flex-col items-start hover:-translate-y-1 transition-transform duration-300">
+<div class="bg-primary-container text-on-primary p-3 rounded-full mb-stack-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Autenticidad garantizada</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Todos nuestros suplementos provienen directamente de los fabricantes oficiales, asegurando fórmulas 100% originales sin adulteraciones.
+                    </p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-gutter custom-ambient-shadow flex flex-col items-start hover:-translate-y-1 transition-transform duration-300">
+<div class="bg-primary-container text-on-primary p-3 rounded-full mb-stack-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="sell">sell</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Mejores precios</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Optimizamos nuestra cadena de suministro para ofrecerte tarifas competitivas en marcas premium sin comprometer el servicio.
+                    </p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-gutter custom-ambient-shadow flex flex-col items-start hover:-translate-y-1 transition-transform duration-300">
+<div class="bg-primary-container text-on-primary p-3 rounded-full mb-stack-md flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Asesoría personalizada</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Nuestro equipo de expertos en nutrición deportiva está disponible para guiarte hacia el suplemento ideal para tus objetivos.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="py-section-padding px-gutter max-w-container-max mx-auto" id="contacto">
+<div class="text-center mb-section-padding">
+<h2 class="font-headline-lg text-headline-lg text-primary-container uppercase">Contacto</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-start">
+<!-- Contact Form (Left) -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-stack-lg custom-ambient-shadow">
+<form class="space-y-stack-md">
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2 uppercase" for="nombre">Nombre</label>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded-DEFAULT px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-shadow" id="nombre" placeholder="Tu nombre completo" type="text"/>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2 uppercase" for="email">Email</label>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded-DEFAULT px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-shadow" id="email" placeholder="correo@ejemplo.com" type="email"/>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2 uppercase" for="asunto">Asunto</label>
+<select class="w-full bg-surface-container-lowest border border-surface-variant rounded-DEFAULT px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-shadow appearance-none" id="asunto">
+<option value="ventas">Consulta de Ventas</option>
+<option value="asesoria">Asesoría Nutricional</option>
+<option value="soporte">Soporte de Pedido</option>
+<option value="otro">Otro</option>
+</select>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2 uppercase" for="mensaje">Mensaje</label>
+<textarea class="w-full bg-surface-container-lowest border border-surface-variant rounded-DEFAULT px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-shadow resize-none" id="mensaje" placeholder="¿En qué te podemos ayudar?" rows="4"></textarea>
+</div>
+<button class="w-full bg-primary-container text-on-primary font-label-bold text-label-bold uppercase py-4 rounded-DEFAULT hover:bg-on-secondary-fixed transition-colors duration-200 hover:scale-102 active:scale-98 flex justify-center items-center gap-2" type="button">
+<span>Enviar Mensaje</span>
+<span class="material-symbols-outlined text-sm" data-icon="send">send</span>
+</button>
+</form>
+</div>
+<!-- Contact Info (Right) -->
+<div class="space-y-stack-lg">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-DEFAULT p-stack-lg custom-ambient-shadow space-y-stack-md">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="location_on">location_on</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Dirección</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Av. Rendimiento Alto 1234<br/>Distrito Financiero, Ciudad Base</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="call">call</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Teléfono</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">+1 (555) 987-6543</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="mail">mail</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Email</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">performance@[ds]sports.com</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary-container" data-icon="schedule">schedule</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Horario de Atención</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Lunes a Viernes: 09:00 - 19:00<br/>Sábados: 10:00 - 14:00</p>
+</div>
+</div>
+<div class="pt-stack-md border-t border-surface-variant">
+<button class="w-full bg-tertiary-fixed-dim text-on-tertiary-fixed-variant font-label-bold text-label-bold uppercase py-4 rounded-DEFAULT hover:opacity-90 transition-opacity duration-200 hover:scale-102 active:scale-98 flex justify-center items-center gap-2" type="button">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span>Escríbenos por WhatsApp</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="mt-section-padding w-full h-80 rounded-lg overflow-hidden border border-surface-variant custom-ambient-shadow" data-location="Ciudad Base" style="">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist street map UI focusing on a modern metropolitan area, rendered in light mode with subtle topographical details. The map utilizes a corporate color palette with deep cobalt blue accents for roads and a bright blue marker indicating the primary store location. The overall aesthetic is precise, technical, and aligned with a premium sports performance brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM03XGuqWgosDmPgIsUjk7mWrEptqouZ4iC9NEg5-wQVKUpg_5DRcRJkEKZG_VSuyWOHnOjUc6ZcwC1JeLV3nkrr88QZnpzUY0Jf_dZB9pFrMDVjWGEPa4S8iz8BZ8m9V9ittaJHwzhd9uGWMS59XWUueMwGkjq71jJyP0Nqhgbe-l9Ifbrvt0oi3z9vqGVoPsn73tGojC55ME-mdmFtTzFPIn1u0cwSc1_ul_eL4WzxUg7V3HweiJ"/>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full bg-on-secondary-fixed dark:bg-on-secondary-fixed mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center py-stack-lg px-gutter max-w-container-max mx-auto">
+<div class="font-headline-sm text-headline-sm font-bold text-white mb-stack-md md:mb-0 opacity-90 hover:opacity-100 transition-opacity cursor-pointer">
+                © 2024 [DS] Sports Nutrition. Engineered for Performance.
+            </div>
+<div class="flex flex-wrap justify-center gap-x-8 gap-y-4">
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white transition-colors hover:text-secondary-fixed transition-colors" href="#">
+                    Privacy Policy
+                </a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white transition-colors hover:text-secondary-fixed transition-colors" href="#">
+                    Terms of Service
+                </a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white transition-colors hover:text-secondary-fixed transition-colors" href="#">
+                    Shipping Info
+                </a>
+<a class="font-body-sm text-body-sm text-surface-variant hover:text-white transition-colors hover:text-secondary-fixed transition-colors" href="#">
+                    Wholesale
+                </a>
+</div>
+</div>
+</footer>
+</body></html>

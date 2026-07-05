@@ -1,0 +1,6 @@
+# Dependencias Python de FLUJO
+# Instalar con: pip install -r requirements.txt
+
+# Graphify — mapea proyectos a grafos de conocimiento
+# Repo: https://github.com/safishamsi/graphify
+graphifyy

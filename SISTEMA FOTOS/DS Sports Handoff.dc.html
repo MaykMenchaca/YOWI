@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background: oklch(94% 0.005 90); font-family:'Barlow',sans-serif; }
+  .hd { font-family:'Barlow Condensed',sans-serif; }
+  pre { font-family:'SF Mono',Menlo,monospace; font-size:13px; line-height:1.6; white-space:pre-wrap; margin:0; }
+</style>
+</helmet>
+
+<div style="padding:48px 5vw; max-width:960px; margin:0 auto; display:flex; flex-direction:column; gap:40px;">
+
+  <div>
+    <h1 class="hd" style="font-size:36px; font-weight:800; color:oklch(15% 0.02 260); margin:0 0 6px;">Handoff — dirección "gimnasio"</h1>
+    <div style="color:oklch(50% 0.01 90); font-size:14px;">Para pegar directo en tu HTML + Tailwind CDN. No requiere build.</div>
+  </div>
+
+  <!-- 1. TAILWIND CONFIG -->
+  <div style="background:white; border:1px solid oklch(88% 0.005 90); border-radius:8px; padding:28px;">
+    <div class="hd" style="font-size:20px; font-weight:800; color:oklch(15% 0.02 260); margin-bottom:6px; text-transform:uppercase;">1. Tailwind config (pégalo en cada página)</div>
+    <div style="font-size:13px; color:oklch(50% 0.01 90); margin-bottom:14px;">Reemplaza tu bloque actual de <code>tailwind.config</code> por este — agrega los tokens de marca.</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:18px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;script&gt;
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:    '#0B0F1A',   // negro/hero
+          brand:  '#1F5FD9',   // azul primario (ya lo usan)
+          lime:   '#8FD11F',   // acento energ&#237;a — solo para datos/CTA
+          paper:  '#F7F8FA'
+        },
+        fontFamily: {
+          display: ['"Barlow Condensed"', 'sans-serif'],
+          body:    ['"Barlow"', 'sans-serif']
+        }
+      }
+    }
+  }
+&lt;/script&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Barlow:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 2. TIPOGRAFIA -->
+  <div style="background:white; border:1px solid oklch(88% 0.005 90); border-radius:8px; padding:28px;">
+    <div class="hd" style="font-size:20px; font-weight:800; color:oklch(15% 0.02 260); margin-bottom:6px; text-transform:uppercase;">2. Reglas de tipografía</div>
+    <ul style="font-size:14px; color:oklch(35% 0.01 90); line-height:1.8; padding-left:20px; margin:10px 0 0;">
+      <li>Titulares (h1/h2/h3): <code>font-display font-extrabold uppercase tracking-tight</code></li>
+      <li>Cuerpo de texto: <code>font-body</code> (peso 400–600)</li>
+      <li>Datos clave (gramos, %, stock): <code>font-mono text-lime font-extrabold uppercase text-xs tracking-wide</code></li>
+      <li>Todo titular grande lleva una barra de acento debajo: <code>&lt;div class="w-14 h-1.5 bg-lime mb-6"&gt;&lt;/div&gt;</code></li>
+    </ul>
+  </div>
+
+  <!-- 3. COMPONENTES -->
+  <div style="background:white; border:1px solid oklch(88% 0.005 90); border-radius:8px; padding:28px;">
+    <div class="hd" style="font-size:20px; font-weight:800; color:oklch(15% 0.02 260); margin-bottom:6px; text-transform:uppercase;">3. Componentes clave</div>
+
+    <div style="margin-top:18px; font-weight:700; font-size:14px; color:oklch(15% 0.02 260);">Nav / header</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:16px; margin-top:8px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;header class="flex items-center justify-between px-12 py-4 bg-ink border-b-2 border-lime"&gt;
+  &lt;div class="font-display font-extrabold text-2xl uppercase text-white"&gt;
+    DS &lt;span class="text-lime"&gt;SPORTS&lt;/span&gt;
+  &lt;/div&gt;
+  ...
+&lt;/header&gt;</pre>
+    </div>
+
+    <div style="margin-top:20px; font-weight:700; font-size:14px; color:oklch(15% 0.02 260);">Botón primario / CTA energía</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:16px; margin-top:8px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;button class="bg-brand text-white font-extrabold px-8 py-4 rounded-none"&gt;
+  Ver cat&#225;logo
+&lt;/button&gt;
+
+&lt;button class="bg-lime text-ink font-extrabold uppercase tracking-wide px-8 py-4"&gt;
+  Agregar al carrito
+&lt;/button&gt;</pre>
+    </div>
+
+    <div style="margin-top:20px; font-weight:700; font-size:14px; color:oklch(15% 0.02 260);">Card de producto</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:16px; margin-top:8px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition"&gt;
+  &lt;div class="h-36 bg-gray-100 mb-3"&gt;&lt;!-- foto producto --&gt;&lt;/div&gt;
+  &lt;div class="text-[11px] uppercase font-extrabold text-gray-500 tracking-wide"&gt;Marca&lt;/div&gt;
+  &lt;div class="font-bold text-base"&gt;Nombre del producto&lt;/div&gt;
+  &lt;div class="flex justify-between items-baseline mt-2"&gt;
+    &lt;div class="text-brand font-extrabold text-lg"&gt;$999.00&lt;/div&gt;
+    &lt;div class="font-mono text-[11px] text-lime font-extrabold"&gt;24G PROTE&#205;NA&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+    </div>
+
+    <div style="margin-top:20px; font-weight:700; font-size:14px; color:oklch(15% 0.02 260);">Hero con líneas de velocidad (CSS puro, sin imágenes)</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:16px; margin-top:8px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;div class="relative bg-ink py-24 px-12 overflow-hidden"&gt;
+  &lt;div class="absolute inset-0 opacity-50"
+    style="background:repeating-linear-gradient(-8deg,transparent,transparent 60px,#1a2030 60px,#1a2030 62px)"&gt;
+  &lt;/div&gt;
+  &lt;div class="relative z-10"&gt;...contenido...&lt;/div&gt;
+&lt;/div&gt;</pre>
+    </div>
+
+    <div style="margin-top:20px; font-weight:700; font-size:14px; color:oklch(15% 0.02 260);">Franja angulada (trust bar)</div>
+    <div style="background:oklch(12% 0.015 260); border-radius:6px; padding:16px; margin-top:8px; overflow-x:auto;">
+<pre style="color:oklch(85% 0.01 90);">&lt;div class="bg-brand py-6 px-12"
+  style="clip-path:polygon(0 12px,100% 0,100% 100%,0 calc(100% - 12px))"&gt;
+  ...
+&lt;/div&gt;</pre>
+    </div>
+  </div>
+
+  <!-- 4. ADMIN -->
+  <div style="background:white; border:1px solid oklch(88% 0.005 90); border-radius:8px; padding:28px;">
+    <div class="hd" style="font-size:20px; font-weight:800; color:oklch(15% 0.02 260); margin-bottom:6px; text-transform:uppercase;">4. Panel admin — solo 3 cambios</div>
+    <ul style="font-size:14px; color:oklch(35% 0.01 90); line-height:1.8; padding-left:20px; margin:10px 0 0;">
+      <li>Títulos de sección: <code>uppercase font-display border-l-4 border-lime pl-3</code></li>
+      <li>Botones "+Nuevo": cambiar de azul a <code>bg-lime text-ink uppercase font-extrabold</code></li>
+      <li>Cards del dashboard: cambiar <code>rounded-lg</code> por <code>rounded-none</code> con <code>border-l-[3px]</code> de color por métrica (ya lo tenían, solo quitar el radio)</li>
+    </ul>
+  </div>
+
+  <!-- 5. ARCHIVOS -->
+  <div style="background:white; border:1px solid oklch(88% 0.005 90); border-radius:8px; padding:28px;">
+    <div class="hd" style="font-size:20px; font-weight:800; color:oklch(15% 0.02 260); margin-bottom:6px; text-transform:uppercase;">5. Orden sugerido de implementación</div>
+    <ol style="font-size:14px; color:oklch(35% 0.01 90); line-height:1.9; padding-left:20px; margin:10px 0 0;">
+      <li>Pega el config de Tailwind + fuentes en las 14 páginas (find & replace del bloque actual).</li>
+      <li>Home (la nueva, no existía) — es la de mayor impacto.</li>
+      <li>Header/nav — un solo include si tu PHP ya lo comparte entre páginas.</li>
+      <li>Catálogo + Detalle de producto.</li>
+      <li>Resto de páginas públicas (Marcas, Nosotros, Login, Registro, Pedido, Ofertas, Perfil).</li>
+      <li>Admin (cambio menor, rápido).</li>
+      <li>Sube tus fotos reales — reemplaza los placeholders <code>bg-gray-100</code> por <code>&lt;img&gt;</code>.</li>
+    </ol>
+  </div>
+
+  <div style="font-size:13px; color:oklch(50% 0.01 90); text-align:center; padding:20px 0;">
+    Mockup de referencia completo: <b>DS Sports Rediseño.dc.html</b> — ábrelo junto a este documento mientras implementas.
+  </div>
+
+</div>
+]]>
+</x-dc>
+</body>
+</html>

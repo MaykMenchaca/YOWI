@@ -1,0 +1,29 @@
+# Outputs de graphify
+graphify-out/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code cache
+.claude/cache/
+.claude/sessions/
+.claude/paste-cache/
+.claude/file-history/
+.claude/shell-snapshots/
+.claude/session-env/
+
+# Archivos locales de impeccable
+.impeccable/
+
+# Backend PHP — credenciales reales de base de datos (nunca subir por git)
+site/api/config/env.php

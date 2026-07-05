@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Fondo deportivo">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#042C53"/>
+      <stop offset="0.55" stop-color="#0F4C86"/>
+      <stop offset="1" stop-color="#185FA5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="800" fill="url(#g)"/>
+  <!-- franjas diagonales atléticas -->
+  <g opacity="0.10" fill="#FFFFFF">
+    <polygon points="1050,0 1230,0 720,800 540,800"/>
+    <polygon points="1260,0 1360,0 850,800 750,800"/>
+  </g>
+  <g opacity="0.14" stroke="#378ADD" stroke-width="3" fill="none">
+    <polygon points="1180,0 1420,0 900,800 660,800"/>
+  </g>
+  <!-- destello de acento -->
+  <circle cx="1280" cy="180" r="220" fill="#378ADD" opacity="0.12"/>
+</svg>

@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/../../config/database.php';
+require __DIR__ . '/../../lib/Response.php';
+require __DIR__ . '/../../lib/AdminSession.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
+ds_require_admin();
+ds_admin_csrf_check($_POST['csrf_token'] ?? null);
+
+if (empty($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
+    $code = $_FILES['imagen']['error'] ?? -1;
+    ds_json_error("Error al recibir el archivo (código $code)", 400);
+}
+
+$file     = $_FILES['imagen'];
+$maxBytes = 2 * 1024 * 1024;
+
+if ($file['size'] > $maxBytes) {
+    ds_json_error('El archivo supera el límite de 2 MB', 400);
+}
+
+$finfo    = new finfo(FILEINFO_MIME_TYPE);
+$mime     = $finfo->file($file['tmp_name']);
+$allowed  = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+
+if (!array_key_exists($mime, $allowed)) {
+    ds_json_error('Solo se permiten imágenes JPG, PNG o WebP', 400);
+}
+
+$ext      = $allowed[$mime];
+$safeName = bin2hex(random_bytes(12)) . '.' . $ext;
+$destDir  = __DIR__ . '/../../../assets/img/productos/';
+
+if (!is_dir($destDir) && !mkdir($destDir, 0755, true)) {
+    ds_json_error('No se pudo crear el directorio de imágenes', 500);
+}
+
+// Asegurar que la carpeta de uploads nunca ejecute scripts (defensa en profundidad),
+// incluso si se crea desde cero en el servidor de producción.
+$htaccess = $destDir . '.htaccess';
+if (!file_exists($htaccess)) {
+    @file_put_contents(
+        $htaccess,
+        "php_flag engine off\n"
+        . "RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps .pht\n"
+        . "<FilesMatch \"\\.(php|phtml|php3|php4|php5|php7|phps|pht)\$\">\n"
+        . "    Require all denied\n"
+        . "</FilesMatch>\n"
+    );
+}
+
+if (!move_uploaded_file($file['tmp_name'], $destDir . $safeName)) {
+    ds_json_error('Error al guardar la imagen en el servidor', 500);
+}
+
+ds_json_success(['url' => 'assets/img/productos/' . $safeName]);

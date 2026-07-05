@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Logo de marca">
+  <rect width="160" height="160" rx="16" fill="#F4F8FF"/>
+  <circle cx="80" cy="66" r="30" fill="#D4E3FF" stroke="#185FA5" stroke-width="2.5"/>
+  <path d="M86 52 l-18 26 h12 l-6 22 20 -30 h-12 z" fill="#378ADD"/>
+  <rect x="44" y="110" width="72" height="7" rx="3.5" fill="#B5D4F4"/>
+  <rect x="58" y="126" width="44" height="6" rx="3" fill="#D4E3FF"/>
+</svg>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mi Cuenta - [DS] Sports Supplements</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#003d6d",
+                      "on-secondary-fixed-variant": "#004880",
+                      "surface-dim": "#c6dbff",
+                      "outline": "#727782",
+                      "background": "#f9f9ff",
+                      "surface": "#f9f9ff",
+                      "surface-bright": "#f9f9ff",
+                      "surface-container-low": "#eff3ff",
+                      "on-error-container": "#93000a",
+                      "surface-container-high": "#dde9ff",
+                      "secondary-fixed": "#d2e4ff",
+                      "inverse-on-surface": "#ebf1ff",
+                      "tertiary-fixed": "#66ff8e",
+                      "surface-tint": "#1960a6",
+                      "inverse-surface": "#0c3158",
+                      "secondary-fixed-dim": "#a1c9ff",
+                      "primary-fixed": "#d4e3ff",
+                      "primary-container": "#185fa5",
+                      "secondary-container": "#5da9fe",
+                      "primary": "#004782",
+                      "on-primary-fixed-variant": "#004883",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "secondary": "#0060a8",
+                      "outline-variant": "#c2c6d2",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#424751",
+                      "surface-container": "#e6eeff",
+                      "inverse-primary": "#a4c9ff",
+                      "on-primary-container": "#c1d9ff",
+                      "on-secondary-fixed": "#001c38",
+                      "on-background": "#001c3a",
+                      "on-secondary": "#ffffff",
+                      "tertiary-container": "#006d2f",
+                      "surface-variant": "#d4e3ff",
+                      "on-tertiary-fixed": "#002109",
+                      "on-tertiary-container": "#54f483",
+                      "tertiary-fixed-dim": "#3de273",
+                      "tertiary": "#005222",
+                      "primary-fixed-dim": "#a4c9ff",
+                      "surface-container-highest": "#d4e3ff",
+                      "on-surface": "#001c3a",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#005322",
+                      "on-primary-fixed": "#001c39",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-padding": "80px",
+                      "stack-lg": "32px",
+                      "stack-sm": "8px",
+                      "gutter": "24px",
+                      "margin-mobile": "16px",
+                      "container-max": "1280px",
+                      "stack-md": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Montserrat"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Montserrat"
+                      ],
+                      "label-bold": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "price-display": [
+                              "Montserrat"
+                      ],
+                      "headline-xl": [
+                              "Montserrat"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Montserrat"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-bold": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "price-display": [
+                              "22px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Base styles mapped to guidance */
+        body {
+            background-color: #F0F4FF; /* Approximating background to the requested theme */
+            color: #042C53; /* Text */
+        }
+        .card-custom {
+            background-color: #ffffff;
+            border: 1px solid #B5D4F4;
+            box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05);
+        }
+        .btn-primary {
+            background-color: #185FA5;
+            color: #ffffff;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary:hover {
+            background-color: #134B82;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased pt-20 flex flex-col min-h-screen">
+<!-- Shared Component: TopNavBar -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-8 h-20 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary cursor-pointer active:scale-95 transition-transform duration-200 hover:scale-105">
+                [DS]
+            </div>
+<nav class="hidden md:flex gap-8 font-body-md text-body-md">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors cursor-pointer active:scale-95 hover:scale-105 duration-200" href="#">Proteins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors cursor-pointer active:scale-95 hover:scale-105 duration-200" href="#">Pre-Workout</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors cursor-pointer active:scale-95 hover:scale-105 duration-200" href="#">Vitamins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors cursor-pointer active:scale-95 hover:scale-105 duration-200" href="#">Brands</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors hover:scale-105 active:scale-95 p-2">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 transition-colors hover:scale-105 active:scale-95 p-2">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-8 py-stack-lg">
+<!-- Breadcrumb -->
+<nav aria-label="Breadcrumb" class="flex text-body-sm font-body-sm text-on-surface-variant mb-stack-lg">
+<ol class="inline-flex items-center space-x-1 md:space-x-2">
+<li class="inline-flex items-center">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+<span aria-current="page" class="text-on-surface">Mi Cuenta</span>
+</div>
+</li>
+</ol>
+</nav>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-stack-lg">Mi Cuenta</h1>
+<!-- Dashboard Layout Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+<!-- Left Sidebar -->
+<aside class="md:col-span-3 card-custom rounded-lg p-4 sticky top-28">
+<nav class="flex flex-col gap-2 font-body-md text-body-md">
+<a class="flex items-center gap-3 px-4 py-3 rounded-md bg-surface-container text-primary font-medium border-l-4 border-primary" href="#">
+<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
+                        Mis datos
+                    </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-on-surface-variant hover:bg-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                        Mis pedidos
+                    </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-on-surface-variant hover:bg-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+                        Favoritos
+                    </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-on-surface-variant hover:bg-surface hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+                        Direcciones
+                    </a>
+<div class="h-px bg-outline-variant/30 my-2"></div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-md text-error hover:bg-error-container/20 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                        Cerrar sesión
+                    </a>
+</nav>
+</aside>
+<!-- Right Content Area -->
+<div class="md:col-span-9 flex flex-col gap-gutter">
+<!-- Profile Card -->
+<section class="card-custom rounded-xl p-8">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-2">Información Personal</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Gestiona tus datos de contacto y preferencias.</p>
+</div>
+<button class="btn-primary px-4 py-2 rounded font-label-bold text-label-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span> Editar
+                        </button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-bold text-label-bold text-outline mb-1 uppercase tracking-wider">Nombre Completo</label>
+<div class="font-body-md text-body-md text-on-surface">Juan Pérez García</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-outline mb-1 uppercase tracking-wider">Correo Electrónico</label>
+<div class="font-body-md text-body-md text-on-surface">juan.perez@ejemplo.com</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-outline mb-1 uppercase tracking-wider">Teléfono</label>
+<div class="font-body-md text-body-md text-on-surface">+34 600 123 456</div>
+</div>
+<div>
+<label class="block font-label-bold text-label-bold text-outline mb-1 uppercase tracking-wider">Nivel Atleta</label>
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-bold text-label-bold bg-[#378ADD] text-white">
+                                Pro Member
+                            </span>
+</div>
+</div>
+</section>
+<!-- Recent Orders Card -->
+<section class="card-custom rounded-xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Pedidos recientes</h2>
+<a class="font-body-sm text-body-sm text-secondary-container hover:underline flex items-center" href="#">
+                            Ver todos <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 text-outline font-label-bold text-label-bold uppercase tracking-wider">
+<th class="py-3 px-4 font-semibold">Pedido #</th>
+<th class="py-3 px-4 font-semibold">Fecha</th>
+<th class="py-3 px-4 font-semibold">Total</th>
+<th class="py-3 px-4 font-semibold">Estado</th>
+<th class="py-3 px-4 font-semibold text-right">Acción</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/20">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-4 font-medium">#DS-9845</td>
+<td class="py-4 px-4 text-on-surface-variant">12 Oct, 2023</td>
+<td class="py-4 px-4 font-price-display text-[16px]">€89.50</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-tertiary-container/10 text-tertiary">
+                                            Entregado
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button aria-label="Ver detalles" class="text-secondary-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-4 font-medium">#DS-9812</td>
+<td class="py-4 px-4 text-on-surface-variant">28 Sep, 2023</td>
+<td class="py-4 px-4 font-price-display text-[16px]">€124.00</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-secondary-fixed/50 text-on-secondary-fixed-variant">
+                                            En camino
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button aria-label="Ver detalles" class="text-secondary-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-4 font-medium">#DS-9750</td>
+<td class="py-4 px-4 text-on-surface-variant">05 Sep, 2023</td>
+<td class="py-4 px-4 font-price-display text-[16px]">€45.99</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-tertiary-container/10 text-tertiary">
+                                            Entregado
+                                        </span>
+</td>
+<td class="py-4 px-4 text-right">
+<button aria-label="Ver detalles" class="text-secondary-container hover:text-primary transition-colors">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (WhatsApp) -->
+<a aria-label="Chat con soporte" class="fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform z-40 flex items-center justify-center" href="#">
+<svg fill="currentColor" height="24" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+</svg>
+</a>
+<!-- Shared Component: Footer -->
+<footer class="bg-on-background dark:bg-surface-container-lowest w-full py-section-padding mt-auto text-surface-container-lowest dark:text-on-background font-body-sm text-body-sm">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-8 max-w-container-max mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="font-headline-sm text-headline-sm font-bold mb-4">
+                    [DS]
+                </div>
+<p class="text-surface-variant dark:text-on-surface-variant mb-4">Premium sports nutrition engineered for performance and purity.</p>
+<div class="text-surface-variant dark:text-on-surface-variant">
+                    © 2024 [DS] Premium Supplements. All rights reserved.
+                </div>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-wrap gap-x-8 gap-y-4 md:justify-end">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Shipping Info</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Contact Us</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">WhatsApp Support</a>
+</div>
+</div>
+</footer>
+</body></html>

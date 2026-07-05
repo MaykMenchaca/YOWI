@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Mapa de ubicación">
+  <rect width="1200" height="400" fill="#E6EEFF"/>
+  <!-- calles -->
+  <g stroke="#C3D6F2" stroke-width="10" fill="none">
+    <path d="M0 120 H1200"/><path d="M0 260 H1200"/>
+    <path d="M300 0 V400"/><path d="M760 0 V400"/>
+    <path d="M0 60 L1200 340" opacity="0.6"/>
+  </g>
+  <g stroke="#D4E3FF" stroke-width="5" fill="none">
+    <path d="M0 190 H1200"/><path d="M540 0 V400"/><path d="M960 0 V400"/>
+  </g>
+  <!-- pin -->
+  <path d="M600 150 c-26 0 -46 20 -46 46 c0 34 46 74 46 74 s46 -40 46 -74 c0 -26 -20 -46 -46 -46 z" fill="#185FA5"/>
+  <circle cx="600" cy="196" r="17" fill="#FFFFFF"/>
+  <text x="600" y="356" text-anchor="middle" font-family="Barlow, sans-serif" font-size="20" font-weight="500" fill="#5B6472">Tampico, Tamaulipas</text>
+</svg>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productos — DS Admin</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: {
+        "fontFamily": {
+          "display": ['"Barlow Condensed"', 'sans-serif'],
+          "body":    ['"Barlow"', 'sans-serif']
+        }, colors: {
+          "ink": "#0B0F1A",
+          "brand": "#1F5FD9",
+          "lime": "#8FD11F",
+          "paper": "#F7F8FA", cobalt: { 600:"#185FA5",500:"#378ADD",700:"#0D4A80" } } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Barlow', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
+    <div class="px-5 py-5 border-b border-slate-700">
+      <div class="flex items-center gap-2"><img src="../assets/img/logo-ds-clean.png" alt="DS" class="h-9 w-auto"/><span class="font-display font-extrabold text-white text-sm uppercase tracking-tight leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
+      <p class="text-slate-500 text-[11px] mt-0.5 uppercase tracking-widest">Panel de administración</p>
+    </div>
+    <nav class="flex-1 py-4">
+      <a href="index.html"      class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="productos.html"  class="flex items-center gap-3 px-5 py-2.5 bg-brand text-white text-sm font-semibold">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Productos
+      </a>
+      <a href="categorias.html" class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        Categorías
+      </a>
+      <a href="pedidos.html"    class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        Pedidos
+      </a>
+    </nav>
+    <div class="px-5 py-4 border-t border-slate-700">
+      <p class="text-slate-400 text-xs mb-2" id="admin-name"></p>
+      <button id="logout-btn" class="text-slate-400 hover:text-red-400 text-xs transition-colors">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8 overflow-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Productos</h1>
+      <button id="new-product-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
+        + Nuevo producto
+      </button>
+    </div>
+
+    <div id="alert-banner" class="hidden mb-4"></div>
+
+    <!-- Filtros -->
+    <div class="flex gap-3 mb-4">
+      <input id="search-q" type="search" placeholder="Buscar nombre o marca…"
+        class="bg-slate-800 border border-slate-600 rounded-none px-4 py-2 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-brand w-64" />
+      <select id="filter-cat"
+        class="bg-slate-800 border border-slate-600 rounded-none px-3 py-2 text-slate-300 text-sm focus:outline-none focus:border-brand">
+        <option value="">Todas las categorías</option>
+      </select>
+    </div>
+
+    <div class="bg-slate-800 rounded-none border border-slate-700 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-left text-slate-400 text-xs uppercase tracking-wide">
+            <th class="px-3 py-3">Img</th>
+            <th class="px-3 py-3">Nombre</th>
+            <th class="px-3 py-3 text-right">Precio</th>
+            <th class="px-3 py-3 text-center">Stock</th>
+            <th class="px-3 py-3 text-center">Dest.</th>
+            <th class="px-3 py-3 text-center">Estado</th>
+            <th class="px-3 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="products-tbody">
+          <tr><td colspan="7" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="pagination" class="mt-4 flex gap-2 flex-wrap"></div>
+  </main>
+
+  <!-- Modal de producto -->
+  <div id="product-modal" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
+    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-2xl shadow-2xl my-8">
+      <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 rounded-t-xl z-10">
+        <h2 id="modal-title" class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Nuevo producto</h2>
+        <button id="modal-cancel" class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
+      </div>
+
+      <form id="product-form" class="px-6 py-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 text-sm font-medium mb-1">Nombre <span class="text-red-400">*</span></label>
+            <input name="nombre" type="text" required
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Marca <span class="text-red-400">*</span></label>
+            <input name="marca" type="text" required
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Categoría <span class="text-red-400">*</span></label>
+            <select name="category_id" required
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+              <option value="">-- Seleccionar --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Precio (MXN) <span class="text-red-400">*</span></label>
+            <input name="precio" type="number" step="0.01" min="0" required
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Precio original (tachado)</label>
+            <input name="precio_original" type="number" step="0.01" min="0"
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Stock</label>
+            <input name="stock" type="number" min="0" value="0"
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Cantidad / presentación</label>
+            <input name="cantidad" type="text" placeholder="Ej: 2 kg, 60 cápsulas"
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">Badge / etiqueta</label>
+            <input name="badge" type="text" placeholder="NUEVO, OFERTA, AGOTADO…"
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 text-sm font-medium mb-1">Descripción</label>
+            <textarea name="descripcion" rows="3"
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-none"></textarea>
+          </div>
+
+          <!-- Imagen -->
+          <div class="sm:col-span-2">
+            <label class="block text-slate-300 text-sm font-medium mb-2">Imagen del producto</label>
+            <img id="image-preview" src="" alt="" class="hidden w-24 h-24 object-contain rounded bg-slate-700 mb-2 border border-slate-600" />
+            <input name="imagen_file" type="file" accept="image/jpeg,image/png,image/webp"
+              class="block text-sm text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-none file:border-0 file:text-sm file:font-bold file:uppercase file:bg-lime file:text-ink hover:file:opacity-90 file:cursor-pointer" />
+            <p class="text-slate-500 text-xs mt-1">JPG, PNG o WebP · máx. 2 MB</p>
+            <input type="hidden" id="current-imagen" />
+          </div>
+
+          <!-- Toggles -->
+          <div class="flex items-center gap-3">
+            <input name="destacado" type="checkbox" id="chk-destacado" class="w-4 h-4 accent-brand" />
+            <label for="chk-destacado" class="text-slate-300 text-sm">Producto destacado</label>
+          </div>
+          <div class="flex items-center gap-3">
+            <input name="activo" type="checkbox" id="chk-activo" class="w-4 h-4 accent-brand" checked />
+            <label for="chk-activo" class="text-slate-300 text-sm">Visible en catálogo</label>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-2 border-t border-slate-700">
+          <button type="submit" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity">Guardar</button>
+          <button type="button" id="modal-cancel-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/admin/api-client.js"></script>
+  <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/products.js"></script>
+  <script>
+    document.getElementById("modal-cancel-btn").addEventListener("click", function () {
+      document.getElementById("product-modal").classList.add("hidden");
+    });
+  </script>
+</body>
+</html>

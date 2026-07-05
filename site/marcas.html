@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Distribuidor de Suplementos</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+          "ink": "#0B0F1A",
+          "brand": "#1F5FD9",
+          "lime": "#8FD11F",
+          "paper": "#F7F8FA",
+                        "surface-container-high": "#dde9ff",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#424751",
+                        "on-secondary-fixed": "#001c38",
+                        "on-secondary-container": "#003d6d",
+                        "surface-tint": "#1960a6",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d4e3ff",
+                        "on-tertiary-fixed-variant": "#005322",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#005222",
+                        "secondary": "#0060a8",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#e6eeff",
+                        "primary-container": "#185fa5",
+                        "surface": "#f9f9ff",
+                        "primary": "#004782",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "tertiary-fixed-dim": "#3de273",
+                        "surface-dim": "#c6dbff",
+                        "on-primary-fixed": "#001c39",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#5da9fe",
+                        "on-surface": "#001c3a",
+                        "tertiary-container": "#006d2f",
+                        "surface-container-highest": "#d4e3ff",
+                        "primary-fixed": "#d4e3ff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-container": "#54f483",
+                        "on-primary-fixed-variant": "#004883",
+                        "secondary-fixed": "#d2e4ff",
+                        "on-tertiary-fixed": "#002109",
+                        "on-background": "#001c3a",
+                        "outline-variant": "#c2c6d2",
+                        "tertiary-fixed": "#66ff8e",
+                        "secondary-fixed-dim": "#a1c9ff",
+                        "on-primary-container": "#c1d9ff",
+                        "surface-container-low": "#eff3ff",
+                        "inverse-primary": "#a4c9ff",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9ff",
+                        "outline": "#727782",
+                        "on-secondary-fixed-variant": "#004880",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#0c3158"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Barlow", "sans-serif"],
+                        "headline-md": ["Barlow Condensed", "sans-serif"],
+                        "body-sm": ["Barlow", "sans-serif"],
+                        "body-lg": ["Barlow", "sans-serif"],
+                        "price-display": ["Barlow Condensed", "sans-serif"],
+                        "headline-lg": ["Barlow Condensed", "sans-serif"],
+                        "headline-xl": ["Barlow Condensed", "sans-serif"],
+                        "headline-sm": ["Barlow Condensed", "sans-serif"],
+                        "label-bold": ["Barlow", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-display": ["22px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-bold": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .brand-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .brand-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 12px 24px rgba(15, 23, 42, 0.10);
+            border-color: #185FA5;
+        }
+        
+        .letter-filter-btn {
+            transition: all 0.2s ease;
+        }
+        .letter-filter-btn:hover, .letter-filter-btn.active {
+            background-color: #185FA5;
+            color: white;
+            border-color: #185FA5;
+        }
+    </style>
+<style id="flujo-enhance">
+:root{--ease-out:cubic-bezier(.23,1,.32,1);}
+button,a[href],[role=button],label[for]{cursor:pointer;}
+button,.product-card,.brand-card,.card-custom{transition:transform .16s var(--ease-out),box-shadow .2s var(--ease-out),background-color .2s var(--ease-out),border-color .2s var(--ease-out);}
+button:active,a[href]:active{transform:scale(.97);}
+:focus-visible{outline:2px solid #378ADD;outline-offset:2px;border-radius:4px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}}
+</style>
+<link rel="stylesheet" href="assets/experience.css"/>
+</head>
+<body class="bg-paper text-ink font-body antialiased flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between px-4 md:px-12 py-4 bg-ink border-b-2 border-lime sticky top-0 z-50">
+  <a href="index.html" class="flex items-center gap-3 hover:opacity-90 shrink-0"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto" /><span class="hidden sm:block font-display font-extrabold text-sm md:text-base uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></a>
+  <nav class="hidden md:flex gap-6 items-center">
+    <a href="index.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Inicio</a>
+    <a href="catalogo.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Catálogo</a>
+    <a href="marcas.html" class="text-lime font-extrabold uppercase tracking-wide text-sm border-b-2 border-lime">Marcas</a>
+    <a href="nosotros.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Nosotros</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <a class="relative flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime" href="pedido.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">shopping_cart</span>
+      <span data-cart-badge class="absolute top-0 right-0 bg-brand text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+    </a>
+    <a class="flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime" href="cuenta.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">person</span>
+    </a>
+  </div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 pb-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="flex text-gray-500 font-body text-sm mb-stack-lg">
+<ol class="inline-flex items-center space-x-1 md:space-x-3">
+<li class="inline-flex items-center">
+<a class="hover:text-brand transition-colors" href="#">Inicio</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+<span aria-current="page" class="text-brand font-medium">Marcas</span>
+</div>
+</li>
+</ol>
+</nav>
+<!-- Header Section -->
+<section class="mb-section-padding">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-lg">
+<div class="max-w-2xl">
+<span class="font-label-bold text-brand uppercase block mb-3" style="letter-spacing:0.2em;font-size:13px;">Catálogo de marcas</span>
+<h1 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink mb-2">Nuestras marcas</h1><div class="w-14 h-1.5 bg-lime mt-2 mb-4"></div>
+<p class="font-body text-lg text-gray-500">
+                        Descubre nuestra selección de las mejores marcas de nutrición deportiva y suplementos a nivel mundial, elegidas por su pureza, eficacia y respaldo científico.
+                    </p>
+</div>
+<div class="w-full md:w-80 relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-white border border-gray-200 text-ink font-body-md text-body-md rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-all placeholder:text-outline shadow-sm" placeholder="Buscar marca..." type="text"/>
+</div>
+</div>
+</section>
+<!-- Alphabet Filter -->
+<section class="mb-stack-lg border-y border-outline-variant py-4 overflow-x-auto hide-scrollbar">
+<div class="flex space-x-2 min-w-max">
+<button class="letter-filter-btn active w-10 h-10 rounded-none flex items-center justify-center font-bold uppercase tracking-widest text-xs border-2 border-brand bg-brand text-white">Todo</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">A</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">B</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">C</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">D</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">E</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">F</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">G</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">H</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">I</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">J</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">K</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">L</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">M</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">N</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">O</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">P</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">Q</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">R</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">S</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">T</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white">U</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">V</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">W</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">X</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">Y</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-bold uppercase tracking-widest text-xs border border-gray-200 text-ink bg-white opacity-50 cursor-not-allowed">Z</button>
+</div>
+</section>
+<!-- Brands Grid -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-gutter">
+<!-- Brand Card 1 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, minimalist logo of 'Optimum Nutrition' on a white background, corporate modern sports nutrition style, high contrast, crisp edges." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Optimum Nutrition</h3>
+<p class="font-body text-sm text-gray-500">42 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 2 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, bold logo of 'GAT Sport' on a white background, corporate modern athletic minimalist style, high contrast." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">GAT</h3>
+<p class="font-body text-sm text-gray-500">18 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 3 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A striking logo of 'Insane Labz' on a white background, sports nutrition aesthetic, crisp and professional." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Insane Labz</h3>
+<p class="font-body text-sm text-gray-500">25 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 4 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'Hi-Tech Pharmaceuticals' on a white background, clean corporate style, high visibility." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Hi-Tech</h3>
+<p class="font-body text-sm text-gray-500">12 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 5 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A professional logo of 'Cellucor' on a white background, modern sports supplement aesthetic, blue and silver accents." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Cellucor</h3>
+<p class="font-body text-sm text-gray-500">30 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 6 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean logo of 'Nutrex Research' on a white background, corporate modern style, sharp typography." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Nutrex</h3>
+<p class="font-body text-sm text-gray-500">22 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 7 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A bold logo of 'Mutant' on a white background, high contrast sports nutrition branding, clean layout." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Mutant</h3>
+<p class="font-body text-sm text-gray-500">15 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 8 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A simple logo of 'Ronnie Coleman Signature Series' on a white background, professional and clear." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Ronnie</h3>
+<p class="font-body text-sm text-gray-500">10 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 9 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A distinct logo of 'Dragon Pharma' on a white background, minimalist sports supplement style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Dragon Pharma</h3>
+<p class="font-body text-sm text-gray-500">28 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 10 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean logo of 'Evogen Nutrition' on a white background, premium technical branding." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Evogen</h3>
+<p class="font-body text-sm text-gray-500">14 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Add remaining requested brands with similar structure to ensure 18 items minimum for a good grid display -->
+<!-- Brand Card 11 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A bold logo of 'BPI Sports' on a white background, blue and white corporate style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">BPI</h3>
+<p class="font-body text-sm text-gray-500">19 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 12 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A sleek logo of 'MuscleTech' on a white background, scientific and modern supplement branding." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">MuscleTech</h3>
+<p class="font-body text-sm text-gray-500">35 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 13 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A high contrast logo of 'Allmax Nutrition' on a white background, clean and professional." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Allmax</h3>
+<p class="font-body text-sm text-gray-500">21 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 14 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A classic logo of 'Universal Nutrition' on a white background, clear typography." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Universal</h3>
+<p class="font-body text-sm text-gray-500">16 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 15 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A modern logo of 'ProSupps' on a white background, striking colors." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">ProSupps</h3>
+<p class="font-body text-sm text-gray-500">24 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 16 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, earthy logo of 'Birdman' plant-based nutrition on a white background." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Birdman</h3>
+<p class="font-body text-sm text-gray-500">11 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 17 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'MHP' on a white background, corporate athletic style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">MHP</h3>
+<p class="font-body text-sm text-gray-500">8 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 18 -->
+<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A simple text logo of 'B Life' on a white background, clean and pure aesthetic." loading="lazy" src="assets/img/marca-placeholder.svg"/>
+</div>
+<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">B Life</h3>
+<p class="font-body text-sm text-gray-500">20 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+</section>
+<!-- Pagination Placeholder -->
+<div class="mt-stack-lg flex justify-center">
+<nav aria-label="Pagination" class="inline-flex rounded-md shadow-sm -space-x-px">
+<a class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-200 bg-white text-sm font-medium text-gray-500 hover:bg-surface-container-low" href="#">
+<span class="sr-only">Anterior</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</a>
+<a aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium" href="#">1</a>
+<a class="bg-white border-gray-200 text-gray-500 hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">2</a>
+<a class="bg-white border-gray-200 text-gray-500 hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">3</a>
+<a class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-200 bg-white text-sm font-medium text-gray-500 hover:bg-surface-container-low" href="#">
+<span class="sr-only">Siguiente</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</nav>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-ink text-white mt-12 border-t-[8px] border-lime">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div>
+      <div class="flex items-center gap-3 mb-4"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto"/><span class="font-display font-extrabold text-2xl uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
+      <p class="text-gray-400 text-sm">Suplementos originales de las mejores marcas, con asesoría real y entrega en todo México.</p>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Tienda</span>
+      <div class="flex flex-col gap-2">
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="catalogo.html">Catálogo</a>
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="marcas.html">Marcas</a>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Empresa</span>
+      <div class="flex flex-col gap-2">
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="nosotros.html">Nosotros</a>
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="nosotros.html">Contacto</a>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Contacto</span>
+      <a class="flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#0F7A3A] hover:bg-[#0B6E34] transition py-3 px-4 min-h-[44px]" href="https://wa.me/5218330000000">
+        <span class="material-symbols-outlined">chat</span> WhatsApp
+      </a>
+    </div>
+  </div>
+</footer>
+<!-- WhatsApp FAB placeholder (as requested in style guide) -->
+<a class="fixed bottom-6 right-6 w-14 h-14 bg-[#0F7A3A] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50" href="#">
+<span class="material-symbols-outlined icon-fill">chat</span>
+</a>
+<script>
+        // Simple script for letter filter interaction
+        document.querySelectorAll('.letter-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(!this.classList.contains('cursor-not-allowed')) {
+                    document.querySelectorAll('.letter-filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+<script src="assets/enhance.js" defer></script>
+<script src="assets/experience.js" defer></script>
+<script src="assets/js/mobile-nav.js" defer></script>
+</body></html>

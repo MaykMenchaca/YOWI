@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Distribuidor de Suplementos</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+          "ink": "#0B0F1A",
+          "brand": "#1F5FD9",
+          "lime": "#8FD11F",
+          "paper": "#F7F8FA",
+                        "on-secondary-fixed": "#001c38",
+                        "surface-container-highest": "#d4e3ff",
+                        "on-tertiary-container": "#54f483",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#f9f9ff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d4e3ff",
+                        "surface-tint": "#1960a6",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c2c6d2",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#002109",
+                        "on-primary-fixed-variant": "#004883",
+                        "on-surface-variant": "#424751",
+                        "secondary-fixed": "#d2e4ff",
+                        "surface-container-high": "#dde9ff",
+                        "secondary-fixed-dim": "#a1c9ff",
+                        "inverse-surface": "#0c3158",
+                        "surface": "#f9f9ff",
+                        "primary-container": "#185fa5",
+                        "on-primary-container": "#c1d9ff",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#a4c9ff",
+                        "tertiary-fixed-dim": "#3de273",
+                        "tertiary": "#005222",
+                        "secondary-container": "#5da9fe",
+                        "on-secondary": "#ffffff",
+                        "surface-variant": "#d4e3ff",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#c6dbff",
+                        "secondary": "#0060a8",
+                        "outline": "#727782",
+                        "on-secondary-fixed-variant": "#004880",
+                        "tertiary-fixed": "#66ff8e",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#003d6d",
+                        "on-primary-fixed": "#001c39",
+                        "primary": "#004782",
+                        "surface-container": "#e6eeff",
+                        "on-tertiary-fixed-variant": "#005322",
+                        "on-background": "#001c3a",
+                        "surface-container-low": "#eff3ff",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "on-surface": "#001c3a",
+                        "tertiary-container": "#006d2f",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "stack-lg": "32px",
+                        "container-max": "1280px",
+                        "section-padding": "80px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "price-display": ["Barlow Condensed", "sans-serif"],
+                        "body-lg": ["Barlow", "sans-serif"],
+                        "headline-xl": ["Barlow Condensed", "sans-serif"],
+                        "body-md": ["Barlow", "sans-serif"],
+                        "label-bold": ["Barlow", "sans-serif"],
+                        "headline-lg": ["Barlow Condensed", "sans-serif"],
+                        "headline-md": ["Barlow Condensed", "sans-serif"],
+                        "headline-sm": ["Barlow Condensed", "sans-serif"],
+                        "body-sm": ["Barlow", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "price-display": ["22px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "800" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-bold": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-border { border-color: #B5D4F4; }
+        .custom-shadow { box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05); }
+        .custom-focus:focus { border-color: #378ADD; box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.2); }
+    </style>
+<style id="flujo-enhance">
+:root{--ease-out:cubic-bezier(.23,1,.32,1);}
+button,a[href],[role=button],label[for]{cursor:pointer;}
+button,.product-card,.brand-card,.card-custom{transition:transform .16s var(--ease-out),box-shadow .2s var(--ease-out),background-color .2s var(--ease-out),border-color .2s var(--ease-out);}
+button:active,a[href]:active{transform:scale(.97);}
+:focus-visible{outline:2px solid #378ADD;outline-offset:2px;border-radius:4px;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}}
+</style>
+<link rel="stylesheet" href="assets/experience.css"/>
+</head>
+<body class="bg-paper text-ink font-body antialiased">
+<header class="flex items-center justify-between px-4 md:px-12 py-4 bg-ink border-b-2 border-lime sticky top-0 z-50">
+  <a href="index.html" class="flex items-center gap-3 hover:opacity-90 shrink-0"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto" /><span class="hidden sm:block font-display font-extrabold text-sm md:text-base uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></a>
+  <nav class="hidden md:flex gap-6 items-center">
+    <a href="index.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Inicio</a>
+    <a href="catalogo.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Catálogo</a>
+    <a href="marcas.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Marcas</a>
+    <a href="nosotros.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Nosotros</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <a class="relative flex items-center justify-center min-w-[44px] min-h-[44px] text-lime" href="pedido.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">shopping_cart</span>
+      <span data-cart-badge class="absolute top-0 right-0 bg-brand text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+    </a>
+    <a class="flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime" href="cuenta.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">person</span>
+    </a>
+  </div>
+</header>
+
+<main class="max-w-[1280px] mx-auto px-4 md:px-12 py-12 flex-grow w-full">
+  <div class="flex flex-col items-start mb-8">
+    <h1 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink">Tu Pedido</h1>
+    <div class="w-14 h-1.5 bg-lime mt-4"></div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <!-- Left Column: Cart Items -->
+    <div class="lg:col-span-8 flex flex-col gap-6" id="cart-items">
+      <div class="bg-white border border-gray-200 p-8 flex justify-center items-center">
+        <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Cargando carrito…</p>
+      </div>
+    </div>
+    
+    <!-- Right Column: Sticky Summary -->
+    <div class="lg:col-span-4">
+      <div class="sticky top-24 bg-ink p-8 border-t-[6px] border-lime text-white flex flex-col gap-6">
+        <h2 class="font-display font-extrabold text-2xl uppercase tracking-wide">Resumen</h2>
+        
+        <div class="flex justify-between items-center text-gray-400 font-bold text-sm uppercase">
+          <span>Productos (<span data-summary="count">0</span>)</span>
+          <span data-summary="total">$0.00 MXN</span>
+        </div>
+        
+        <div class="border-t border-gray-700 py-4 flex justify-between items-center font-display font-extrabold text-2xl text-lime">
+          <span>Subtotal</span>
+          <span data-summary="total">$0.00 MXN</span>
+        </div>
+        
+        <p class="text-xs text-gray-500 font-bold uppercase tracking-widest mb-4">El envío se cotiza por WhatsApp</p>
+        
+        <form class="flex flex-col gap-4" id="checkout-form">
+          <div>
+            <input class="w-full bg-white text-ink border-none p-4 font-bold outline-none placeholder:text-gray-400" id="nombre" name="nombre" placeholder="TU NOMBRE" type="text" />
+          </div>
+          <div>
+            <input class="w-full bg-white text-ink border-none p-4 font-bold outline-none placeholder:text-gray-400" id="ciudad" name="ciudad" placeholder="CIUDAD" type="text" />
+          </div>
+          <button id="submit-order-btn" class="mt-4 bg-brand text-white font-extrabold uppercase tracking-widest py-4 w-full flex items-center justify-center gap-2 hover:bg-white hover:text-brand transition min-h-[44px]" type="button">
+            <span class="material-symbols-outlined">send</span>
+            Enviar por WhatsApp
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="bg-ink text-white mt-12 border-t-[8px] border-lime">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-12 py-16 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div>
+      <div class="flex items-center gap-3 mb-4"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto"/><span class="font-display font-extrabold text-2xl uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
+      <p class="text-gray-400 text-sm">Suplementos originales de las mejores marcas, con asesoría real y entrega en todo México.</p>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Tienda</span>
+      <div class="flex flex-col gap-2">
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="catalogo.html">Catálogo</a>
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="marcas.html">Marcas</a>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Empresa</span>
+      <div class="flex flex-col gap-2">
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="nosotros.html">Nosotros</a>
+        <a class="text-sm font-bold text-white hover:text-lime transition" href="nosotros.html">Contacto</a>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4">
+      <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Contacto</span>
+      <a class="flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#0F7A3A] hover:bg-[#0B6E34] transition py-3 px-4 min-h-[44px]" href="https://wa.me/5218330000000">
+        <span class="material-symbols-outlined">chat</span> WhatsApp
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/api-client.js" defer></script>
+<script src="assets/js/catalog-engine.js" defer></script>
+<script src="assets/js/cart.js" defer></script>
+<script src="assets/enhance.js" defer></script>
+<script src="assets/experience.js" defer></script>
+<script src="assets/js/mobile-nav.js" defer></script>
+</body>
+</html>

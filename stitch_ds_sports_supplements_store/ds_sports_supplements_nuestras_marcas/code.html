@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Marcas - [DS] Performance Nutrition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Montserrat:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#dde9ff",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#424751",
+                        "on-secondary-fixed": "#001c38",
+                        "on-secondary-container": "#003d6d",
+                        "surface-tint": "#1960a6",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#d4e3ff",
+                        "on-tertiary-fixed-variant": "#005322",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#005222",
+                        "secondary": "#0060a8",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#e6eeff",
+                        "primary-container": "#185fa5",
+                        "surface": "#f9f9ff",
+                        "primary": "#004782",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "tertiary-fixed-dim": "#3de273",
+                        "surface-dim": "#c6dbff",
+                        "on-primary-fixed": "#001c39",
+                        "on-error": "#ffffff",
+                        "secondary-container": "#5da9fe",
+                        "on-surface": "#001c3a",
+                        "tertiary-container": "#006d2f",
+                        "surface-container-highest": "#d4e3ff",
+                        "primary-fixed": "#d4e3ff",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-tertiary-container": "#54f483",
+                        "on-primary-fixed-variant": "#004883",
+                        "secondary-fixed": "#d2e4ff",
+                        "on-tertiary-fixed": "#002109",
+                        "on-background": "#001c3a",
+                        "outline-variant": "#c2c6d2",
+                        "tertiary-fixed": "#66ff8e",
+                        "secondary-fixed-dim": "#a1c9ff",
+                        "on-primary-container": "#c1d9ff",
+                        "surface-container-low": "#eff3ff",
+                        "inverse-primary": "#a4c9ff",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9ff",
+                        "outline": "#727782",
+                        "on-secondary-fixed-variant": "#004880",
+                        "surface-bright": "#f9f9ff",
+                        "inverse-surface": "#0c3158"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "stack-sm": "8px",
+                        "section-padding": "80px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "price-display": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-xl": ["Montserrat"],
+                        "headline-sm": ["Montserrat"],
+                        "label-bold": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "price-display": ["22px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "800" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-bold": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .brand-card {
+            transition: all 0.3s ease;
+        }
+        .brand-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0px 12px 24px rgba(4, 44, 83, 0.08);
+            border-color: #185FA5;
+        }
+        
+        .letter-filter-btn {
+            transition: all 0.2s ease;
+        }
+        .letter-filter-btn:hover, .letter-filter-btn.active {
+            background-color: #185FA5;
+            color: white;
+            border-color: #185FA5;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 fixed top-0 w-full z-50 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter flex justify-between items-center h-20">
+<!-- Brand -->
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 hover:scale-[1.02] duration-200" href="#">
+                [DS]
+            </a>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex space-x-8 items-center">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Proteins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Pre-Workout</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Vitamins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Creatine</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Bundles</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Coaching</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 cursor-pointer transition-all active:scale-95 font-body-md text-body-md hover:scale-[1.02] duration-200" href="#">Marcas</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center space-x-4">
+<button class="text-primary dark:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 hover:scale-[1.02] duration-200">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 hover:scale-[1.02] duration-200">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 hover:scale-[1.02] duration-200 hidden md:block">
+<span class="material-symbols-outlined">person</span>
+</button>
+<button class="text-primary dark:text-primary-fixed-dim cursor-pointer transition-all active:scale-95 md:hidden">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-24 pb-section-padding px-margin-mobile md:px-gutter max-w-container-max mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="flex text-on-surface-variant font-body-sm text-body-sm mb-stack-lg">
+<ol class="inline-flex items-center space-x-1 md:space-x-3">
+<li class="inline-flex items-center">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+<span aria-current="page" class="text-primary font-medium">Marcas</span>
+</div>
+</li>
+</ol>
+</nav>
+<!-- Header Section -->
+<section class="mb-section-padding">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-lg">
+<div class="max-w-2xl">
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-stack-sm">Nuestras marcas</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        Descubre nuestra selección de las mejores marcas de nutrición deportiva y suplementos a nivel mundial, elegidas por su pureza, eficacia y respaldo científico.
+                    </p>
+</div>
+<div class="w-full md:w-80 relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] text-on-surface font-body-md text-body-md rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-all placeholder:text-outline-variant shadow-sm" placeholder="Buscar marca..." type="text"/>
+</div>
+</div>
+</section>
+<!-- Alphabet Filter -->
+<section class="mb-stack-lg border-y border-outline-variant py-4 overflow-x-auto hide-scrollbar">
+<div class="flex space-x-2 min-w-max">
+<button class="letter-filter-btn active w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">Todo</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">A</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">B</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">C</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">D</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">E</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">F</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">G</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">H</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">I</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">J</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">K</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">L</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">M</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">N</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">O</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">P</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">Q</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">R</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">S</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">T</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest">U</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">V</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">W</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">X</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">Y</button>
+<button class="letter-filter-btn w-10 h-10 rounded flex items-center justify-center font-label-bold text-label-bold border border-[#B5D4F4] text-on-surface bg-surface-container-lowest opacity-50 cursor-not-allowed">Z</button>
+</div>
+</section>
+<!-- Brands Grid -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-gutter">
+<!-- Brand Card 1 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, minimalist logo of 'Optimum Nutrition' on a white background, corporate modern sports nutrition style, high contrast, crisp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPdr4VyTESBk-8eP7TbOYYXtbga_lHFkaUgpaZuk8Xuafn1LNIfAQ_5-SJJdDw1IIED_kika8_ZzjpM_LuDbBfoe8VLA0MjXcb7JT4L5YIhRZxVhSE4R6BcALVEBGRGFqQaPf-m88fD6pWHpXpKz_U-3UcxFsomGPgOEwA6FA2Y5dS1Q7YhkrthonwKDz5PkGlkChOVPGXWl0uVU8gcJvrRE4gZxeZ21lf8X-J3IrkSwFgDU0CRX90"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Optimum Nutrition</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">42 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 2 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, bold logo of 'GAT Sport' on a white background, corporate modern athletic minimalist style, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP4DL91Op3VlBhadrLimouVE7T334aLvI4tV6snc3vSfonlSw5-kS_H2SIfn8ntHMmrwOu9FQiwkUe6iLRwyZ7zPQiFDkzaLXeEvo-yML4JgbxYCU-mtoExZWJnQNYsKOAHFUSMheXJt1ILcmcjEEHpPvI9teGfZTf8QyzyPztqp6iq3GaJs1LU7hYRKhAyndsdAfblce15I-KUeCk07ug5sHnLsukSwEYiqWpGAZ8wzkIt2N-ExS4"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">GAT</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">18 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 3 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A striking logo of 'Insane Labz' on a white background, sports nutrition aesthetic, crisp and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABaFKX3A1qFnTXwK1ZE1dUrXKRLdVQ9M3AC2lmfqf0INr7pQblgl-Ko6kafsOA9u4OuG7Ajga0NE3co8XTi8P2lDOqIt-y0jV_cTdbrgAA81uOEsh-L7woYdU-nlNuJDldOvWkdERd_I1eNoJwHUbK1mo2wqaElwFzh9VfHn8eJ4R63DakiRqsSsOva39W-v1PUmanclXfB_-bzP2KU-hUwqFTrn6KJhhjPJVdOacvLwYUvcIdq1fC"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Insane Labz</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">25 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 4 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'Hi-Tech Pharmaceuticals' on a white background, clean corporate style, high visibility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaSTTKkCJNH7YpMi29VbgQX4w2kP_uQQt7ABaRKcJjWfdJ-Z3u4e-m0Ejk2xDfGCvlDyPdi_IZqWzeXtzzkGVZjduUSr24Jn5q2vnLagcnz_7_9squkb-PxLVAkLEcWsczout6-pjC0PKSDn8MfT0-1VngGHGDQd7JRlsjOhXlT453sH92Y_9ecY0WXXI0aWQ_8d-6JUl2xtseTSxWLUukd5WZ1dHxQu6KKGEBZaV1vym4Wb_j6RHt"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Hi-Tech</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">12 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 5 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A professional logo of 'Cellucor' on a white background, modern sports supplement aesthetic, blue and silver accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe-3cWAoywAn-KyY5pllo0TrHQbxAoVrxAhj506pl8ABDIYeXrFniLN9xXk3nLCUiUEIN5EjWeZODihWTyMGYFdvXhLiv3fO66wdeC2nH7o8LdNggkW8jgk6510U7fvB1NgIhP1zFsRa8MtqCjgClqNxyj6KV2zg0JCd99pewsIpBvlSMJFqn5mTIRR8iKup2PbvW0pMlY3KIa0ldQrpVYCOKbDczxWmoRM1loCv8aaYGBSLLrIMTa"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Cellucor</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">30 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 6 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean logo of 'Nutrex Research' on a white background, corporate modern style, sharp typography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhaEsu2ibeZ-fqtfQd_XwWCxQorfydSfC5iZvTo4aWQHeR79RuK576ggWA9ImNspBEbupCxogsIZTiMFif7QdcNjziR9EkTc9jlRtRepPPjyxlOq9o0L2fS7uLercUmABOvuZQvQ2F9Nc3blt4SJarOfJAGMgHKFij3IVE_BEdpXMv-d6BIhGNPA4fsWe0lf2NsOe_gR0AxC-U_3kzl0GYXbPXrjBQo86hbwJj1bb3-BOYwGZZl4q9"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Nutrex</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">22 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 7 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A bold logo of 'Mutant' on a white background, high contrast sports nutrition branding, clean layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgGsz_rgN7ZU1-v0wtxUoq47EI_dFShX46GIsTbckOro3jNfgIf9GoJtInfK0JNp8lkTAlvGbG61xBXeyTQVQXy8k_fs7O48ZxzItsBjR-uLwAZnubjJa2TFXI37P9hiTPhDVuq3YTd9C4p074aU-ppiPhTcimukFC4Go5_NH0Fqpvk_Q3dlDNhMPF7MtgipfN6C_fzHmpTdYW0yFgcUxIEZdZvZ-aZ3mFxlbeYGgjHKZOFHRaP2KR"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Mutant</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">15 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 8 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A simple logo of 'Ronnie Coleman Signature Series' on a white background, professional and clear." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJHJMq22RcXlkYAMa0xS-8HEGam2LM10d58ro81yQDK7U_KimjzJaTpvb5wu4aXPE0wC0btNXFmsKJIx_6FpV3kT7OpX1ojaPLAzCXjlpXl7w9taC-BcyL33v4v1xHbvLVDI0QCAtUHs7xW8ScRV89Gf1hHk5qG3zzP9P_sv02OjqC3slAFGZZcGZZ97T__jaPy742S42XmqP0jY6JJhnT7YKjY46MZyCle7HsSco0RoTK0bnFMGQc"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Ronnie</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">10 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 9 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A distinct logo of 'Dragon Pharma' on a white background, minimalist sports supplement style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlOaBxItkjg-6IOPK4yyjI7d_C-8uoj-NotvEOYMIlVtK4YU1qF9zWhIMfWYmV0_6mbY1FOwnuu9c_5fP_5M9BwXOppRd-AJolfI7pPXuAmj3TRAwnQmGzDcLqF7ltJ5oyOxUwx93-fAVICXbc_ocIKWdMl4JbVhG0uUbTgBw5FXeO9NBIAsMwRzP7T5ODlTi-UF3A_bzlPUiSYTIC6C72oC8yTYGjwhp5ewmBzGUVF_U2mKDtZqhe"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Dragon Pharma</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">28 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 10 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean logo of 'Evogen Nutrition' on a white background, premium technical branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkoWxm4QZg2OctDOhFEi4gpt0zHRdtZNU9b9poSzayxMhmw1qVU6OuNIN4kiiuThU6UGmTUWboOsEcSnZO92XQNTCVy3HVzTCQobgboJnM9FUgYvFaTnNZ5FFrBjseVHJIxXDns0UI9WPlSQvHXPpElYvchZm7OsZbAuEXNpFwwpi5ygpHdw9_1B-ay65ZP8faAm4oSVUJb6XCQjvbupwDFQYIW0TCKb5iySTtaEes6Yv2ElusQMbw"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Evogen</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">14 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Add remaining requested brands with similar structure to ensure 18 items minimum for a good grid display -->
+<!-- Brand Card 11 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A bold logo of 'BPI Sports' on a white background, blue and white corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByww71YViBoZLzY1g5u57cbYS4xuwu63_4HiX1-ESjjpR2bTyVAUiB8hq5NDbHmEJcetKz-dVOwBZsOX0zXnmGSZFmpShEBM1sHXk4JNKA6L93vzoimHJFkNcd3eqA_VGvE_GrYam_7Ilri6Sp1dZGE7XP-geeFonWsS7sQQGGo-dzpCl5gUAGLKX6nY0MtfJsgEqvVx6nUYa3esyaeDMVQ2rE5Da8aLx2leawLZO016exonRXKOeI"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">BPI</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">19 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 12 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A sleek logo of 'MuscleTech' on a white background, scientific and modern supplement branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4EnsSotCZYbhBiYT5lPr6NZu5CFwbi51ZmXPuJdiHBq4axGF0E9rwxFoIjsHv7cSMTpo9XbshroySbhMuUv-6wtHuNVaWNgwNYWmqBTLl5Fvom40thid0fexAv6KA4fiAsSYjElRhGOOb6k86gMfKvmJh2FmBIxitzL9OYbkiLbH4G3baS3ZMPpNdVm2UM69tmga2d-Ohy2f2zzqHpkulwk-xnrXorfFsCslEoPEvvfKAhvVNlN1Q"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">MuscleTech</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">35 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 13 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A high contrast logo of 'Allmax Nutrition' on a white background, clean and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk-oer4iw8RXkVgj012na0HBQN3tM1Di8AIkhMo961sqs5ubr1IYaVGZy9NfISovH-2yvToEWEite4fODH8xkTRR9mf8n7-JIG0tNjbLQM9k1wJ9YfTv09GbfjeIWokq0ukoJfUdV12JFrQdQndm6n8UmmWkL31XSHJ55cu8enc0rBw40_kdWmizSYjUCl6WGAf0_5LFVBU7mr8_yjxEo8iy7GKRKRxyAlLr3jGPlO2bwapyDmFHuv"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Allmax</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">21 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 14 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A classic logo of 'Universal Nutrition' on a white background, clear typography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGEMBQxyGnCLTY1QqC7LJOijST0BbgADsEJpTTvkOGqDCsVP_jdjkt36Cl9sJ9ryvZL5IM87-1Ogm6shU7ktrCb1KPGizyEj37dGZ9qFAs1d-HDC1Cje2NKd2wOly2khzpXSUsPxa0o7CKMfBmiXh16FymxmYGqrBy8kliA2o5hsTUXbVpnRzeGnfyk5kmckxrd03aVVTlo3TgQv6J9f7xfw9NDC8MMEuuroOb9tC8BufMdrH4jqoV"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Universal</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">16 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 15 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A modern logo of 'ProSupps' on a white background, striking colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOmIrF3RNDMN9QQXfDRmpB-42tCdnKduAvVKqf4muDnERZZpgen2cV1qofKizL7d27KkKB7BIzcJwdBHUq2Q-l_vYzAB6-JD9iV1Vi-CZacUSDUdyI7Y3hX4-8Juev6hBozofRedsqEjmRzcoAj-6ddhvwZHpq4-tFGfzzrNiOLSbfcth3kNQtdqS5OxNhL_5OtkVVrwW7Gldo4JahggnTxuaLw7ml5_eTmH3oclr6ShxaN3mm2dTc"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">ProSupps</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">24 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 16 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A clean, earthy logo of 'Birdman' plant-based nutrition on a white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEtY335v5r8N4VFPIDqpU8MNB8VWcuekFuQU7neqWDqQqdq9oYwqiT8mKQq26cnWfL8z9l8JCDHkq7yTYIkkdB_inxVpLO478I-btfclVG22MwpGtnEPmkZWe3x_YLnYvbd05aI9wGgIGPvHmV7I6Hjhcq-2_7Zs4FfZ530WfhjloZdIpI6W9lYHowowSDfqcbBgMpU4gdy1kGfbJ35jnkXSTk04IybV9BxP6cQ4a_sOja05XobdzU"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">Birdman</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">11 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 17 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'MHP' on a white background, corporate athletic style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBYOBGUS4xw_6Oo-84aRvf8NzpR6v6kQRZ1XnZjPBLe1-HPOtu1kX-zbQcCGBD8jK2TPvO15CmjaEvrPGYQLtXXPyUFMEnRc5qtpQsGRawVvxWOGdyJ2Yq9RBGuLL2D2KTQqtETI_uBhoKS3HKgH7RXZi_OtvsDNFpqzW4WW2j-FurTcWzyo5fCeYmlyJqcgQGWmwL7bCwXGFNEJzhkNIbn-gdGxrNMHJvz_X2c2-KANC811ViEOhF"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">MHP</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">8 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+<!-- Brand Card 18 -->
+<a class="brand-card bg-surface-container-lowest rounded-lg border border-[#B5D4F4] p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
+<div class="w-20 h-20 mb-4 bg-surface-container-highest rounded-full flex items-center justify-center overflow-hidden p-2">
+<img class="w-full h-full object-contain" data-alt="A simple text logo of 'B Life' on a white background, clean and pure aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcTpjDoxCzQKPLDIg9hwT04nGJ20FjpPKPmBnNCJVwShtDSt_mTasH11gqdBAFMVG6ZLv-Cz8sOvzN2AL1SI9c427cMfDap1zC7fqWSu2FkNRnTLEliejJUq46d8OWDmiqBkaEFpnBuDRTzrAdHGXWsjpHBAYJNQPV1EL45XdlakofSMY2zBQm_Z4tYBtnrgXsPs4S8-Lz8F1r6ky4s8LQX5Td4MlAUxM28VabPtGSx5BL5Sltl2fH"/>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-1 truncate w-full">B Life</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">20 productos</p>
+<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
+</a>
+</section>
+<!-- Pagination Placeholder -->
+<div class="mt-stack-lg flex justify-center">
+<nav aria-label="Pagination" class="inline-flex rounded-md shadow-sm -space-x-px">
+<a class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-[#B5D4F4] bg-surface-container-lowest text-sm font-medium text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="sr-only">Anterior</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</a>
+<a aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium" href="#">1</a>
+<a class="bg-surface-container-lowest border-[#B5D4F4] text-on-surface-variant hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">2</a>
+<a class="bg-surface-container-lowest border-[#B5D4F4] text-on-surface-variant hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">3</a>
+<a class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-[#B5D4F4] bg-surface-container-lowest text-sm font-medium text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="sr-only">Siguiente</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</nav>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-on-secondary-fixed dark:bg-on-secondary-fixed w-full py-section-padding">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="col-span-2 md:col-span-1 mb-8 md:mb-0">
+<span class="font-headline-sm text-headline-sm font-bold text-white mb-4 block">[DS]</span>
+<p class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 mb-4">
+                    Elevando el rendimiento humano a través de nutrición científica y transparente.
+                </p>
+<div class="flex space-x-4">
+<!-- Social placeholders -->
+<a class="text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-white mb-4 block">Tienda</h4>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Shop All</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Lab Reports</a></li>
+<li><a class="font-body-sm text-body-sm text-white font-bold underline cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Marcas</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-white mb-4 block">Empresa</h4>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Our Story</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Shipping Policy</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Return Policy</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-white mb-4 block">Soporte</h4>
+<ul class="space-y-2">
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Help Center</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80 hover:text-white cursor-pointer hover:translate-x-1 transition-transform duration-200 block" href="#">Contact Expert</a></li>
+</ul>
+</div>
+<div class="col-span-2 md:col-span-4 mt-section-padding pt-8 border-t border-surface-variant/20 flex flex-col md:flex-row justify-between items-center">
+<span class="font-body-sm text-body-sm text-surface-variant/80 dark:text-surface-variant/80">© 2024 [DS] Performance Nutrition. All rights reserved.</span>
+</div>
+</div>
+</footer>
+<!-- WhatsApp FAB placeholder (as requested in style guide) -->
+<a class="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50" href="#">
+<span class="material-symbols-outlined icon-fill">chat</span>
+</a>
+<script>
+        // Simple script for letter filter interaction
+        document.querySelectorAll('.letter-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(!this.classList.contains('cursor-not-allowed')) {
+                    document.querySelectorAll('.letter-filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body></html>

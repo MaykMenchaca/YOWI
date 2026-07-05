@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crear cuenta - [DS] Sports Supplements</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#003d6d",
+                        "on-secondary-fixed-variant": "#004880",
+                        "surface-dim": "#c6dbff",
+                        "outline": "#727782",
+                        "background": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-low": "#eff3ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#dde9ff",
+                        "secondary-fixed": "#d2e4ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "tertiary-fixed": "#66ff8e",
+                        "surface-tint": "#1960a6",
+                        "inverse-surface": "#0c3158",
+                        "secondary-fixed-dim": "#a1c9ff",
+                        "primary-fixed": "#d4e3ff",
+                        "primary-container": "#185fa5",
+                        "secondary-container": "#5da9fe",
+                        "primary": "#004782",
+                        "on-primary-fixed-variant": "#004883",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary": "#0060a8",
+                        "outline-variant": "#c2c6d2",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#424751",
+                        "surface-container": "#e6eeff",
+                        "inverse-primary": "#a4c9ff",
+                        "on-primary-container": "#c1d9ff",
+                        "on-secondary-fixed": "#001c38",
+                        "on-background": "#001c3a",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#006d2f",
+                        "surface-variant": "#d4e3ff",
+                        "on-tertiary-fixed": "#002109",
+                        "on-tertiary-container": "#54f483",
+                        "tertiary-fixed-dim": "#3de273",
+                        "tertiary": "#005222",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "surface-container-highest": "#d4e3ff",
+                        "on-surface": "#001c3a",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#005322",
+                        "on-primary-fixed": "#001c39",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "80px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "label-bold": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "price-display": ["Montserrat"],
+                        "headline-xl": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Montserrat"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "label-bold": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "price-display": ["22px", { "lineHeight": "1", "fontWeight": "700" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-sm": ["18px", { "lineHeight": "1.2", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-shadow { box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05); }
+        .focus-glow:focus { box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.2); }
+    </style>
+</head>
+<body class="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-8 h-20 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary cursor-pointer active:scale-95">
+                [DS]
+            </div>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:scale-105 duration-200 cursor-pointer font-body-md text-body-md" href="#">Proteins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:scale-105 duration-200 cursor-pointer font-body-md text-body-md" href="#">Pre-Workout</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:scale-105 duration-200 cursor-pointer font-body-md text-body-md" href="#">Vitamins</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors hover:scale-105 duration-200 cursor-pointer font-body-md text-body-md" href="#">Brands</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95" data-icon="shopping_cart">shopping_cart</span>
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 cursor-pointer hover:scale-105 transition-transform duration-200 active:scale-95" data-icon="person">person</span>
+</div>
+</div>
+</header>
+<!-- Main Content - Centered Registration Card -->
+<main class="flex-grow flex items-center justify-center pt-32 pb-section-padding px-margin-mobile md:px-0">
+<div class="bg-surface-container-lowest border border-[#B5D4F4] rounded-lg custom-shadow w-full max-w-[480px] p-stack-lg flex flex-col gap-stack-lg">
+<div class="text-center flex flex-col gap-stack-sm">
+<div class="font-headline-xl text-headline-xl text-primary font-bold">
+                    [DS]
+                </div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">
+                    Crear cuenta
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Únete a la élite del rendimiento deportivo.
+                </p>
+</div>
+<form action="#" class="flex flex-col gap-stack-md" method="POST">
+<div class="flex flex-col gap-2">
+<label class="font-label-bold text-label-bold text-on-surface" for="nombre">Nombre</label>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] rounded text-on-surface font-body-md text-body-md px-4 py-3 focus:outline-none focus:border-[#378ADD] focus-glow transition-all" id="nombre" name="nombre" placeholder="Tu nombre completo" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-bold text-label-bold text-on-surface" for="email">Email</label>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] rounded text-on-surface font-body-md text-body-md px-4 py-3 focus:outline-none focus:border-[#378ADD] focus-glow transition-all" id="email" name="email" placeholder="tu@email.com" required="" type="email"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-bold text-label-bold text-on-surface" for="telefono">Teléfono (WhatsApp)</label>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] rounded text-on-surface font-body-md text-body-md px-4 py-3 focus:outline-none focus:border-[#378ADD] focus-glow transition-all" id="telefono" name="telefono" placeholder="+1 234 567 8900" required="" type="tel"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-bold text-label-bold text-on-surface" for="password">Password</label>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] rounded text-on-surface font-body-md text-body-md px-4 py-3 focus:outline-none focus:border-[#378ADD] focus-glow transition-all" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-bold text-label-bold text-on-surface" for="confirm_password">Confirmar password</label>
+<input class="w-full bg-surface-container-lowest border border-[#B5D4F4] rounded text-on-surface font-body-md text-body-md px-4 py-3 focus:outline-none focus:border-[#378ADD] focus-glow transition-all" id="confirm_password" name="confirm_password" placeholder="••••••••" required="" type="password"/>
+</div>
+<div class="flex items-start gap-3 mt-2">
+<input class="mt-1 border-[#B5D4F4] rounded text-primary-container focus:ring-[#378ADD] cursor-pointer" id="terms" name="terms" required="" type="checkbox"/>
+<label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer" for="terms">
+                        Acepto los <a class="text-[#378ADD] hover:underline" href="#">Términos y condiciones</a> y la <a class="text-[#378ADD] hover:underline" href="#">Política de privacidad</a>.
+                    </label>
+</div>
+<button class="mt-4 bg-primary-container text-on-primary font-headline-sm text-headline-sm py-4 rounded transition-all duration-200 hover:bg-[#134b82] hover:scale-[1.02] active:scale-[0.98] custom-shadow flex justify-center items-center gap-2" type="submit">
+                    Registrarme
+                </button>
+</form>
+<div class="text-center mt-2 border-t border-[#B5D4F4]/50 pt-stack-md">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    ¿Ya tienes una cuenta? <a class="font-label-bold text-label-bold text-[#378ADD] hover:underline" href="#">Iniciar sesión</a>
+</p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-on-background dark:bg-surface-container-lowest w-full py-section-padding">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-8 max-w-container-max mx-auto">
+<div class="flex flex-col gap-stack-md">
+<div class="font-headline-sm text-headline-sm font-bold text-surface-container-lowest dark:text-on-background cursor-pointer">
+                    [DS]
+                </div>
+<p class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant">
+                    © 2024 [DS] Premium Supplements. All rights reserved.
+                </p>
+</div>
+<div class="flex flex-col gap-stack-sm font-body-sm text-body-sm">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-stack-sm font-body-sm text-body-sm">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Shipping Info</a>
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Contact Us</a>
+</div>
+<div class="flex flex-col gap-stack-sm font-body-sm text-body-sm">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer flex items-center gap-2" href="#">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
+                    WhatsApp Support
+                </a>
+</div>
+</div>
+</footer>
+<!-- FAB WhatsApp -->
+<a class="fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-lg hover:scale-110 transition-transform duration-200 z-50 flex items-center justify-center" href="#">
+<svg class="w-8 h-8 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
+</a>
+</body></html>

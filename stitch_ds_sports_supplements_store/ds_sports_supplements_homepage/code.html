@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>[DS] Sports Supplements</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Montserrat:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#001c3a",
+                      "on-tertiary-fixed": "#002109",
+                      "on-surface": "#001c3a",
+                      "secondary": "#0060a8",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#66ff8e",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed-dim": "#a1c9ff",
+                      "tertiary-container": "#006d2f",
+                      "surface": "#f9f9ff",
+                      "on-tertiary-container": "#54f483",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary": "#004782",
+                      "secondary-fixed": "#d2e4ff",
+                      "primary-fixed-dim": "#a4c9ff",
+                      "inverse-primary": "#a4c9ff",
+                      "on-primary-fixed-variant": "#004883",
+                      "surface-variant": "#d4e3ff",
+                      "outline-variant": "#c2c6d2",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#185fa5",
+                      "error-container": "#ffdad6",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed": "#001c38",
+                      "on-surface-variant": "#424751",
+                      "primary-fixed": "#d4e3ff",
+                      "outline": "#727782",
+                      "surface-dim": "#c6dbff",
+                      "surface-container-low": "#eff3ff",
+                      "on-tertiary-fixed-variant": "#005322",
+                      "surface-container-highest": "#d4e3ff",
+                      "secondary-container": "#5da9fe",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "inverse-surface": "#0c3158",
+                      "tertiary-fixed-dim": "#3de273",
+                      "background": "#f9f9ff",
+                      "surface-container-high": "#dde9ff",
+                      "on-error": "#ffffff",
+                      "surface-container": "#e6eeff",
+                      "on-secondary-fixed-variant": "#004880",
+                      "on-secondary-container": "#003d6d",
+                      "surface-bright": "#f9f9ff",
+                      "on-primary-container": "#c1d9ff",
+                      "surface-tint": "#1960a6",
+                      "tertiary": "#005222",
+                      "on-primary-fixed": "#001c39"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "stack-lg": "32px",
+                      "stack-sm": "8px",
+                      "section-padding": "80px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "stack-md": "16px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Montserrat"
+                      ],
+                      "headline-xl": [
+                              "Montserrat"
+                      ],
+                      "label-bold": [
+                              "Inter"
+                      ],
+                      "price-display": [
+                              "Montserrat"
+                      ],
+                      "headline-lg": [
+                              "Montserrat"
+                      ],
+                      "headline-sm": [
+                              "Montserrat"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "label-bold": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "price-display": [
+                              "22px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #F0F4FF; }
+        .ambient-shadow { box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05); }
+        .product-card { border: 1px solid #B5D4F4; }
+        .input-border { border: 1px solid #B5D4F4; }
+        .input-border:focus-within { border-color: #378ADD; box-shadow: 0 0 0 2px rgba(55, 138, 221, 0.2); }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-md dark:bg-on-background/80 docked full-width top-0 sticky z-50 border-b border-outline-variant dark:border-on-surface-variant shadow-sm">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-gutter max-w-container-max mx-auto h-20">
+<!-- Brand Logo -->
+<a class="font-headline-lg text-headline-lg font-black text-primary-container dark:text-inverse-primary tracking-tighter" href="#">
+                [DS]
+            </a>
+<!-- Search Bar (Center) -->
+<div class="hidden md:flex flex-1 max-w-md mx-8">
+<div class="flex w-full items-center bg-surface-container-lowest rounded-full px-4 py-2 input-border">
+<span class="material-symbols-outlined text-outline mr-2" style="font-variation-settings: 'FILL' 0;">search</span>
+<input class="w-full bg-transparent border-none outline-none text-body-sm font-body-sm text-on-surface placeholder:text-outline-variant focus:ring-0" placeholder="Buscar suplementos..." type="text"/>
+</div>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-primary dark:text-primary-fixed hover:opacity-90 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="absolute top-0 right-0 bg-[#378ADD] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span>
+</button>
+<button class="p-2 text-primary dark:text-primary-fixed hover:opacity-90 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+</button>
+</div>
+</div>
+<!-- Main Navigation (Desktop) -->
+<nav class="hidden md:flex justify-center border-t border-outline-variant/30 py-2 bg-surface-container-lowest">
+<ul class="flex gap-6 px-gutter max-w-container-max w-full overflow-x-auto no-scrollbar">
+<li><a class="text-primary dark:text-primary-fixed border-b-2 border-primary font-bold pb-1 font-label-bold text-label-bold uppercase" href="#">Proteínas</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant font-label-bold text-label-bold uppercase hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 pb-1" href="#">Creatina</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant font-label-bold text-label-bold uppercase hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 pb-1" href="#">Pre-Entrenos</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant font-label-bold text-label-bold uppercase hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 pb-1" href="#">Salud</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant font-label-bold text-label-bold uppercase hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 pb-1 text-[#ba1a1a]" href="#">Ofertas</a></li>
+</ul>
+</nav>
+</header>
+<main class="min-h-screen">
+<!-- Hero Section -->
+<section class="relative w-full h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center z-0" data-alt="A highly professional and cinematic photograph of a powerful athlete in a modern, well-lit industrial gym setting. The lighting is high-key and bright, highlighting muscle definition and evoking a sense of peak physical performance. The color palette incorporates cool, technical blues (like cobalt #185FA5) and deep navy shadows, reflecting a premium sports nutrition brand identity. The composition includes ample negative space for text overlay." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAHbSN8ZQDy-SFSRoKBnusZo6b8V7ct8U_jKsEMSEAfKT-oWnAlZTOBBaK-NzHdWs-hx-KHVRn2tjO2m9zqZCFVqsDWeNJBecgGxz23pzYw6xEBj35-iSS--0xWRBRNCIznBXdoEqX_UB4E-0HmSJgBVaBEIFEzRiD-lDrEY4cdUn6XTHjOopWzZFTuEKEHHGuJI5Lx-rfPraXqd3he3_MQOoIETU9QC8JhVQILP9S6aIZD0aiS-STK')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#F0F4FF]/90 to-transparent z-10"></div>
+<div class="relative z-20 max-w-container-max mx-auto w-full px-margin-mobile md:px-gutter flex flex-col items-start max-w-xl">
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-4 uppercase">Los mejores suplementos al mejor precio</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-lg max-w-md">Potencia tus entrenamientos con la más alta calidad y envío rápido. Encuentra todo lo que necesitas para alcanzar tus metas.</p>
+<button class="bg-primary-container text-on-primary font-headline-sm text-headline-sm py-4 px-8 rounded hover:bg-[#004782] hover:scale-102 transition-all duration-200">
+                    Ver productos
+                </button>
+</div>
+</section>
+<!-- Trust Signals -->
+<section class="bg-surface-container-lowest py-8 border-y border-outline-variant/30">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-[#378ADD] text-3xl" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Envío garantizado</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-[#378ADD] text-3xl" style="font-variation-settings: 'FILL' 0;">verified_user</span>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Pagos seguros</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-[#378ADD] text-3xl" style="font-variation-settings: 'FILL' 0;">military_tech</span>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Productos originales</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-[#25D366] text-3xl" style="font-variation-settings: 'FILL' 0;">chat</span>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Atención por WhatsApp</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Grid -->
+<section class="py-section-padding max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-stack-lg text-center">Categorías</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+<!-- Example Category Cards -->
+<a class="flex flex-col items-center gap-3 p-4 bg-surface-container-lowest rounded-lg product-card hover:ambient-shadow transition-shadow duration-200" href="#">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">fitness_center</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Proteínas</span>
+</a>
+<a class="flex flex-col items-center gap-3 p-4 bg-surface-container-lowest rounded-lg product-card hover:ambient-shadow transition-shadow duration-200" href="#">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bolt</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Pre-Entrenos</span>
+</a>
+<!-- Replicate for others -->
+<a class="flex flex-col items-center gap-3 p-4 bg-surface-container-lowest rounded-lg product-card hover:ambient-shadow transition-shadow duration-200" href="#">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">science</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Creatina</span>
+</a>
+<a class="flex flex-col items-center gap-3 p-4 bg-surface-container-lowest rounded-lg product-card hover:ambient-shadow transition-shadow duration-200" href="#">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</div>
+<span class="font-label-bold text-label-bold text-on-surface uppercase">Salud</span>
+</a>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="py-section-padding bg-surface-container-lowest border-t border-outline-variant/30">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-stack-lg text-center">Productos Destacados</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-lg product-card flex flex-col overflow-hidden hover:ambient-shadow transition-shadow duration-200 group">
+<div class="p-6 flex justify-center relative">
+<span class="absolute top-2 left-2 bg-[#378ADD] text-white font-label-bold text-label-bold px-2 py-1 rounded">NUEVO</span>
+<img class="w-48 h-48 object-contain group-hover:scale-105 transition-transform duration-300" data-alt="A clean, studio-lit product shot of a black tub of whey protein powder from a premium brand. The tub is centered against a pristine white background. The lighting is crisp and even, highlighting the label details without harsh reflections, fitting a high-end corporate modern e-commerce aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu8SrdVvgTcL1rWmos789XV5bRIRulMYcLUW2TWu6GM7SmVcHZvpqcfLTs_3PBoSF2OANQF-wkOwW4mzm3C2ouBktCkiE6gams7EQeiJLCz7FZcYgmZ_LbgbrYOobwrsbrp_Wu8hkniFsC_sH7gMFj3_xUSsEGrSdy-0br3SFEayMZlmePooMvTrwhWKzAvKjTqv24HFkGEK8l8rT7cPZkrIpUUmvcxWDVVVre9IVbstEmQWCvo9qx"/>
+</div>
+<div class="p-4 flex flex-col flex-grow border-t border-outline-variant/30">
+<span class="font-label-bold text-label-bold text-outline uppercase mb-1">Optimum Nutrition</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 line-clamp-2">Gold Standard 100% Whey</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-4">5 lbs</span>
+<div class="mt-auto">
+<span class="font-price-display text-price-display text-[#378ADD] block mb-4">$1,299 MXN</span>
+<button class="w-full bg-[#25D366] text-white font-label-bold text-label-bold py-3 px-4 rounded flex items-center justify-center gap-2 hover:bg-[#1DA851] transition-colors duration-200">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">chat</span>
+                                    COMPRAR POR WHATSAPP
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-lg product-card flex flex-col overflow-hidden hover:ambient-shadow transition-shadow duration-200 group">
+<div class="p-6 flex justify-center">
+<img class="w-48 h-48 object-contain group-hover:scale-105 transition-transform duration-300" data-alt="A professional studio product shot of a tub of pre-workout supplement. The packaging is sleek and modern, standing out cleanly against an absolute white background. The lighting emphasizes the product's premium quality, aligning perfectly with a sports nutrition brand's corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe8X4FTxg7C7gh3bbtFPRx3GHxOT1HTPX-ockMrbGDjBeUQd6Fu3bSpkJZgouQW9d3iVNF_-h3nDIVRl1IBLWND2yI1OLYLtEIRM8wN9yfBOetIvhmOaGp8QPerfeCxgXy5tSchO4zSk_yRtB2XZlVV2ZXkqOuaEYhGeQ2RW8tCeo72Uc6Eh-raL4a4poWs-wIsKZxftPfamvVvsSH-zDyn3Yizudjooeku5-YjHLOue0SgkVxNxGc"/>
+</div>
+<div class="p-4 flex flex-col flex-grow border-t border-outline-variant/30">
+<span class="font-label-bold text-label-bold text-outline uppercase mb-1">GAT Sport</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 line-clamp-2">Nitraflex Pre-Entreno</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-4">30 Servicios</span>
+<div class="mt-auto">
+<span class="font-price-display text-price-display text-[#378ADD] block mb-4">$650 MXN</span>
+<button class="w-full bg-[#25D366] text-white font-label-bold text-label-bold py-3 px-4 rounded flex items-center justify-center gap-2 hover:bg-[#1DA851] transition-colors duration-200">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">chat</span>
+                                    COMPRAR POR WHATSAPP
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest rounded-lg product-card flex flex-col overflow-hidden hover:ambient-shadow transition-shadow duration-200 group">
+<div class="p-6 flex justify-center relative">
+<span class="absolute top-2 left-2 bg-[#ba1a1a] text-white font-label-bold text-label-bold px-2 py-1 rounded">OFERTA</span>
+<img class="w-48 h-48 object-contain group-hover:scale-105 transition-transform duration-300" data-alt="A clean, isolated product image of micronized creatine monohydrate powder in a white plastic tub with a distinct label. The container is centered on a pure white background with soft, natural ambient shadows beneath it, perfectly matching a technical and minimalist e-commerce design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZtAkNk6cCxPqEjXWIU6hRUAwf0q581bLA06Xm2SJuzHh1g9R9yCUwHUmAtUTs7I107fVqiA_RFKd9oV4pnA1lijCCqZFNqTlkyV3PWJYM7BaYPGNMr2_QzesmxuUtphLA2JBD6R2QAGPIZ98rB4O2fcdfRPzPx8QMqyPaWsUkFvX6FMSENvjmgQYW8EaB7N4DDdk-fDQyo5_lVefDarieyA428AcaxOzLeabC6AosZeaWCWPFE4t"/>
+</div>
+<div class="p-4 flex flex-col flex-grow border-t border-outline-variant/30">
+<span class="font-label-bold text-label-bold text-outline uppercase mb-1">Mutant</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 line-clamp-2">Creatine Monohydrate</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-4">300g</span>
+<div class="mt-auto">
+<span class="font-price-display text-price-display text-[#378ADD] block mb-4">$399 MXN</span>
+<button class="w-full bg-[#25D366] text-white font-label-bold text-label-bold py-3 px-4 rounded flex items-center justify-center gap-2 hover:bg-[#1DA851] transition-colors duration-200">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">chat</span>
+                                    COMPRAR POR WHATSAPP
+                                </button>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest rounded-lg product-card flex flex-col overflow-hidden hover:ambient-shadow transition-shadow duration-200 group">
+<div class="p-6 flex justify-center">
+<img class="w-48 h-48 object-contain group-hover:scale-105 transition-transform duration-300" data-alt="A high-quality e-commerce product photograph of a mass gainer supplement in a large bag. The packaging design is aggressive yet professional. It is placed centrally on a stark white background with very subtle, soft shadow to give depth, maintaining a high-performance sports aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7OfAO3mO6B1BIzBp5yRaWglpBIdek7_h4_DuwqdxbaibGinl3qvsgLBvbycEvPkoYengzR4z7OQU3x0MJ-ByImmiFzp-N1Myv3T-Qutw7MiWLXyumPGPHj2l5RRkBB854sv3Dtdhglo9OLBoFg1T_1OTuVcA41IKmW6PxA-OshHu4109y73xeP_zObmhoZJMpwNkRd-BmUJs638KFSZaqvyKOs_I7zmsM2DrIoufgMUXgXuC9HOzA"/>
+</div>
+<div class="p-4 flex flex-col flex-grow border-t border-outline-variant/30">
+<span class="font-label-bold text-label-bold text-outline uppercase mb-1">Cellucor</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 line-clamp-2">C4 Original</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-4">60 Servicios</span>
+<div class="mt-auto">
+<span class="font-price-display text-price-display text-[#378ADD] block mb-4">$599 MXN</span>
+<button class="w-full bg-[#25D366] text-white font-label-bold text-label-bold py-3 px-4 rounded flex items-center justify-center gap-2 hover:bg-[#1DA851] transition-colors duration-200">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">chat</span>
+                                    COMPRAR POR WHATSAPP
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-on-background dark:bg-surface-container-lowest full-width">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-mobile md:px-gutter py-section-padding max-w-container-max mx-auto">
+<div class="flex flex-col gap-4">
+<span class="font-headline-md text-headline-md font-bold text-surface-bright">[DS]</span>
+<p class="font-body-sm text-body-sm text-surface-variant/80">Tu aliado en nutrición deportiva. Calidad y rendimiento en cada servicio.</p>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-label-bold text-label-bold text-surface uppercase">Enlaces</span>
+<ul class="flex flex-col gap-2">
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Tienda</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Productos</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Empresa</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Contacto</a></li>
+</ul>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-label-bold text-label-bold text-surface uppercase">Legal</span>
+<ul class="flex flex-col gap-2">
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Términos y Condiciones</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Aviso de Privacidad</a></li>
+<li><a class="font-body-sm text-body-sm text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200" href="#">Políticas de Devolución</a></li>
+</ul>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-label-bold text-label-bold text-surface uppercase">Síguenos</span>
+<div class="flex gap-4">
+<a class="text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200 opacity-100 hover:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">photo_camera</span>
+</a>
+<a class="text-surface-variant/80 hover:text-surface hover:translate-x-1 transition-transform duration-200 opacity-100 hover:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">thumb_up</span>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-surface-variant/20 px-margin-mobile md:px-gutter py-4">
+<div class="max-w-container-max mx-auto text-center font-body-sm text-body-sm text-surface-variant/60">
+                © 2024 [DS] Sports Supplements. Todos los derechos reservados.
+            </div>
+</div>
+</footer>
+</body></html>

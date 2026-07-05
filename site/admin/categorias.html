@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Categorías — DS Admin</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: {
+        "fontFamily": {
+          "display": ['"Barlow Condensed"', 'sans-serif'],
+          "body":    ['"Barlow"', 'sans-serif']
+        }, colors: {
+          "ink": "#0B0F1A",
+          "brand": "#1F5FD9",
+          "lime": "#8FD11F",
+          "paper": "#F7F8FA", cobalt: { 600:"#185FA5",500:"#378ADD",700:"#0D4A80" } } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Barlow', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
+    <div class="px-5 py-5 border-b border-slate-700">
+      <div class="flex items-center gap-2"><img src="../assets/img/logo-ds-clean.png" alt="DS" class="h-9 w-auto"/><span class="font-display font-extrabold text-white text-sm uppercase tracking-tight leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
+      <p class="text-slate-500 text-[11px] mt-0.5 uppercase tracking-widest">Panel de administración</p>
+    </div>
+    <nav class="flex-1 py-4">
+      <a href="index.html"      class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="productos.html"  class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Productos
+      </a>
+      <a href="categorias.html" class="flex items-center gap-3 px-5 py-2.5 bg-brand text-white text-sm font-semibold">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+        Categorías
+      </a>
+      <a href="pedidos.html"    class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        Pedidos
+      </a>
+    </nav>
+    <div class="px-5 py-4 border-t border-slate-700">
+      <p class="text-slate-400 text-xs mb-2" id="admin-name"></p>
+      <button id="logout-btn" class="text-slate-400 hover:text-red-400 text-xs transition-colors">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8 overflow-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Categorías</h1>
+      <button id="new-category-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
+        + Nueva categoría
+      </button>
+    </div>
+
+    <div id="alert-banner" class="hidden mb-4"></div>
+
+    <div class="bg-slate-800 rounded-none border border-slate-700 overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-700 text-left text-slate-400 text-xs uppercase tracking-wide">
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">Slug</th>
+            <th class="px-4 py-3 text-center">Orden</th>
+            <th class="px-4 py-3 text-center">Productos</th>
+            <th class="px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="categories-tbody">
+          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="cat-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-md shadow-2xl">
+      <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <h2 id="modal-title" class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Nueva categoría</h2>
+        <button id="modal-cancel" class="text-slate-400 hover:text-slate-200 text-xl leading-none">&times;</button>
+      </div>
+      <form id="cat-form" class="px-6 py-5 space-y-4">
+        <div>
+          <label class="block text-slate-300 text-sm font-medium mb-1">Nombre <span class="text-red-400">*</span></label>
+          <input name="nombre" type="text" required
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+            placeholder="Ej: Proteínas" />
+        </div>
+        <div>
+          <label class="block text-slate-300 text-sm font-medium mb-1">Orden de aparición</label>
+          <input name="orden" type="number" min="0" value="0"
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity">Guardar</button>
+          <button type="button" id="modal-cancel-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 rounded-none transition-colors">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../assets/js/admin/api-client.js"></script>
+  <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/categories.js"></script>
+  <script>
+    document.getElementById("modal-cancel-btn").addEventListener("click", function () {
+      document.getElementById("cat-modal").classList.add("hidden");
+    });
+  </script>
+</body>
+</html>

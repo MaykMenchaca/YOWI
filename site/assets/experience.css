@@ -1,0 +1,48 @@
+/* DS Experience Layer — scroll & atmosfera (frontend-design + scroll-experience).
+   No toca el 3D (product3d.js). Todo respeta prefers-reduced-motion. */
+
+/* 1. Barra de progreso de scroll */
+.ds-progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;
+  background:linear-gradient(90deg,#185fa5,#378ADD);
+  transition:width .1s linear;pointer-events:none;}
+
+/* 2. Reveal de secciones (independiente de enhance.js) */
+.ds-reveal{opacity:0;transform:translateY(20px);
+  transition:opacity .6s var(--ease-out,cubic-bezier(.23,1,.32,1)),
+             transform .6s var(--ease-out,cubic-bezier(.23,1,.32,1));}
+.ds-reveal-in{opacity:1;transform:none;}
+
+/* 3. Atmosfera del hero: gradient mesh + grano (capa extendida para parallax) */
+.ds-hero-atmosphere{position:absolute;left:0;right:0;top:-15%;height:130%;
+  z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60% 80% at 15% 20%, rgba(24,95,165,.28), transparent 60%),
+    radial-gradient(50% 70% at 85% 15%, rgba(55,138,221,.22), transparent 55%),
+    radial-gradient(70% 90% at 70% 90%, rgba(0,28,58,.18), transparent 60%),
+    linear-gradient(180deg,#F0F4FF 0%,#dde9ff 100%);}
+.ds-grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* 4. Capa que el JS mueve con parallax */
+.ds-parallax{will-change:transform;}
+
+/* 5. Lift de tarjeta mas definido al hover (gana al reveal-in !important de enhance.js) */
+.product-card:hover{transform:translateY(-4px)!important;
+  box-shadow:0 12px 30px rgba(4,44,83,.10);border-color:#378ADD;}
+
+/* 6. H1 del hero con acento (fallback si background-clip:text no existe) */
+.ds-hero-title{background:linear-gradient(180deg,#001c3a 0%,#185fa5 130%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  .ds-hero-title{color:#001c3a;background:none;}}
+
+/* Reduced motion: sin parallax ni lift, reveals visibles */
+@media(prefers-reduced-motion:reduce){
+  .ds-reveal{opacity:1!important;transform:none!important;}
+  .ds-parallax{transform:none!important;}
+  .ds-progress{transition:none;}
+  .product-card:hover{transform:none!important;}
+}
+
+/* Mobile: parallax off por performance */
+@media(max-width:768px){.ds-parallax{transform:none!important;}}

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ds-php",
+      "runtimeExecutable": "C:\\Users\\maikg\\dev-tools\\php\\php.exe",
+      "runtimeArgs": ["-S", "localhost:8000", "-t", "site"],
+      "port": 8000
+    }
+  ]
+}

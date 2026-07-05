@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Iniciar sesión - [DS] Premium Supplements</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#003d6d",
+                    "on-secondary-fixed-variant": "#004880",
+                    "surface-dim": "#c6dbff",
+                    "outline": "#727782",
+                    "background": "#f9f9ff",
+                    "surface": "#f9f9ff",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container-low": "#eff3ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#dde9ff",
+                    "secondary-fixed": "#d2e4ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "tertiary-fixed": "#66ff8e",
+                    "surface-tint": "#1960a6",
+                    "inverse-surface": "#0c3158",
+                    "secondary-fixed-dim": "#a1c9ff",
+                    "primary-fixed": "#d4e3ff",
+                    "primary-container": "#185fa5",
+                    "secondary-container": "#5da9fe",
+                    "primary": "#004782",
+                    "on-primary-fixed-variant": "#004883",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary": "#0060a8",
+                    "outline-variant": "#c2c6d2",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#424751",
+                    "surface-container": "#e6eeff",
+                    "inverse-primary": "#a4c9ff",
+                    "on-primary-container": "#c1d9ff",
+                    "on-secondary-fixed": "#001c38",
+                    "on-background": "#001c3a",
+                    "on-secondary": "#ffffff",
+                    "tertiary-container": "#006d2f",
+                    "surface-variant": "#d4e3ff",
+                    "on-tertiary-fixed": "#002109",
+                    "on-tertiary-container": "#54f483",
+                    "tertiary-fixed-dim": "#3de273",
+                    "tertiary": "#005222",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-container-highest": "#d4e3ff",
+                    "on-surface": "#001c3a",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#005322",
+                    "on-primary-fixed": "#001c39",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-padding": "80px",
+                    "stack-lg": "32px",
+                    "stack-sm": "8px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Montserrat"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Montserrat"
+                    ],
+                    "label-bold": [
+                            "Inter"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "price-display": [
+                            "Montserrat"
+                    ],
+                    "headline-xl": [
+                            "Montserrat"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "headline-sm": [
+                            "Montserrat"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-bold": [
+                            "12px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "price-display": [
+                            "22px",
+                            {
+                                    "lineHeight": "1",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-xl": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-sm": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .login-card-shadow {
+            box-shadow: 0px 4px 20px rgba(4, 44, 83, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface antialiased">
+<!-- TopNavBar Suppressed due to Transactional Page Intent -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-gutter">
+<div class="w-full max-w-md bg-surface-container-lowest border border-[#B5D4F4] rounded-lg login-card-shadow p-stack-lg transition-all duration-300">
+<div class="text-center mb-stack-lg">
+<span class="font-headline-lg text-headline-lg font-bold text-primary block mb-stack-sm tracking-tight">[DS]</span>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface mt-2">Iniciar sesión</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">Accede a tu cuenta de Premium Supplements.</p>
+</div>
+<form action="#" class="space-y-stack-md" method="POST">
+<!-- Email Field -->
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2" for="email">Correo electrónico</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant" style="font-variation-settings: 'FILL' 0;">mail</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-[#B5D4F4] rounded bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-[#378ADD] focus:border-[#378ADD] transition-colors" id="email" name="email" placeholder="tu@email.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block font-label-bold text-label-bold text-on-surface mb-2" for="password">Contraseña</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline-variant" style="font-variation-settings: 'FILL' 0;">lock</span>
+</div>
+<input class="block w-full pl-10 pr-10 py-3 border border-[#B5D4F4] rounded bg-surface-container-lowest text-on-surface font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-[#378ADD] focus:border-[#378ADD] transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<button aria-label="Mostrar contraseña" class="text-outline-variant hover:text-primary transition-colors focus:outline-none" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" id="toggleIcon" style="font-variation-settings: 'FILL' 0;">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Aux Options -->
+<div class="flex items-center justify-between mt-4">
+<div class="flex items-center">
+<input class="h-4 w-4 rounded border-[#B5D4F4] text-primary-container focus:ring-primary-container bg-surface-container-lowest cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block font-body-sm text-body-sm text-on-surface-variant cursor-pointer" for="remember-me">
+                            Recuérdame
+                        </label>
+</div>
+<div class="text-sm">
+<a class="font-body-sm text-body-sm font-medium text-[#185FA5] hover:text-[#378ADD] transition-colors" href="#">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+</div>
+</div>
+<!-- CTA Button -->
+<div class="pt-2">
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded bg-primary-container hover:bg-[#134D86] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-container font-headline-sm text-headline-sm font-bold text-on-primary shadow-sm hover:scale-[1.02] transition-transform duration-200" type="submit">
+                        Entrar
+                    </button>
+</div>
+</form>
+<!-- Divider & Secondary Link -->
+<div class="mt-stack-lg pt-stack-md border-t border-outline-variant/30 text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    ¿No tienes una cuenta?
+                    <a class="font-label-bold text-label-bold text-[#185FA5] hover:text-[#378ADD] transition-colors ml-1" href="#">
+                        Crear cuenta
+                    </a>
+</p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-on-background dark:bg-surface-container-lowest w-full py-section-padding no-border flat no shadows">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-8 max-w-container-max mx-auto">
+<!-- Brand & Copyright -->
+<div class="flex flex-col gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-surface-container-lowest dark:text-on-background">[DS]</span>
+<p class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant">© 2024 [DS] Premium Supplements. All rights reserved.</p>
+</div>
+<!-- Links Column 1 -->
+<div class="flex flex-col gap-3">
+<a class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Terms of Service</a>
+</div>
+<!-- Links Column 2 -->
+<div class="flex flex-col gap-3">
+<a class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Shipping Info</a>
+<a class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer" href="#">Contact Us</a>
+</div>
+<!-- Support -->
+<div class="flex flex-col gap-3 md:items-end">
+<a class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant hover:text-secondary-container dark:hover:text-secondary transition-colors cursor-pointer flex items-center gap-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">chat</span>
+                    WhatsApp Support
+                 </a>
+</div>
+</div>
+</footer>
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = 'visibility';
+            }
+        }
+    </script>
+</body></html>
