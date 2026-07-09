@@ -33,7 +33,7 @@
       '<div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
         '<a href="' + detailUrl + '" class="block">' +
           '<div class="h-40 bg-gray-100 mb-3 flex items-center justify-center overflow-hidden p-2">' +
-            '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '"/>' +
+            '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
           '</div>' +
         '</a>' +
         '<div class="text-[11px] uppercase font-extrabold text-gray-500 tracking-wide mb-1">' + esc(p.marca) + '</div>' +
@@ -84,7 +84,7 @@
     return fetchProductos().then(function (productos) {
       var p = productos.filter(function (item) { return item.id === idNum || String(item.id) === String(id); })[0];
       if (!p) {
-        container.innerHTML = '<p class="text-on-surface-variant">Producto no encontrado.</p>';
+        container.innerHTML = '<p class="text-gray-600">Producto no encontrado.</p>';
         return null;
       }
       document.querySelectorAll("[data-field]").forEach(function (el) {
@@ -95,7 +95,7 @@
       });
       return p;
     }).catch(function () {
-      container.innerHTML = '<p class="text-on-surface-variant">No se pudo cargar el producto. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-primary underline">reintenta</button>.</p>';
+      container.innerHTML = '<p class="text-gray-600">No se pudo cargar el producto. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';
       return null;
     });
   }
@@ -127,7 +127,7 @@
         renderGrid(result, grid);
         if (countEl) countEl.textContent = result.length + " producto" + (result.length === 1 ? "" : "s");
       }).catch(function () {
-        grid.innerHTML = '<p class="p-6 text-center text-on-surface-variant col-span-full">No se pudo cargar el catálogo. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-primary underline">reintenta</button>.</p>';
+        grid.innerHTML = '<p class="p-6 text-center text-gray-600 col-span-full">No se pudo cargar el catálogo. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';
         if (countEl) countEl.textContent = "";
       });
     }
@@ -155,7 +155,7 @@
     fetchProductos().then(function (productos) {
       renderFeatured(productos, container, Number(container.getAttribute("data-limit")) || 4);
     }).catch(function () {
-      container.innerHTML = '<p class="p-6 text-center text-on-surface-variant col-span-full">No se pudieron cargar los productos destacados.</p>';
+      container.innerHTML = '<p class="p-6 text-center text-gray-600 col-span-full">No se pudieron cargar los productos destacados.</p>';
     });
   }
 

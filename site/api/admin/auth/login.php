@@ -7,7 +7,6 @@ require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 
-header('Access-Control-Allow-Origin: same-origin');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
 // login.php es el único endpoint admin que NO requiere sesión previa.

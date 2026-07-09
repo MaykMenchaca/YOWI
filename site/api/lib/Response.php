@@ -26,3 +26,15 @@ function ds_read_json_body(): array
     $data = json_decode($raw, true);
     return is_array($data) ? $data : [];
 }
+
+// Red de seguridad: cualquier excepción no capturada (p. ej. BD caída) responde JSON
+// uniforme en vez de filtrar un stack trace PHP con rutas del servidor.
+set_exception_handler(function (Throwable $e): void {
+    error_log('API uncaught: ' . $e->getMessage());
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    echo json_encode(['ok' => false, 'error' => 'Error del servidor'], JSON_UNESCAPED_UNICODE);
+    exit;
+});

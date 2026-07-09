@@ -83,6 +83,8 @@
                     "stack-md": "16px"
             },
             "fontFamily": {
+                      "display": ["Barlow Condensed", "sans-serif"],
+                      "body": ["Barlow", "sans-serif"],
                     "headline-lg": [
                             "Barlow Condensed", "sans-serif"
                     ],
@@ -199,8 +201,26 @@ button:active,a[href]:active{transform:scale(.97);}
 <link rel="stylesheet" href="assets/experience.css"/>
 </head>
 <body class="bg-paper text-ink font-body antialiased flex flex-col min-h-screen">
-<!-- TopNavBar Suppressed due to Transactional Page Intent -->
-<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-gutter">
+<!-- TopNavBar -->
+<header class="flex items-center justify-between px-4 md:px-12 py-4 bg-ink border-b-2 border-lime sticky top-0 z-50">
+  <a href="index.html" class="flex items-center gap-3 hover:opacity-90 shrink-0"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto" /><span class="hidden sm:block font-display font-extrabold text-sm md:text-base uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></a>
+  <nav class="hidden md:flex gap-6 items-center">
+    <a href="index.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Inicio</a>
+    <a href="catalogo.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Catálogo</a>
+    <a href="marcas.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Marcas</a>
+    <a href="nosotros.html" class="text-white font-extrabold uppercase tracking-wide text-sm hover:text-lime">Nosotros</a>
+  </nav>
+  <div class="flex items-center gap-4">
+    <a class="relative flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime" href="pedido.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">shopping_cart</span>
+      <span data-cart-badge class="absolute top-0 right-0 bg-brand text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">0</span>
+    </a>
+    <a class="flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime" href="cuenta.html">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">person</span>
+    </a>
+  </div>
+</header>
+<main class="flex-grow flex items-center justify-center pt-32 pb-12 px-margin-mobile md:px-gutter">
 <div class="w-full max-w-md bg-white border border-gray-200 rounded-lg login-card-shadow p-stack-lg transition-all duration-300">
 <div class="text-center mb-stack-lg">
 <img src="assets/img/logo-ds-blue.png" alt="Distribuidor de Suplementos" class="h-14 w-auto mx-auto mb-stack-sm" />
@@ -236,7 +256,7 @@ button:active,a[href]:active{transform:scale(.97);}
 <!-- Aux Options -->
 <div class="flex items-center justify-between mt-4">
 <div class="flex items-center">
-<input class="h-4 w-4 rounded border-gray-200 text-brand-container focus:ring-primary-container bg-white cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
+<input class="h-4 w-4 rounded border-gray-200 text-brand focus:ring-brand bg-white cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
 <label class="ml-2 block font-body text-sm text-gray-500 cursor-pointer" for="remember-me">
                             Recuérdame
                         </label>
@@ -249,7 +269,7 @@ button:active,a[href]:active{transform:scale(.97);}
 </div>
 <!-- CTA Button -->
 <div class="pt-2">
-<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded bg-primary-container hover:bg-[#134D86] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-container font-display font-extrabold uppercase tracking-wide text-xl font-bold text-on-primary shadow-sm hover:scale-[1.02] transition-transform duration-200" type="submit">
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-none bg-brand hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand font-display font-extrabold uppercase tracking-wide text-xl text-white shadow-sm hover:scale-[1.02] transition-all duration-200 min-h-[44px]" type="submit">
                         Entrar
                     </button>
 </div>
@@ -310,6 +330,7 @@ button:active,a[href]:active{transform:scale(.97);}
     </script>
 <script src="assets/js/api-client.js" defer></script>
 <script src="assets/js/auth.js" defer></script>
+<script src="assets/js/mobile-nav.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>
 </body></html>

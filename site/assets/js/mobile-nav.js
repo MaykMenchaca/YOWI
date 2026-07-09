@@ -21,7 +21,7 @@
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className =
-      "md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] text-primary";
+      "md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] text-white hover:text-lime transition-colors";
     btn.setAttribute("aria-label", "Abrir menú");
     btn.setAttribute("aria-expanded", "false");
     btn.setAttribute("aria-controls", "mobile-menu");
@@ -29,9 +29,10 @@
 
     var drawer = document.createElement("div");
     drawer.id = "mobile-menu";
-    drawer.className = "hidden md:hidden border-t border-outline-variant/30 bg-white";
+    // Panel full-width debajo del header, paleta gimnasio (ink + lima).
+    drawer.className = "hidden md:hidden bg-ink border-b-2 border-lime";
     var ul = document.createElement("ul");
-    ul.className = "flex flex-col px-4 py-2 max-w-[1280px] mx-auto";
+    ul.className = "flex flex-col px-6 py-2 max-w-[1280px] mx-auto";
 
     Array.prototype.forEach.call(links, function (a) {
       var li = document.createElement("li");
@@ -40,8 +41,8 @@
       na.textContent = (a.textContent || "").trim();
       var esOferta = /ofertas/i.test(na.textContent);
       na.className =
-        "flex items-center min-h-[44px] font-semibold text-sm uppercase tracking-wide " +
-        (esOferta ? "text-[#ba1a1a] hover:opacity-80" : "text-on-surface-variant hover:text-primary");
+        "flex items-center min-h-[44px] font-display font-extrabold text-base uppercase tracking-wide " +
+        (esOferta ? "text-lime hover:opacity-80" : "text-white hover:text-lime");
       li.appendChild(na);
       ul.appendChild(li);
     });
@@ -53,6 +54,8 @@
     });
 
     iconGroup.appendChild(btn);
-    nav.parentNode.insertBefore(drawer, nav.nextSibling);
+    // Insertar el drawer como bloque full-width DESPUÉS del header (no dentro del flex row).
+    var header = nav.closest("header") || nav.parentNode;
+    header.parentNode.insertBefore(drawer, header.nextSibling);
   });
 })();

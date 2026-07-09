@@ -184,6 +184,16 @@
   document.addEventListener("DOMContentLoaded", function () {
     updateCartBadge();
 
+    // Obtener el token CSRF del cliente para poder registrar el pedido en la BD.
+    // (pedido.html no carga auth.js, así que el token hay que fijarlo aquí; sin esto el
+    //  POST a orders/create.php responde 403 y el pedido nunca se guarda.)
+    if (global.DSApi) {
+      fetch("api/auth/me.php", { credentials: "same-origin" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.ok && j.data && j.data.csrf_token) global.DSApi.setCsrfToken(j.data.csrf_token); })
+        .catch(function () {});
+    }
+
     document.addEventListener("click", function (e) {
       var qtyBtn = e.target.closest(".cart-qty-btn");
       if (qtyBtn) {

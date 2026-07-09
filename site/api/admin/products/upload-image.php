@@ -21,11 +21,22 @@ if ($file['size'] > $maxBytes) {
     ds_json_error('El archivo supera el límite de 2 MB', 400);
 }
 
-$finfo    = new finfo(FILEINFO_MIME_TYPE);
-$mime     = $finfo->file($file['tmp_name']);
+// Detección del MIME real, con fallbacks si la extensión fileinfo no está disponible.
+$mime = null;
+if (class_exists('finfo')) {
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']) ?: null;
+} elseif (function_exists('mime_content_type')) {
+    $mime = mime_content_type($file['tmp_name']) ?: null;
+}
+if ($mime === null) {
+    // Último recurso: getimagesize devuelve el mime para imágenes válidas.
+    $info = @getimagesize($file['tmp_name']);
+    $mime = $info['mime'] ?? null;
+}
 $allowed  = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
 
-if (!array_key_exists($mime, $allowed)) {
+if ($mime === null || !array_key_exists($mime, $allowed)) {
     ds_json_error('Solo se permiten imágenes JPG, PNG o WebP', 400);
 }
 
