@@ -127,33 +127,110 @@
     });
   }
 
-  function buildWhatsAppMessage(items, nombre, ciudad) {
-    var total = items.reduce(function (sum, i) { return sum + i.precio * i.cantidad; }, 0);
-    var lines = ["Hola DS, quiero hacer este pedido:"];
-    items.forEach(function (i) {
-      lines.push("- " + i.cantidad + "x " + i.nombre + " (" + money(i.precio) + ")");
+  // Campos obligatorios del checkout (envío a domicilio).
+  var REQUIRED_FIELDS = ["nombre", "telefono", "calle", "colonia", "cp", "ciudad", "estado"];
+  var ALL_FIELDS = REQUIRED_FIELDS.concat(["referencias", "notas"]);
+
+  function readForm(form) {
+    var d = {};
+    ALL_FIELDS.forEach(function (n) {
+      var el = form.querySelector('[name="' + n + '"]');
+      d[n] = el ? String(el.value || "").trim() : "";
     });
-    lines.push("Total: " + money(total));
-    if (nombre) lines.push("Nombre: " + nombre);
-    if (ciudad) lines.push("Ciudad: " + ciudad);
+    return d;
+  }
+
+  function buildDireccion(d) {
+    var parts = [];
+    if (d.calle) parts.push(d.calle);
+    if (d.colonia) parts.push("Col. " + d.colonia);
+    if (d.cp) parts.push("CP " + d.cp);
+    if (d.ciudad) parts.push(d.ciudad);
+    if (d.estado) parts.push(d.estado);
+    var linea = parts.join(", ");
+    if (d.referencias) linea += " (Ref: " + d.referencias + ")";
+    return linea;
+  }
+
+  function buildWhatsAppMessage(items, d) {
+    var total = items.reduce(function (sum, i) { return sum + i.precio * i.cantidad; }, 0);
+    var lines = ["Hola DS, quiero hacer este pedido:", ""];
+    items.forEach(function (i) {
+      lines.push("• " + i.cantidad + "x " + i.nombre + " — " + money(i.precio));
+    });
+    lines.push("");
+    lines.push("Subtotal: " + money(total));
+    lines.push("");
+    lines.push("*Datos de envío*");
+    lines.push("Nombre: " + d.nombre);
+    lines.push("Tel: " + d.telefono);
+    lines.push("Dirección: " + buildDireccion(d));
+    if (d.notas) lines.push("Notas: " + d.notas);
+    lines.push("");
+    lines.push("Pago: transferencia (SPEI)");
     return lines.join("\n");
+  }
+
+  function showFieldError(form, name, msg) {
+    var p = form.querySelector('[data-error-for="' + name + '"]');
+    if (p) { p.textContent = msg; p.classList.remove("hidden"); }
+    var el = form.querySelector('[name="' + name + '"]');
+    if (el) el.classList.add("border-error");
+  }
+
+  function clearFieldError(form, name) {
+    var p = form.querySelector('[data-error-for="' + name + '"]');
+    if (p) { p.textContent = ""; p.classList.add("hidden"); }
+    var el = form.querySelector('[name="' + name + '"]');
+    if (el) el.classList.remove("border-error");
+  }
+
+  // Valida el formulario; devuelve el nombre del primer campo inválido, o null si todo ok.
+  function validateForm(form, d) {
+    REQUIRED_FIELDS.concat(["form"]).forEach(function (n) { clearFieldError(form, n); });
+    var firstInvalid = null;
+    REQUIRED_FIELDS.forEach(function (n) {
+      if (!d[n]) {
+        showFieldError(form, n, "Campo obligatorio");
+        if (!firstInvalid) firstInvalid = n;
+      }
+    });
+    if (d.telefono && d.telefono.replace(/\D/g, "").length < 10) {
+      showFieldError(form, "telefono", "Ingresa un teléfono de 10 dígitos");
+      if (!firstInvalid) firstInvalid = "telefono";
+    }
+    if (d.cp && !/^\d{5}$/.test(d.cp)) {
+      showFieldError(form, "cp", "El código postal son 5 dígitos");
+      if (!firstInvalid) firstInvalid = "cp";
+    }
+    return firstInvalid;
+  }
+
+  // Oculta el formulario de envío y desactiva el botón cuando el carrito está vacío.
+  function syncCheckoutState() {
+    var has = getCart().length > 0;
+    var card = document.getElementById("shipping-card");
+    var btn = document.getElementById("submit-order-btn");
+    if (card) card.classList.toggle("hidden", !has);
+    if (btn) btn.disabled = !has;
   }
 
   function submitOrder(form) {
     var items = getCart();
     if (!items.length) {
-      alert("Tu carrito está vacío.");
+      showFieldError(form, "form", "Tu carrito está vacío.");
       return;
     }
-    var nombre = (form.querySelector('[name="nombre"]') || {}).value || "";
-    var ciudad = (form.querySelector('[name="ciudad"]') || {}).value || "";
-    var telefono = (form.querySelector('[name="telefono"]') || {}).value || "";
-    if (!nombre.trim()) {
-      alert("Ingresa tu nombre para continuar.");
+    var d = readForm(form);
+    var firstInvalid = validateForm(form, d);
+    if (firstInvalid) {
+      showFieldError(form, "form", "Revisa los campos marcados.");
+      var el = form.querySelector('[name="' + firstInvalid + '"]');
+      if (el && el.focus) el.focus();
       return;
     }
 
-    var mensaje = buildWhatsAppMessage(items, nombre, ciudad);
+    var mensaje = buildWhatsAppMessage(items, d);
 
     // Abrir WhatsApp de inmediato: no bloquear al usuario por la latencia del POST.
     window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensaje), "_blank");
@@ -162,9 +239,11 @@
       global.DSApi.apiFetch("api/orders/create.php", {
         method: "POST",
         body: {
-          nombre_cliente: nombre,
-          ciudad: ciudad,
-          telefono: telefono,
+          nombre_cliente: d.nombre,
+          ciudad: d.ciudad,
+          telefono: d.telefono,
+          direccion_envio: buildDireccion(d),
+          notas: d.notas,
           items: items.map(function (i) {
             return {
               producto_id: i.producto_id,
@@ -202,6 +281,7 @@
         var summary = document.getElementById("cart-summary");
         if (container) renderCart(container);
         if (summary) renderSummary(summary);
+        syncCheckoutState();
         return;
       }
       var removeBtn = e.target.closest(".cart-remove-btn");
@@ -211,6 +291,7 @@
         var summary2 = document.getElementById("cart-summary");
         if (container2) renderCart(container2);
         if (summary2) renderSummary(summary2);
+        syncCheckoutState();
         return;
       }
       var addBtn = e.target.closest(".add-to-cart-btn");
@@ -229,6 +310,7 @@
     var cartSummary = document.getElementById("cart-summary");
     if (cartItems) renderCart(cartItems);
     if (cartSummary) renderSummary(cartSummary);
+    syncCheckoutState();
 
     var checkoutForm = document.getElementById("checkout-form");
     var submitBtn = document.getElementById("submit-order-btn");
@@ -238,9 +320,23 @@
         // lo que también lo capturaría el listener genérico de enhance.js
         // (abriría una segunda pestaña con un mensaje fijo). Este listener
         // se registra primero, así que bloquea el genérico sin tocar enhance.js.
+        // preventDefault también evita el submit nativo del <form> (recarga).
         e.preventDefault();
         e.stopImmediatePropagation();
         submitOrder(checkoutForm);
+      });
+
+      // Enter dentro de un campo dispara submit del form (no un click al botón):
+      // lo interceptamos aquí para validar sin recargar la página.
+      checkoutForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        submitOrder(checkoutForm);
+      });
+
+      // Limpiar el error de un campo en cuanto el usuario lo corrige.
+      checkoutForm.addEventListener("input", function (e) {
+        var name = e.target && e.target.getAttribute ? e.target.getAttribute("name") : null;
+        if (name) clearFieldError(checkoutForm, name);
       });
     }
   });

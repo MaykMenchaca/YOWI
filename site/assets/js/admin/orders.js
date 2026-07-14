@@ -72,6 +72,7 @@
         '<td class="px-3 py-3">' +
           '<div class="text-slate-200">' + esc(o.nombre_cliente) + '</div>' +
           '<div class="text-slate-400 text-xs">' + esc(o.telefono || '') + (o.ciudad ? ' · ' + esc(o.ciudad) : '') + '</div>' +
+          (o.direccion_envio ? '<div class="text-slate-400 text-xs mt-0.5">📦 ' + esc(o.direccion_envio) + '</div>' : '') +
           (o.user_email ? '<div class="text-slate-500 text-xs">' + esc(o.user_email) + '</div>' : '') +
         '</td>' +
         '<td class="px-3 py-3">' +

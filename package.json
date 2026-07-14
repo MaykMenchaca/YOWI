@@ -1,0 +1,16 @@
+{
+  "name": "ds-suplementos-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build de CSS (Tailwind compilado) para el storefront de Distribuidor de Suplementos.",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i site/assets/css/tailwind.input.css -o site/assets/css/app.css --minify",
+    "watch:css": "tailwindcss -c tailwind.config.js -i site/assets/css/tailwind.input.css -o site/assets/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/forms": "^0.5.9",
+    "playwright-core": "^1.61.1",
+    "tailwindcss": "^3.4.17"
+  }
+}

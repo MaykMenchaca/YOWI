@@ -18,15 +18,27 @@ y un **panel de administración** para gestionar productos, categorías y pedido
 - **2026-07-05:** **Despliegue = Hostinger (Apache + PHP + MySQL).** Se eliminó `vercel.json`: Vercel
   no ejecuta PHP nativamente, así que rompería el backend/login/catálogo. El JS usa rutas relativas
   (`api/...`) asumiendo el mismo host, coherente con LAMP.
+- **2026-07-14:** **Tailwind compilado en las 9 páginas públicas.** Se reemplazó el CDN de Tailwind +
+  la config inline por un CSS estático versionado (`site/assets/css/app.css`), generado con
+  `npm run build:css` (config en `tailwind.config.js`, entrada `site/assets/css/tailwind.input.css`).
+  Elimina el parpadeo y el runtime JIT en móvil. El build corre en local; el server solo sirve el CSS
+  ya compilado (coherente con "sin build en el server"). **El panel admin sigue en CDN** (config
+  distinta, herramienta interna) — pendiente migrar en un follow-up.
+- **2026-07-14:** **Checkout con envío a domicilio.** El pedido ahora captura dirección completa
+  (calle, colonia, CP, ciudad, estado, referencias), teléfono y notas, con validación inline
+  (antes solo nombre + ciudad). El mensaje de WhatsApp se arma con todo y el pago es por transferencia
+  (SPEI). Se agregó la columna `orders.direccion_envio` (migración en `sql/migrations/`) y el admin la
+  muestra en el listado de pedidos.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de logins, `password_hash` bcrypt, uploads validados (MIME real + `.htaccess` anti-ejecución).
 - Accesibilidad: contraste WCAG AA, touch targets ≥44px, foco visible, `prefers-reduced-motion`.
-- Rendimiento: logos optimizados (<50 KB); Tailwind CDN es deuda técnica aceptada (idealmente compilar para producción).
+- Rendimiento: logos optimizados (<50 KB); **Tailwind ya compilado** en las páginas públicas (`app.css`); falta migrar el panel admin (aún en CDN).
 
 ## Checklist de release (Hostinger)
 1. Crear `site/api/config/env.php` real (gitignored) con las credenciales de la BD de Hostinger (host `localhost`, sin `DB_PORT`).
-2. Importar `sql/schema.sql` vía phpMyAdmin.
+2. Importar `sql/schema.sql` vía phpMyAdmin. **En BD ya desplegada**, correr además la migración
+   `sql/migrations/2026-07-14-add-direccion-envio.sql` (agrega `orders.direccion_envio`).
 3. Crear admin con `php scripts/create-admin.php "Nombre" "correo" "password"`.
 4. Cargar los 336 productos reales (`scripts/seed-products.php`) — hoy hay 12 demo.
 5. Reemplazar el número de WhatsApp real (constante `WA_NUMBER` y footers).

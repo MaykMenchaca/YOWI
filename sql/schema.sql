@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS orders (
     nombre_cliente   VARCHAR(150)  NOT NULL,
     ciudad           VARCHAR(120)  NULL,
     telefono         VARCHAR(30)   NULL,
+    direccion_envio  TEXT          NULL,
     total            DECIMAL(10,2) NOT NULL,
     estado           ENUM('pendiente','confirmado','enviado','entregado','cancelado')
                                    NOT NULL DEFAULT 'pendiente',

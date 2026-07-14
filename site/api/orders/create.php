@@ -17,6 +17,7 @@ ds_csrf_check($body['csrf_token'] ?? null);
 $nombreCliente = ds_clean_string((string) ($body['nombre_cliente'] ?? ''), 150);
 $ciudad = ds_clean_string((string) ($body['ciudad'] ?? ''), 120);
 $telefono = ds_clean_string((string) ($body['telefono'] ?? ''), 30);
+$direccionEnvio = ds_clean_string((string) ($body['direccion_envio'] ?? ''), 500);
 $mensajeWhatsapp = ds_clean_string((string) ($body['mensaje_whatsapp'] ?? ''), 4000);
 $items = is_array($body['items'] ?? null) ? $body['items'] : [];
 
@@ -75,14 +76,15 @@ $userId = ds_current_user_id();
 $pdo->beginTransaction();
 try {
     $insertOrder = $pdo->prepare(
-        'INSERT INTO orders (user_id, nombre_cliente, ciudad, telefono, total, mensaje_whatsapp)
-         VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO orders (user_id, nombre_cliente, ciudad, telefono, direccion_envio, total, mensaje_whatsapp)
+         VALUES (?, ?, ?, ?, ?, ?, ?)'
     );
     $insertOrder->execute([
         $userId,
         $nombreCliente,
         $ciudad !== '' ? $ciudad : null,
         $telefono !== '' ? $telefono : null,
+        $direccionEnvio !== '' ? $direccionEnvio : null,
         round($total, 2),
         $mensajeWhatsapp !== '' ? $mensajeWhatsapp : null,
     ]);

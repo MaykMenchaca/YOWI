@@ -30,7 +30,7 @@ $countStmt->execute($params);
 $total = (int) $countStmt->fetchColumn();
 
 $stmt = $pdo->prepare(
-    "SELECT o.id, o.nombre_cliente, o.ciudad, o.telefono, o.total, o.estado, o.created_at,
+    "SELECT o.id, o.nombre_cliente, o.ciudad, o.telefono, o.direccion_envio, o.total, o.estado, o.created_at,
             u.email AS user_email
      FROM orders o
      LEFT JOIN users u ON u.id = o.user_id
@@ -56,6 +56,7 @@ foreach ($orders as $o) {
         'nombre_cliente' => $o['nombre_cliente'],
         'ciudad'         => $o['ciudad'],
         'telefono'       => $o['telefono'],
+        'direccion_envio' => $o['direccion_envio'],
         'total'          => (float) $o['total'],
         'estado'         => $o['estado'],
         'created_at'     => $o['created_at'],
