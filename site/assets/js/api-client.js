@@ -20,10 +20,14 @@
       body = JSON.stringify(body);
     }
 
-    return fetch(path, {
+    var url = global.DS_API_URL ? global.DS_API_URL(path) : path;
+
+    return fetch(url, {
       method: options.method || "GET",
       headers: headers,
-      credentials: "same-origin",
+      // "include" funciona igual en same-origin y es necesario cross-site
+      // (frontend en Vercel + backend en Hostinger) para enviar la cookie de sesión.
+      credentials: "include",
       body: body,
     })
       .then(function (res) {

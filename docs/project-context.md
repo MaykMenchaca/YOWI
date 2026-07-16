@@ -24,6 +24,14 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   Elimina el parpadeo y el runtime JIT en móvil. El build corre en local; el server solo sirve el CSS
   ya compilado (coherente con "sin build en el server"). **El panel admin sigue en CDN** (config
   distinta, herramienta interna) — pendiente migrar en un follow-up.
+- **2026-07-14:** **Modo de despliegue "split" opcional (frontend en Vercel + API en Hostinger).**
+  Vercel no ejecuta PHP, así que no puede alojar el backend. Se añadió una capa de config
+  (`site/assets/js/config.js` → `DS_CONFIG.API_BASE`) para que el frontend apunte al backend PHP en
+  otro dominio; CORS credenciado en `site/api/.htaccess` (se activa solo si el Origin coincide) y
+  cookies `SameSite=None; Secure` en `Session.php` vía `SetEnv DS_CROSS_SITE 1`. **Default sigue siendo
+  same-origin (todo en Hostinger), sin cambios.** Guía en `docs/deploy-vercel-split.md`. Caveat: las
+  rutas con sesión (login/cuenta/admin) dependen de cookies de terceros que los navegadores restringen;
+  el catálogo público y el checkout por WhatsApp sí funcionan cross-site.
 - **2026-07-14:** **Checkout con envío a domicilio.** El pedido ahora captura dirección completa
   (calle, colonia, CP, ciudad, estado, referencias), teléfono y notas, con validación inline
   (antes solo nombre + ciudad). El mensaje de WhatsApp se arma con todo y el pago es por transferencia

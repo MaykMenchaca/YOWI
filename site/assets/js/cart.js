@@ -267,7 +267,7 @@
     // (pedido.html no carga auth.js, así que el token hay que fijarlo aquí; sin esto el
     //  POST a orders/create.php responde 403 y el pedido nunca se guarda.)
     if (global.DSApi) {
-      fetch("api/auth/me.php", { credentials: "same-origin" })
+      fetch(global.DS_API_URL ? global.DS_API_URL("api/auth/me.php") : "api/auth/me.php", { credentials: "include" })
         .then(function (r) { return r.json(); })
         .then(function (j) { if (j && j.ok && j.data && j.data.csrf_token) global.DSApi.setCsrfToken(j.data.csrf_token); })
         .catch(function () {});

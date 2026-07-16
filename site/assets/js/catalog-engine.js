@@ -1,12 +1,12 @@
 /* DS Catalog Engine — fetch + render + filtros + búsqueda del catálogo.
    Lee desde api/products/list.php (MySQL). El JSON demo ya no se usa. */
 (function (global) {
-  var PRODUCTS_URL = "api/products/list.php";
   var cache = null;
 
   function fetchProductos() {
     if (cache) return Promise.resolve(cache);
-    return fetch(PRODUCTS_URL)
+    var url = global.DS_API_URL ? global.DS_API_URL("api/products/list.php") : "api/products/list.php";
+    return fetch(url, { credentials: "include" })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         // Soporta respuesta de la API {ok,data:[...]} o array directo (fallback)

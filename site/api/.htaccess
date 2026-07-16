@@ -1,2 +1,37 @@
 # Evita listado de directorio si algún endpoint se elimina y la carpeta queda vacía/visible.
 Options -Indexes
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CORS — solo necesario en modo "frontend en Vercel + API aparte".
+# Si sirves TODO desde Hostinger (mismo origen), este bloque no hace nada porque
+# el navegador no manda Origin cross-site: las cabeceras solo se emiten cuando el
+# Origin coincide con el dominio de tu frontend.
+#
+# 1) Sustituye el patrón de abajo por el dominio EXACTO de tu frontend en Vercel.
+#    Puedes duplicar la línea SetEnvIf para permitir varios (preview + producción).
+# 2) Recuerda escapar los puntos con \. en la expresión regular.
+# ─────────────────────────────────────────────────────────────────────────────
+<IfModule mod_setenvif.c>
+    # Ej.: dominio de producción en Vercel
+    SetEnvIf Origin "^https://tu-tienda\.vercel\.app$"        DS_CORS_ORIGIN=$0
+    # Ej.: previews de Vercel (opcional; comenta si quieres restringir):
+    SetEnvIf Origin "^https://[a-z0-9-]+\.vercel\.app$"       DS_CORS_ORIGIN=$0
+    # Ej.: dominio propio:
+    # SetEnvIf Origin "^https://www\.tudominio\.com$"          DS_CORS_ORIGIN=$0
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin      "%{DS_CORS_ORIGIN}e" env=DS_CORS_ORIGIN
+    Header always set Access-Control-Allow-Credentials "true"               env=DS_CORS_ORIGIN
+    Header always set Access-Control-Allow-Headers     "Content-Type"       env=DS_CORS_ORIGIN
+    Header always set Access-Control-Allow-Methods     "GET, POST, OPTIONS" env=DS_CORS_ORIGIN
+    # Necesario para que caches/CDN no mezclen respuestas de distintos orígenes.
+    Header always merge Vary "Origin"
+</IfModule>
+
+# Responder a la preflight (OPTIONS) con 200 vacío, sin ejecutar PHP.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} =OPTIONS
+    RewriteRule ^ - [R=200,L]
+</IfModule>

@@ -9,10 +9,26 @@ function ds_session_start(): void
         return;
     }
     ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', '1');
-    // Solo enviar la cookie por HTTPS cuando esté disponible (Hostinger sirve HTTPS).
-    ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+
+    // Modo "frontend en Vercel + API aparte": el frontend vive en otro dominio,
+    // así que la cookie de sesión es cross-site. Para que el navegador la envíe
+    // hace falta SameSite=None + Secure (obligatorio). Se activa poniendo
+    // `SetEnv DS_CROSS_SITE 1` en el .htaccess del backend (Hostinger).
+    // NOTA: los navegadores modernos restringen cookies de terceros; para
+    // login/cuenta/admin lo más robusto es servir el frontend en el mismo
+    // dominio del backend.
+    $crossSite = getenv('DS_CROSS_SITE') === '1'
+        || (isset($_SERVER['DS_CROSS_SITE']) && $_SERVER['DS_CROSS_SITE'] === '1');
+
+    if ($crossSite) {
+        ini_set('session.cookie_samesite', 'None');
+        ini_set('session.cookie_secure', '1');
+    } else {
+        ini_set('session.cookie_samesite', 'Lax');
+        // Solo enviar la cookie por HTTPS cuando esté disponible (Hostinger sirve HTTPS).
+        ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+    }
     session_start();
 }
 
