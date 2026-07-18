@@ -1,19 +1,49 @@
 /* DS Catalog Engine — fetch + render + filtros + búsqueda del catálogo.
-   Lee desde api/products/list.php (MySQL). El JSON demo ya no se usa. */
+   Lee desde api/products/list.php (MySQL). Si el backend PHP no responde
+   (p. ej. desplegado en Vercel sin API), cae a un catálogo demo estático
+   (assets/data/productos-demo.json) y muestra un banner de "vista previa". */
 (function (global) {
   var cache = null;
+  var DEMO_URL = "assets/data/productos-demo.json";
+
+  function loadDemo() {
+    return fetch(DEMO_URL)
+      .then(function (res) { return res.json(); })
+      .then(function (list) {
+        cache = Array.isArray(list) ? list : [];
+        showDemoBanner();
+        return cache;
+      })
+      .catch(function () { cache = []; return cache; });
+  }
 
   function fetchProductos() {
     if (cache) return Promise.resolve(cache);
     var url = global.DS_API_URL ? global.DS_API_URL("api/products/list.php") : "api/products/list.php";
     return fetch(url, { credentials: "include" })
-      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
       .then(function (data) {
         // Soporta respuesta de la API {ok,data:[...]} o array directo (fallback)
         var list = Array.isArray(data) ? data : (data.data || []);
+        if (!list.length) throw new Error("empty"); // sin backend/productos → demo
         cache = list;
         return list;
-      });
+      })
+      .catch(function () { return loadDemo(); });
+  }
+
+  // Banner discreto cuando se está usando el catálogo demo (sin backend real).
+  function showDemoBanner() {
+    if (document.getElementById("ds-demo-banner")) return;
+    var bar = document.createElement("div");
+    bar.id = "ds-demo-banner";
+    bar.setAttribute("role", "status");
+    bar.textContent = "Vista previa · catálogo de demostración con precios de ejemplo — aún no conectado al inventario real.";
+    bar.style.cssText = "background:#8FD11F;color:#0B0F1A;font:600 13px/1.4 Barlow,system-ui,sans-serif;text-align:center;padding:8px 16px;";
+    if (document.body) document.body.insertBefore(bar, document.body.firstChild);
   }
 
   function money(n) {

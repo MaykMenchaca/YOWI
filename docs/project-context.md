@@ -32,6 +32,11 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   same-origin (todo en Hostinger), sin cambios.** Guía en `docs/deploy-vercel-split.md`. Caveat: las
   rutas con sesión (login/cuenta/admin) dependen de cookies de terceros que los navegadores restringen;
   el catálogo público y el checkout por WhatsApp sí funcionan cross-site.
+- **2026-07-14:** **Fallback de catálogo demo estático.** Si `api/products/list.php` no responde o
+  no hay backend (p. ej. deploy en Vercel sin PHP), `catalog-engine.js` carga
+  `site/assets/data/productos-demo.json` (24 productos de ejemplo) y muestra un banner "Vista previa".
+  Ese mismo archivo es el que consume `scripts/seed-products.php` para poblar la BD real. Con backend
+  activo el fallback nunca se usa. **Precios del demo son de ejemplo, no reales.**
 - **2026-07-14:** **Checkout con envío a domicilio.** El pedido ahora captura dirección completa
   (calle, colonia, CP, ciudad, estado, referencias), teléfono y notas, con validación inline
   (antes solo nombre + ciudad). El mensaje de WhatsApp se arma con todo y el pago es por transferencia
