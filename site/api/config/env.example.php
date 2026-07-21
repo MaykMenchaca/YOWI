@@ -1,8 +1,8 @@
 <?php
 // Plantilla versionada en git — SIN secretos reales.
 // Copiar a env.php (gitignored) y completar con las credenciales reales
-// de la base de datos creada en hPanel (Hostinger) o en el entorno local
-// (XAMPP/Laragon) para desarrollo.
+// de la base de datos creada en hPanel (Hostinger) o en tu MySQL local
+// para desarrollo.
 
 return [
     'DB_HOST' => 'localhost',

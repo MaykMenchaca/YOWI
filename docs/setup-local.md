@@ -21,9 +21,10 @@ Y asegúrate de que **tu servicio de MySQL esté encendido**: tecla Windows →
 `servicios` → **MySQL80** (o `MySQL`) debe estar **"En ejecución"**. Ponlo en
 *Tipo de inicio → Automático* para que arranque solo con Windows.
 
-## 1. Traer el proyecto
+## 1. Traer el proyecto — UNA sola ruta
 
-Elige una carpeta simple (p. ej. `C:\`) y clona (o actualiza si ya lo tienes):
+Usa **siempre la misma carpeta** para no tener copias regadas. Ruta recomendada:
+**`C:\YOWI`** (simple, sin espacios, no atada a ninguna herramienta).
 
 ```bash
 cd C:\
@@ -31,6 +32,11 @@ git clone https://github.com/MaykMenchaca/YOWI.git
 cd YOWI
 git pull
 ```
+
+> Si ya lo tenías en otra ruta (p. ej. `C:\laragon\www\YOWI`), **muévelo** a
+> `C:\YOWI` y borra la copia vieja. El proyecto es portable: todos los `.bat` y
+> scripts se ubican solos, así que funciona desde cualquier carpeta. La base de
+> datos vive en MySQL (no en la carpeta), así que mover el proyecto no pierde datos.
 
 ## 2. Configurar la conexión a TU MySQL
 

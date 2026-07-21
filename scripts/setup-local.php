@@ -4,7 +4,7 @@
 //
 // Hace todo lo necesario para tener el sitio corriendo en local con MySQL:
 //   1. Crea site/api/config/env.php (si no existe) con valores por defecto de
-//      Laragon/XAMPP (host 127.0.0.1, user root, sin contraseña).
+//      MySQL local (host 127.0.0.1, user root, sin contraseña).
 //   2. Crea la base de datos si no existe.
 //   3. Importa sql/schema.sql (si faltan las tablas).
 //   4. Siembra los productos demo (solo si el catálogo está vacío).
@@ -43,7 +43,7 @@ paso('Configuración de conexión (env.php)');
 if (!file_exists($ENV_PATH)) {
     $plantilla = <<<PHP
 <?php
-// Generado por setup-local.php — valores por defecto de Laragon/XAMPP.
+// Generado por setup-local.php — valores por defecto para MySQL local.
 // Ajusta si tu MySQL usa otro usuario/contraseña/puerto.
 return [
     'DB_HOST'    => '127.0.0.1',
@@ -77,7 +77,7 @@ try {
     ]);
 } catch (PDOException $e) {
     echo "\n\033[31m✗ No se pudo conectar a MySQL.\033[0m\n";
-    info("¿Está MySQL encendido? (En Laragon: 'Start All'.)");
+    info("¿Está MySQL encendido? (inicia el servicio MySQL en Windows).");
     info("Detalle: " . $e->getMessage());
     exit(1);
 }

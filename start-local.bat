@@ -1,6 +1,6 @@
 @echo off
 REM ─────────────────────────────────────────────────────────────
-REM  Levanta el sitio en local (requiere PHP en el PATH — Laragon lo trae).
+REM  Levanta el sitio en local (requiere PHP en el PATH). Mas facil: iniciar-tienda.bat
 REM  Doble clic para arrancar. Ctrl+C para detener.
 REM ─────────────────────────────────────────────────────────────
 cd /d "%~dp0"
