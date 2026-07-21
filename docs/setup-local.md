@@ -85,6 +85,29 @@ Deja esa ventana abierta (Ctrl+C para detener), o usa `start-local.bat`.
 
 ---
 
+## Mapa de carpetas (qué es cada cosa)
+
+```
+YOWI/
+├─ site/              ← LA TIENDA (esto es lo que se sirve)
+│  ├─ *.html          ← páginas públicas (index, catalogo, producto, pedido…)
+│  ├─ admin/          ← panel de administración
+│  ├─ assets/         ← css, js, imágenes, datos demo
+│  └─ api/            ← backend PHP (auth, products, orders, admin) + config
+├─ scripts/           ← utilidades: setup-local, seed-products, create-admin,
+│                        reset-mysql-password, provision-php
+├─ sql/               ← schema.sql y migraciones de la base de datos
+├─ docs/              ← esta guía y notas del proyecto
+├─ referencias/       ← mockups y logos fuente (NO los usa la app)
+├─ php/               ← PHP portable (se descarga solo; no se versiona)
+├─ iniciar-tienda.bat ← doble clic: baja PHP si falta, prepara BD y abre la tienda
+├─ start-local.bat    ← solo levanta el servidor (si ya está todo listo)
+└─ package.json / tailwind.config.js ← solo para compilar CSS (opcional)
+```
+
+**Para correr en local solo necesitas tener MySQL encendido.** PHP lo baja el
+propio `iniciar-tienda.bat` la primera vez. No necesitas Laragon ni XAMPP.
+
 ## Comandos útiles
 
 | Para… | Comando |

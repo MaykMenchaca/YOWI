@@ -15,23 +15,35 @@ set "DB_PASS=AdminDS2026"
 echo.
 echo   Buscando PHP...
 
-REM 1) PHP en el PATH
 set "PHP="
-for /f "delims=" %%P in ('where php 2^>nul') do if not defined PHP set "PHP=%%P"
 
-REM 2) PHP de Laragon (cualquier version)
+REM 1) PHP portable del propio proyecto (.\php)
+if exist "%~dp0php\php.exe" set "PHP=%~dp0php\php.exe"
+
+REM 2) PHP en el PATH
+if not defined PHP for /f "delims=" %%P in ('where php 2^>nul') do if not defined PHP set "PHP=%%P"
+
+REM 3) PHP de Laragon (por si sigue instalado)
 if not defined PHP for /d %%D in ("C:\laragon\bin\php\*") do if exist "%%D\php.exe" set "PHP=%%D\php.exe"
 
-REM 3) Rutas comunes
+REM 4) Rutas comunes
 if not defined PHP if exist "C:\php\php.exe" set "PHP=C:\php\php.exe"
 if not defined PHP if exist "C:\tools\php\php.exe" set "PHP=C:\tools\php\php.exe"
 if not defined PHP if exist "%ProgramFiles%\php\php.exe" set "PHP=%ProgramFiles%\php\php.exe"
 if not defined PHP if exist "%ProgramFiles(x86)%\php\php.exe" set "PHP=%ProgramFiles(x86)%\php\php.exe"
 
+REM 5) Si no hay PHP en ningun lado, descargar uno portable (una sola vez)
+if not defined PHP (
+  echo   No encontre PHP. Descargando una version portable ^(una sola vez, ~30 MB^)...
+  powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\provision-php.ps1"
+  if exist "%~dp0php\php.exe" set "PHP=%~dp0php\php.exe"
+)
+
 if not defined PHP (
   echo.
-  echo   No encontre php.exe automaticamente.
-  echo   Mandale a Claude la ruta donde tienes PHP y lo ajusta.
+  echo   No se pudo obtener PHP automaticamente ^(revisa tu internet o antivirus^).
+  echo   Descarga manual: https://windows.php.net/download  ^(ZIP "NTS x64"^),
+  echo   descomprimelo en una carpeta llamada "php" dentro del proyecto, y reintenta.
   echo.
   pause
   exit /b

@@ -10,6 +10,9 @@ __pycache__/
 # Node
 node_modules/
 
+# PHP portable descargado por iniciar-tienda.bat (no se versiona)
+/php/
+
 # OS
 .DS_Store
 Thumbs.db
