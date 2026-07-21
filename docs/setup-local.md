@@ -1,88 +1,106 @@
-# Correr el sitio en local (Windows + Laragon)
+# Correr el sitio en local (Windows, con tu propio MySQL)
 
-Guía para tener la tienda **completa** funcionando en tu PC: catálogo real desde
-MySQL, panel de administración y pedidos que se guardan en la base de datos.
+Guía para tener la tienda **completa** en tu PC: catálogo real desde MySQL, panel
+de administración y pedidos guardados en la base de datos. Es idéntico a como
+quedará en producción (Hostinger).
 
-> No necesitas XAMPP. Sirve cualquier stack con **PHP + MySQL** (Laragon, XAMPP,
-> WAMP, Docker…). Aquí usamos **Laragon** por ser el más simple.
+Solo necesitas **PHP** y **MySQL** instalados. **No necesitas Laragon ni XAMPP.**
 
 ---
 
-## 1. Instalar Laragon (una vez)
+## 0. Requisitos (verifícalos una vez)
 
-1. Descarga **Laragon Full** desde <https://laragon.org> (incluye PHP + MySQL).
-2. Instálalo con las opciones por defecto.
-3. Abre Laragon y pulsa **Start All** (arranca Apache + MySQL).
-
-## 2. Traer el proyecto
-
-Clona o actualiza el repo, por ejemplo dentro de `C:\laragon\www\`:
+Abre una terminal normal (tecla Windows → `cmd`) y comprueba:
 
 ```bash
-git clone https://github.com/MaykMenchaca/YOWI.git
-cd YOWI
-git pull            # si ya lo tenías, para traer los scripts de setup
+php -v            REM debe mostrar la versión de PHP
+git --version     REM debe mostrar la versión de git
 ```
 
-## 3. Preparar la base de datos y el admin — UN comando
+Y asegúrate de que **tu servicio de MySQL esté encendido**: tecla Windows →
+`servicios` → **MySQL80** (o `MySQL`) debe estar **"En ejecución"**. Ponlo en
+*Tipo de inicio → Automático* para que arranque solo con Windows.
 
-En Laragon: **Menu → Terminal** (abre una consola con PHP y MySQL en el PATH).
-Dentro de la carpeta del proyecto, ejecuta:
+## 1. Traer el proyecto
+
+Elige una carpeta simple (p. ej. `C:\`) y clona (o actualiza si ya lo tienes):
+
+```bash
+cd C:\
+git clone https://github.com/MaykMenchaca/YOWI.git
+cd YOWI
+git pull
+```
+
+## 2. Configurar la conexión a TU MySQL
+
+Crea/edita `site/api/config/env.php` con los datos de tu MySQL:
+
+```bash
+notepad site\api\config\env.php
+```
+
+Pega esto (ajusta `DB_PASS` a tu contraseña de root; si es vacía, déjala `''`):
+
+```php
+<?php
+return [
+    'DB_HOST'    => '127.0.0.1',
+    'DB_NAME'    => 'ds_sports_supplements',
+    'DB_USER'    => 'root',
+    'DB_PASS'    => 'AdminDS2026',
+    'DB_CHARSET' => 'utf8mb4',
+];
+```
+
+Guarda (Ctrl+S) y cierra.
+
+## 3. Preparar la base de datos — UN comando
 
 ```bash
 php scripts/setup-local.php
 ```
 
-Ese comando hace **todo** de una sola vez y es seguro repetirlo:
-
-- crea `site/api/config/env.php` con los valores de Laragon (root, sin contraseña),
-- crea la base de datos `ds_sports_supplements`,
-- importa la estructura (`sql/schema.sql`),
-- siembra los 24 productos de ejemplo,
-- crea el usuario administrador.
-
-Al terminar te muestra el correo y la contraseña del admin.
-
-> **¿Tu MySQL usa contraseña o el usuario no es `root`?**
-> Abre `site/api/config/env.php` y ajusta `DB_USER` / `DB_PASS`, luego vuelve a
-> correr `php scripts/setup-local.php`.
+Crea la BD, importa el esquema, siembra 24 productos y crea el admin.
+Es **idempotente** (puedes repetirlo sin duplicar nada).
 
 ## 4. Levantar el sitio
 
-- **Doble clic** a `start-local.bat` (en la raíz del proyecto), **o** en la terminal:
+```bash
+php -S localhost:8080 -t site
+```
 
-  ```bash
-  php -S localhost:8080 -t site
-  ```
-
-Deja esa ventana abierta mientras uses el sitio (Ctrl+C para detener).
+Deja esa ventana abierta (Ctrl+C para detener), o usa `start-local.bat`.
 
 ## 5. Abrir
 
 - **Tienda:** <http://localhost:8080>
-- **Admin:** <http://localhost:8080/admin/login.html>
-  - Correo: `admin@ds.com`
-  - Contraseña: `AdminDS2026`
-
-Desde el admin puedes crear/editar productos y categorías, y ver los pedidos que
-entran (con su dirección de envío).
+- **Admin:** <http://localhost:8080/admin/login.html> → `admin@ds.com` / `AdminDS2026`
 
 ---
 
-## Comandos sueltos (por si los necesitas)
+## Comandos útiles
 
 | Para… | Comando |
 |---|---|
-| Rehacer setup completo | `php scripts/setup-local.php` |
+| Rehacer el setup | `php scripts/setup-local.php` |
 | Crear otro admin | `php scripts/create-admin.php "Nombre" "correo@x.com" "Password"` |
-| Recargar productos demo | `php scripts/seed-products.php` |
-| Compilar CSS (si tocas clases Tailwind) | `npm run build:css` |
+| Recompilar CSS (si tocas clases Tailwind) | `npm run build:css` |
 
 ## Problemas comunes
 
-- **`No se pudo conectar a MySQL`** → MySQL no está encendido. En Laragon: *Start All*.
-- **`php no se reconoce`** → usa la **Terminal de Laragon** (ahí PHP ya está en el PATH),
-  o abre el sitio con `start-local.bat`.
-- **El catálogo sale vacío / con banner "Vista previa"** → el backend PHP no está
-  respondiendo; asegúrate de abrir por `http://localhost:8080` (no abriendo el
-  `.html` con doble clic) y que `php -S ...` esté corriendo.
+- **Workbench: `Access denied for user 'root'` / olvidaste la contraseña** →
+  ejecuta `scripts/reset-mysql-password.bat` **como administrador** (la
+  restablece a `AdminDS2026`), y ponla en `env.php`.
+- **MySQL "inicia y se apaga solo"** → suele ser **conflicto de puerto 3306**
+  (otro MySQL, p. ej. el de Laragon, ya lo tiene tomado). Cierra/desinstala el
+  otro, reinicia la PC y arranca solo tu MySQL. Para ver quién ocupa el puerto:
+  `netstat -ano | findstr :3306`.
+- **`No se pudo conectar a MySQL`** → el servicio no está encendido, o la
+  contraseña de `env.php` no coincide con la de tu root.
+- **`php` no se reconoce** → PHP no está en el PATH del sistema; agrega su carpeta
+  al PATH o usa la ruta completa a `php.exe`.
+- **El catálogo sale con banner "Vista previa"** → el backend no está
+  respondiendo; abre por `http://localhost:8080` (no el `.html` con doble clic) y
+  confirma que `php -S ...` sigue corriendo.
+```
