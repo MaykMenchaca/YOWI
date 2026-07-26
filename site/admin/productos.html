@@ -150,8 +150,17 @@
           </div>
           <div>
             <label class="block text-slate-300 text-sm font-medium mb-1">Cantidad / presentación</label>
-            <input name="cantidad" type="text" placeholder="Ej: 2 kg, 60 cápsulas"
-              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+            <div class="flex gap-2">
+              <input name="cantidad" type="text" placeholder="Ej: 300"
+                class="w-1/2 bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+              <input name="unidad" type="text" list="unidades-list" placeholder="Unidad (g, caps…)"
+                class="w-1/2 bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+              <datalist id="unidades-list">
+                <option value="g"></option><option value="kg"></option><option value="caps"></option>
+                <option value="tabs"></option><option value="ml"></option><option value="pack"></option>
+                <option value="gomitas"></option><option value="servicios"></option>
+              </datalist>
+            </div>
           </div>
           <div>
             <label class="block text-slate-300 text-sm font-medium mb-1">Badge / etiqueta</label>

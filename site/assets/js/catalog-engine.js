@@ -57,6 +57,13 @@
     });
   }
 
+  // Presentación: combina cantidad + unidad ("300" + "g" -> "300 g").
+  function qtyLabel(p) {
+    var c = String(p.cantidad == null ? "" : p.cantidad).trim();
+    var u = String(p.unidad == null ? "" : p.unidad).trim();
+    return u ? (c + " " + u).trim() : c;
+  }
+
   function productCardHTML(p) {
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
     return (
@@ -68,7 +75,7 @@
         '</a>' +
         '<div class="text-[11px] uppercase font-extrabold text-gray-500 tracking-wide mb-1">' + esc(p.marca) + '</div>' +
         '<h3 class="font-bold text-base leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
-        '<div class="font-body text-sm text-gray-400 mb-4">' + esc(p.cantidad) + '</div>' +
+        '<div class="font-body text-sm text-gray-400 mb-4">' + esc(qtyLabel(p)) + '</div>' +
         '<div class="mt-auto flex flex-col gap-3">' +
           '<div class="text-brand font-extrabold text-lg">' + money(p.precio) + '</div>' +
           '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>' +
@@ -195,6 +202,7 @@
         var field = el.getAttribute("data-field");
         if (field === "precio") el.textContent = money(p.precio);
         else if (field === "imagen") el.setAttribute("src", p.imagen);
+        else if (field === "cantidad") el.textContent = qtyLabel(p);
         else if (p[field] !== undefined) el.textContent = p[field];
       });
       return p;

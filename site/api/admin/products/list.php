@@ -35,7 +35,7 @@ $total = (int) $countStmt->fetchColumn();
 
 $stmt = $pdo->prepare(
     "SELECT p.id, p.nombre, p.marca, c.nombre AS categoria, c.id AS category_id,
-            p.cantidad, p.precio, p.precio_original, p.stock, p.imagen,
+            p.cantidad, p.unidad, p.precio, p.precio_original, p.stock, p.imagen,
             p.badge, p.destacado, p.activo, p.created_at
      FROM products p
      JOIN categories c ON c.id = p.category_id
@@ -53,6 +53,7 @@ $data = array_map(static fn($r) => [
     'categoria'      => $r['categoria'],
     'category_id'    => (int) $r['category_id'],
     'cantidad'       => $r['cantidad'],
+    'unidad'         => $r['unidad'],
     'precio'         => (float) $r['precio'],
     'precio_original'=> $r['precio_original'] !== null ? (float) $r['precio_original'] : null,
     'stock'          => (int) $r['stock'],

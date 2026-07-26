@@ -171,6 +171,7 @@
     f.querySelector('[name="marca"]').value       = p.marca || "";
     f.querySelector('[name="category_id"]').value = p.category_id || "";
     f.querySelector('[name="cantidad"]').value    = p.cantidad || "";
+    f.querySelector('[name="unidad"]').value      = p.unidad || "";
     f.querySelector('[name="descripcion"]').value = p.descripcion || "";
     f.querySelector('[name="precio"]').value      = p.precio || "";
     f.querySelector('[name="precio_original"]').value = p.precio_original || "";
@@ -227,6 +228,7 @@
         marca:           form.querySelector('[name="marca"]').value.trim(),
         category_id:     parseInt(form.querySelector('[name="category_id"]').value, 10),
         cantidad:        form.querySelector('[name="cantidad"]').value.trim(),
+        unidad:          form.querySelector('[name="unidad"]').value.trim(),
         descripcion:     form.querySelector('[name="descripcion"]').value.trim(),
         precio:          parseFloat(form.querySelector('[name="precio"]').value) || 0,
         precio_original: parseFloat(form.querySelector('[name="precio_original"]').value) || null,
@@ -286,9 +288,9 @@
 
   function downloadTemplate() {
     var rows = [
-      "nombre,marca,categoria,cantidad,descripcion,precio,precio_original,stock,imagen,badge,destacado,activo",
-      "Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2 lb,Proteína de suero aislada,899.00,1099.00,15,,MÁS VENDIDO,1,1",
-      "Creatina Monohidratada,Universal,Creatina,300 g,Creatina micronizada,349.00,,30,,,0,1",
+      "nombre,marca,categoria,cantidad,unidad,descripcion,precio,precio_original,stock,imagen,badge,destacado,activo",
+      "Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2,lb,Proteína de suero aislada,899.00,1099.00,15,,MÁS VENDIDO,1,1",
+      "Creatina Monohidratada,Universal,Creatina,300,g,Creatina micronizada,349.00,,30,,,0,1",
     ].join("\r\n");
     // BOM para que Excel abra los acentos correctamente.
     var blob = new Blob(["﻿" + rows], { type: "text/csv;charset=utf-8;" });

@@ -17,6 +17,7 @@ $nombre      = ds_clean_string((string)($body['nombre'] ?? ''), 255);
 $marca       = ds_clean_string((string)($body['marca'] ?? ''), 120);
 $cat_id      = ds_to_positive_int($body['category_id'] ?? 0);
 $cantidad    = ds_clean_string((string)($body['cantidad'] ?? ''), 80);
+$unidad      = ds_clean_string((string)($body['unidad'] ?? ''), 20) ?: null;
 $descripcion = ds_clean_string((string)($body['descripcion'] ?? ''), 5000);
 $precio      = ds_to_positive_float($body['precio'] ?? 0);
 $precio_orig = isset($body['precio_original']) && $body['precio_original'] !== '' && $body['precio_original'] !== null
@@ -49,10 +50,10 @@ if ($imagen !== '') {
 }
 
 $stmt = $pdo->prepare(
-    'UPDATE products SET nombre=?, marca=?, category_id=?, cantidad=?, descripcion=?,
+    'UPDATE products SET nombre=?, marca=?, category_id=?, cantidad=?, unidad=?, descripcion=?,
      precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=?
      WHERE id=?'
 );
-$stmt->execute([$nombre, $marca, $cat_id, $cantidad, $descripcion ?: null, $precio, $precio_orig, $stock, $imagenFinal, $badge, $destacado, $activo, $id]);
+$stmt->execute([$nombre, $marca, $cat_id, $cantidad, $unidad, $descripcion ?: null, $precio, $precio_orig, $stock, $imagenFinal, $badge, $destacado, $activo, $id]);
 
 ds_json_success(['updated' => $stmt->rowCount() > 0]);

@@ -105,20 +105,20 @@ $omitidos      = [];
 $linea         = 1;    // encabezados = línea 1
 $MAX_FILAS     = 2000;
 
-// El upsert distingue por nombre + marca + cantidad: dos presentaciones del mismo
-// producto (ej. "Creakong" 1000 g y 300 g) son productos distintos, no el mismo.
-$findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? LIMIT 1');
+// El upsert distingue por nombre + marca + cantidad + unidad: dos presentaciones del
+// mismo producto (ej. "Creakong" 1000 g y 300 g) son productos distintos, no el mismo.
+$findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? AND unidad <=> ? LIMIT 1');
 $findCat  = $pdo->prepare('SELECT id FROM categories WHERE slug = ? LIMIT 1');
 $insCat   = $pdo->prepare('INSERT INTO categories (nombre, slug, orden) VALUES (?, ?, 0)');
 $insProd  = $pdo->prepare(
-    'INSERT INTO products (nombre, marca, category_id, cantidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    'INSERT INTO products (nombre, marca, category_id, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 );
 $updProdImg = $pdo->prepare(
-    'UPDATE products SET category_id=?, cantidad=?, descripcion=?, precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=? WHERE id=?'
+    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=? WHERE id=?'
 );
 $updProdNoImg = $pdo->prepare(
-    'UPDATE products SET category_id=?, cantidad=?, descripcion=?, precio=?, precio_original=?, stock=?, badge=?, destacado=?, activo=? WHERE id=?'
+    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, badge=?, destacado=?, activo=? WHERE id=?'
 );
 
 while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
@@ -171,6 +171,7 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
 
     // Campos opcionales.
     $cantidad    = mb_substr($get($row, $cols, 'cantidad'), 0, 80);
+    $unidad      = mb_substr($get($row, $cols, 'unidad'), 0, 20) ?: null;
     $descripcion = mb_substr($get($row, $cols, 'descripcion'), 0, 5000) ?: null;
     $precioOrig  = $toNumber($get($row, $cols, 'precio_original'));
     if ($precioOrig !== null && $precioOrig <= $precio) $precioOrig = null; // solo si es un "tachado" válido
@@ -182,20 +183,20 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
     $activo      = $toBool($get($row, $cols, 'activo'), 1);
 
     try {
-        $findProd->execute([$nombre, $marca, $cantidad]);
+        $findProd->execute([$nombre, $marca, $cantidad, $unidad]);
         $existingId = (int) ($findProd->fetchColumn() ?: 0);
 
         if ($existingId > 0) {
             // Upsert: se actualiza. La imagen solo se pisa si el CSV trae una; si va vacía, se conserva.
             if ($imagen !== '') {
-                $updProdImg->execute([$catId, $cantidad, $descripcion, $precio, $precioOrig, $stock, $imagen, $badge, $destacado, $activo, $existingId]);
+                $updProdImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagen, $badge, $destacado, $activo, $existingId]);
             } else {
-                $updProdNoImg->execute([$catId, $cantidad, $descripcion, $precio, $precioOrig, $stock, $badge, $destacado, $activo, $existingId]);
+                $updProdNoImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $badge, $destacado, $activo, $existingId]);
             }
             $actualizados++;
         } else {
             $imagenFinal = $imagen !== '' ? $imagen : 'assets/img/producto-placeholder.svg';
-            $insProd->execute([$nombre, $marca, $catId, $cantidad, $descripcion, $precio, $precioOrig, $stock, $imagenFinal, $badge, $destacado, $activo]);
+            $insProd->execute([$nombre, $marca, $catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagenFinal, $badge, $destacado, $activo]);
             $creados++;
         }
     } catch (\Throwable $e) {

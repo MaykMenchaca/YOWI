@@ -28,7 +28,7 @@ if ($q !== '') {
 }
 
 $sql = 'SELECT p.id, p.nombre, p.marca, c.nombre AS categoria, c.slug AS categoria_slug,
-               p.cantidad, p.descripcion, p.precio, p.precio_original, p.stock,
+               p.cantidad, p.unidad, p.descripcion, p.precio, p.precio_original, p.stock,
                p.imagen, p.badge, p.destacado
         FROM products p
         JOIN categories c ON c.id = p.category_id
@@ -47,6 +47,7 @@ $data = array_map(static fn($r) => [
     'categoria'      => $r['categoria'],
     'categoria_slug' => $r['categoria_slug'],
     'cantidad'       => $r['cantidad'],
+    'unidad'         => $r['unidad'],
     'descripcion'    => $r['descripcion'] ?? '',
     'precio'         => (float) $r['precio'],
     'precio_original'=> $r['precio_original'] !== null ? (float) $r['precio_original'] : null,

@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS products (
     marca            VARCHAR(120)      NOT NULL,
     category_id      INT UNSIGNED      NOT NULL,
     cantidad         VARCHAR(80)       NOT NULL DEFAULT '',
+    unidad           VARCHAR(20)       NULL,
     descripcion      TEXT              NULL,
     precio           DECIMAL(10,2)     NOT NULL DEFAULT 0.00,
     precio_original  DECIMAL(10,2)     NULL,
