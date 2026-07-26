@@ -93,7 +93,7 @@ button:active,a[href]:active{transform:scale(.97);}
 </div>
 <div class="w-full md:w-80 relative">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
-<input class="w-full bg-white border border-gray-200 text-ink font-body-md text-body-md rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-all placeholder:text-outline shadow-sm" placeholder="Buscar marca..." type="text"/>
+<input id="brand-search" class="w-full bg-white border border-gray-200 text-ink font-body-md text-body-md rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-all placeholder:text-outline shadow-sm" placeholder="Buscar marca..." type="text"/>
 </div>
 </div>
 </section>
@@ -130,187 +130,9 @@ button:active,a[href]:active{transform:scale(.97);}
 </div>
 </section>
 <!-- Brands Grid -->
-<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-gutter">
-<!-- Brand Card 1 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A clean, minimalist logo of 'Optimum Nutrition' on a white background, corporate modern sports nutrition style, high contrast, crisp edges." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Optimum Nutrition</h3>
-<p class="font-body text-sm text-gray-500">42 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 2 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A clean, bold logo of 'GAT Sport' on a white background, corporate modern athletic minimalist style, high contrast." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">GAT</h3>
-<p class="font-body text-sm text-gray-500">18 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 3 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A striking logo of 'Insane Labz' on a white background, sports nutrition aesthetic, crisp and professional." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Insane Labz</h3>
-<p class="font-body text-sm text-gray-500">25 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 4 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'Hi-Tech Pharmaceuticals' on a white background, clean corporate style, high visibility." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Hi-Tech</h3>
-<p class="font-body text-sm text-gray-500">12 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 5 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A professional logo of 'Cellucor' on a white background, modern sports supplement aesthetic, blue and silver accents." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Cellucor</h3>
-<p class="font-body text-sm text-gray-500">30 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 6 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A clean logo of 'Nutrex Research' on a white background, corporate modern style, sharp typography." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Nutrex</h3>
-<p class="font-body text-sm text-gray-500">22 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 7 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A bold logo of 'Mutant' on a white background, high contrast sports nutrition branding, clean layout." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Mutant</h3>
-<p class="font-body text-sm text-gray-500">15 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 8 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A simple logo of 'Ronnie Coleman Signature Series' on a white background, professional and clear." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Ronnie</h3>
-<p class="font-body text-sm text-gray-500">10 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 9 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A distinct logo of 'Dragon Pharma' on a white background, minimalist sports supplement style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Dragon Pharma</h3>
-<p class="font-body text-sm text-gray-500">28 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 10 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A clean logo of 'Evogen Nutrition' on a white background, premium technical branding." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Evogen</h3>
-<p class="font-body text-sm text-gray-500">14 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Add remaining requested brands with similar structure to ensure 18 items minimum for a good grid display -->
-<!-- Brand Card 11 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A bold logo of 'BPI Sports' on a white background, blue and white corporate style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">BPI</h3>
-<p class="font-body text-sm text-gray-500">19 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 12 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A sleek logo of 'MuscleTech' on a white background, scientific and modern supplement branding." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">MuscleTech</h3>
-<p class="font-body text-sm text-gray-500">35 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 13 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A high contrast logo of 'Allmax Nutrition' on a white background, clean and professional." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Allmax</h3>
-<p class="font-body text-sm text-gray-500">21 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 14 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A classic logo of 'Universal Nutrition' on a white background, clear typography." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Universal</h3>
-<p class="font-body text-sm text-gray-500">16 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 15 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A modern logo of 'ProSupps' on a white background, striking colors." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">ProSupps</h3>
-<p class="font-body text-sm text-gray-500">24 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 16 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A clean, earthy logo of 'Birdman' plant-based nutrition on a white background." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">Birdman</h3>
-<p class="font-body text-sm text-gray-500">11 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 17 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A minimalist logo of 'MHP' on a white background, corporate athletic style." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">MHP</h3>
-<p class="font-body text-sm text-gray-500">8 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
-<!-- Brand Card 18 -->
-<a class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group" href="#">
-<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">
-<img class="w-full h-full object-contain" data-alt="A simple text logo of 'B Life' on a white background, clean and pure aesthetic." loading="lazy" src="assets/img/marca-placeholder.svg"/>
-</div>
-<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">B Life</h3>
-<p class="font-body text-sm text-gray-500">20 productos</p>
-<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>
-</a>
+<section id="brands-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-gutter">
+<p style="grid-column:1/-1" class="text-center text-gray-500 py-10">Cargando marcas…</p>
 </section>
-<!-- Pagination Placeholder -->
-<div class="mt-stack-lg flex justify-center">
-<nav aria-label="Pagination" class="inline-flex rounded-md shadow-sm -space-x-px">
-<a class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-200 bg-white text-sm font-medium text-gray-500 hover:bg-surface-container-low" href="#">
-<span class="sr-only">Anterior</span>
-<span class="material-symbols-outlined text-sm">chevron_left</span>
-</a>
-<a aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium" href="#">1</a>
-<a class="bg-white border-gray-200 text-gray-500 hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">2</a>
-<a class="bg-white border-gray-200 text-gray-500 hover:bg-surface-container-low relative inline-flex items-center px-4 py-2 border text-sm font-medium" href="#">3</a>
-<a class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-200 bg-white text-sm font-medium text-gray-500 hover:bg-surface-container-low" href="#">
-<span class="sr-only">Siguiente</span>
-<span class="material-symbols-outlined text-sm">chevron_right</span>
-</a>
-</nav>
-</div>
 </main>
 <!-- Footer -->
 <footer class="bg-ink text-white mt-12 border-t-[8px] border-lime">
@@ -359,4 +181,7 @@ button:active,a[href]:active{transform:scale(.97);}
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>
 <script src="assets/js/mobile-nav.js" defer></script>
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/api-client.js" defer></script>
+<script src="assets/js/brands-page.js" defer></script>
 </body></html>

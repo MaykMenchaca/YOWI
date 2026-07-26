@@ -33,3 +33,4 @@ site/api/config/env.php
 
 # Imágenes de promociones subidas desde el admin (se crean al subir)
 site/assets/img/banners/
+site/assets/img/brands/
