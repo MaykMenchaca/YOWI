@@ -19,32 +19,38 @@ if (Test-Path (Join-Path $phpDir "php.exe")) {
 }
 
 Write-Host "Consultando la version estable de PHP para Windows..."
-$rel = Invoke-RestMethod -Uri "https://windows.php.net/downloads/releases/releases.json" -UseBasicParsing
+$rel  = Invoke-RestMethod -Uri "https://windows.php.net/downloads/releases/releases.json" -UseBasicParsing
+$base = "https://windows.php.net/downloads/releases"
+$zip  = Join-Path $env:TEMP "php-portable.zip"
+$ok   = $false
 
-# Elegir una rama estable (preferimos 8.3; si no, lo que haya)
-$branch = $null
-foreach ($b in @("8.3","8.4","8.2","8.1")) {
-    if ($rel.PSObject.Properties.Name -contains $b) { $branch = $b; break }
+# Construimos el nombre del ZIP desde el campo 'version' (confiable) y
+# probamos la carpeta actual y la de archivos historicos.
+foreach ($branch in @("8.3","8.2","8.1","8.4","8.0")) {
+    if (-not ($rel.PSObject.Properties.Name -contains $branch)) { continue }
+    $ver = $rel.$branch.version
+    if (-not $ver) { continue }
+    if ($branch -eq "8.4") { $vs = "vs17" } else { $vs = "vs16" }
+    $name = "php-$ver-nts-Win32-$vs-x64.zip"
+    foreach ($u in @("$base/$name", "$base/archives/$name")) {
+        try {
+            Write-Host "Descargando $u ..."
+            Invoke-WebRequest -Uri $u -OutFile $zip -UseBasicParsing
+            $ok = $true
+            break
+        } catch {
+            Write-Host "  (no disponible, probando otra)"
+        }
+    }
+    if ($ok) { break }
 }
-if (-not $branch) { $branch = ($rel.PSObject.Properties.Name | Select-Object -First 1) }
-$node = $rel.$branch
 
-# Buscar el zip NTS x64 (sirve para php -S)
-$zipName = $node.PSObject.Properties.Name |
-    Where-Object { $_ -match "nts" -and $_ -match "x64" -and $_ -match "\.zip$" } |
-    Select-Object -First 1
-if (-not $zipName) { throw "No encontre un ZIP NTS x64 para PHP $branch." }
-
-$url = "https://windows.php.net/downloads/releases/$zipName"
-$tmp = Join-Path $env:TEMP $zipName
-
-Write-Host "Descargando $zipName ..."
-Invoke-WebRequest -Uri $url -OutFile $tmp -UseBasicParsing
+if (-not $ok) { throw "No pude descargar PHP desde windows.php.net (revisa internet/antivirus)." }
 
 Write-Host "Extrayendo en $phpDir ..."
 if (Test-Path $phpDir) { Remove-Item $phpDir -Recurse -Force }
-Expand-Archive -Path $tmp -DestinationPath $phpDir -Force
-Remove-Item $tmp -Force
+Expand-Archive -Path $zip -DestinationPath $phpDir -Force
+Remove-Item $zip -Force
 
 # php.ini con lo que usa la app
 $ext = Join-Path $phpDir "ext"
