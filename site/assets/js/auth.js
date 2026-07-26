@@ -12,34 +12,79 @@
     box.textContent = message;
   }
 
+  function setBusy(form, busy) {
+    var btn = form.querySelector('[type="submit"]');
+    if (btn) btn.disabled = busy;
+  }
+
+  // El backend exige token CSRF en cada POST. Hay que obtenerlo (GET me.php)
+  // ANTES de enviar login/registro; si no, el servidor responde 403 "Token de
+  // seguridad inválido". Mismo patrón que usa cart.js para crear el pedido.
+  var csrfPromise = null;
+  function ensureCsrf() {
+    if (!csrfPromise) {
+      var url = global.DS_API_URL ? global.DS_API_URL("api/auth/me.php") : "api/auth/me.php";
+      csrfPromise = fetch(url, { credentials: "include" })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (j && j.ok && j.data && j.data.csrf_token) {
+            global.DSApi.setCsrfToken(j.data.csrf_token);
+            return true;
+          }
+          throw new Error("No se pudo iniciar la sesión de seguridad");
+        })
+        .catch(function (e) { csrfPromise = null; throw e; });
+    }
+    return csrfPromise;
+  }
+
   function bindLoginForm() {
     var form = document.getElementById("login-form");
     if (!form) return;
+    ensureCsrf().catch(function () {}); // precargar el token al abrir la página
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var email = form.querySelector('[name="email"]').value;
       var password = form.querySelector('[name="password"]').value;
-      global.DSApi.apiFetch("api/auth/login.php", { method: "POST", body: { email: email, password: password } })
+      setBusy(form, true);
+      ensureCsrf()
+        .then(function () {
+          return global.DSApi.apiFetch("api/auth/login.php", { method: "POST", body: { email: email, password: password } });
+        })
         .then(function () { window.location.href = "cuenta.html"; })
-        .catch(function (err) { showFormError(form, err.message); });
+        .catch(function (err) { showFormError(form, err.message); setBusy(form, false); });
     });
   }
 
   function bindRegistroForm() {
     var form = document.getElementById("registro-form");
     if (!form) return;
+    ensureCsrf().catch(function () {}); // precargar el token al abrir la página
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      var password = form.querySelector('[name="password"]').value;
+      var confirmPass = form.querySelector('[name="confirm_password"]').value;
+      var termsEl = form.querySelector('[name="terms"]');
+
+      // Validaciones en el navegador (el backend igual las revalida).
+      if (password.length < 8) { showFormError(form, "La contraseña debe tener al menos 8 caracteres"); return; }
+      if (password !== confirmPass) { showFormError(form, "Las contraseñas no coinciden"); return; }
+      if (termsEl && !termsEl.checked) { showFormError(form, "Debes aceptar los términos y condiciones"); return; }
+
       var body = {
         nombre: form.querySelector('[name="nombre"]').value,
         email: form.querySelector('[name="email"]').value,
         telefono: (form.querySelector('[name="telefono"]') || {}).value || "",
-        password: form.querySelector('[name="password"]').value,
-        confirm_password: form.querySelector('[name="confirm_password"]').value,
+        password: password,
+        confirm_password: confirmPass,
       };
-      global.DSApi.apiFetch("api/auth/register.php", { method: "POST", body: body })
+      setBusy(form, true);
+      ensureCsrf()
+        .then(function () {
+          return global.DSApi.apiFetch("api/auth/register.php", { method: "POST", body: body });
+        })
         .then(function () { window.location.href = "cuenta.html"; })
-        .catch(function (err) { showFormError(form, err.message); });
+        .catch(function (err) { showFormError(form, err.message); setBusy(form, false); });
     });
   }
 
