@@ -58,9 +58,14 @@
   <main class="flex-1 p-8 overflow-auto">
     <div class="flex items-center justify-between mb-6">
       <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Productos</h1>
-      <button id="new-product-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
-        + Nuevo producto
-      </button>
+      <div class="flex items-center gap-3">
+        <button id="import-btn" class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px]">
+          Importar CSV
+        </button>
+        <button id="new-product-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
+          + Nuevo producto
+        </button>
+      </div>
     </div>
 
     <div id="alert-banner" class="hidden mb-4"></div>
@@ -181,6 +186,43 @@
           <button type="button" id="modal-cancel-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cancelar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal de importación CSV -->
+  <div id="import-modal" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
+    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-xl shadow-2xl my-8">
+      <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
+        <h2 class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Importar productos (CSV)</h2>
+        <button id="import-close" class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="px-6 py-5">
+        <p class="text-slate-400 text-sm mb-3">
+          Sube un archivo <b>.csv</b> (exportado desde Excel o Google Sheets). Las categorías que no
+          existan se crean solas. Si un producto ya existe (mismo <b>nombre</b> y <b>marca</b>), se
+          <b>actualiza</b>; si no, se crea.
+        </p>
+        <button id="download-template" type="button" class="text-brand hover:text-cobalt-500 text-sm font-semibold underline mb-4 inline-flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
+          Descargar plantilla de ejemplo
+        </button>
+
+        <label class="block text-slate-300 text-sm font-medium mb-2">Archivo CSV <span class="text-red-400">*</span></label>
+        <input id="import-file" type="file" accept=".csv,text/csv,text/plain"
+          class="block w-full text-sm text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-none file:border-0 file:text-sm file:font-bold file:uppercase file:bg-lime file:text-ink hover:file:opacity-90 file:cursor-pointer" />
+        <p class="text-slate-500 text-xs mt-1">
+          Columnas: <code>nombre, marca, categoria, cantidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo</code>.
+          Obligatorias: nombre, marca, categoria, precio.
+        </p>
+
+        <div id="import-results" class="hidden mt-4 text-sm"></div>
+
+        <div class="flex gap-3 pt-4 mt-4 border-t border-slate-700">
+          <button id="import-submit" type="button" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity disabled:opacity-50">Importar</button>
+          <button id="import-cancel" type="button" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cerrar</button>
+        </div>
+      </div>
     </div>
   </div>
 

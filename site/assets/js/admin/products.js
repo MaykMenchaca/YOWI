@@ -268,6 +268,78 @@
     });
   }
 
+  // ── importar CSV ──────────────────────────────────────────────────────────────
+  function openImportModal() {
+    var m = document.getElementById("import-modal");
+    document.getElementById("import-file").value = "";
+    var res = document.getElementById("import-results");
+    res.classList.add("hidden");
+    res.innerHTML = "";
+    m.classList.remove("hidden");
+  }
+
+  function closeImportModal() {
+    document.getElementById("import-modal").classList.add("hidden");
+  }
+
+  function downloadTemplate() {
+    var rows = [
+      "nombre,marca,categoria,cantidad,descripcion,precio,precio_original,stock,imagen,badge,destacado,activo",
+      "Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2 lb,Proteína de suero aislada,899.00,1099.00,15,,MÁS VENDIDO,1,1",
+      "Creatina Monohidratada,Universal,Creatina,300 g,Creatina micronizada,349.00,,30,,,0,1",
+    ].join("\r\n");
+    // BOM para que Excel abra los acentos correctamente.
+    var blob = new Blob(["﻿" + rows], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "plantilla-productos.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function submitImport() {
+    var input = document.getElementById("import-file");
+    if (!input.files || !input.files[0]) {
+      showAlert("Elige un archivo CSV primero", "error");
+      return;
+    }
+    var btn = document.getElementById("import-submit");
+    btn.disabled = true;
+    btn.textContent = "Importando…";
+
+    var fd = new FormData();
+    fd.append("csv", input.files[0]);
+
+    DSAdminApi.apiFetch("../api/admin/products/import.php", { method: "POST", body: fd })
+      .then(function (data) {
+        var res = document.getElementById("import-results");
+        var html =
+          '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' +
+          '<p class="text-green-300 font-semibold">✓ ' + data.creados + ' creados · ' +
+          data.actualizados + ' actualizados · ' + data.categorias_creadas + ' categorías nuevas</p>';
+        if (data.omitidos && data.omitidos.length) {
+          html += '<p class="text-amber-300 mt-2 font-medium">' + data.omitidos.length + ' fila(s) omitida(s):</p>' +
+            '<ul class="text-slate-400 text-xs mt-1 list-disc pl-5 space-y-0.5 max-h-40 overflow-auto">' +
+            data.omitidos.map(function (o) {
+              return "<li>Fila " + o.fila + ": " + esc(o.motivo) + "</li>";
+            }).join("") + "</ul>";
+        }
+        html += "</div>";
+        res.innerHTML = html;
+        res.classList.remove("hidden");
+        // Refrescar categorías (pudieron crearse nuevas) y la tabla.
+        loadCategories().then(function () { loadProducts(1); });
+      })
+      .catch(function (err) { showAlert("Error al importar: " + err.message, "error"); })
+      .finally(function () {
+        btn.disabled = false;
+        btn.textContent = "Importar";
+      });
+  }
+
   // ── init ──────────────────────────────────────────────────────────────────────
   document.addEventListener("DOMContentLoaded", function () {
     tableBody = document.getElementById("products-tbody");
@@ -277,6 +349,13 @@
     document.getElementById("new-product-btn").addEventListener("click", function () { openModal(null); });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
     form.addEventListener("submit", submitForm);
+
+    // Importación CSV.
+    document.getElementById("import-btn").addEventListener("click", openImportModal);
+    document.getElementById("import-close").addEventListener("click", closeImportModal);
+    document.getElementById("import-cancel").addEventListener("click", closeImportModal);
+    document.getElementById("download-template").addEventListener("click", downloadTemplate);
+    document.getElementById("import-submit").addEventListener("click", submitImport);
 
     // Cerrar con Escape cuando el modal está abierto.
     document.addEventListener("keydown", function (e) {
