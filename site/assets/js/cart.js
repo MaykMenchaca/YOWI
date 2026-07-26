@@ -84,13 +84,19 @@
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 }) + " MXN";
   }
 
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
   function cartLineHTML(item) {
     var subtotal = money(item.precio * item.cantidad);
     return (
       '<div class="bg-surface-container-lowest border custom-border rounded-lg p-stack-md flex flex-col sm:flex-row items-center gap-stack-md custom-shadow transition-shadow hover:shadow-md" data-cart-line="' + item.producto_id + '">' +
-        '<img class="w-24 h-24 object-contain rounded bg-surface-container-low p-2" loading="lazy" src="' + item.imagen + '" alt="' + item.nombre + '"/>' +
+        '<img class="w-24 h-24 object-contain rounded bg-surface-container-low p-2" loading="lazy" src="' + esc(item.imagen) + '" alt="' + esc(item.nombre) + '"/>' +
         '<div class="flex-grow w-full text-center sm:text-left">' +
-          '<h3 class="font-headline-sm text-headline-sm text-[#042C53]">' + item.nombre + '</h3>' +
+          '<h3 class="font-headline-sm text-headline-sm text-[#042C53]">' + esc(item.nombre) + '</h3>' +
         '</div>' +
         '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + money(item.precio) + '</div>' +
         '<div class="flex items-center gap-2 border custom-border rounded bg-surface">' +

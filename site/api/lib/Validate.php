@@ -25,3 +25,25 @@ function ds_to_positive_int($value): int
     $i = (int) $value;
     return $i > 0 ? $i : 0;
 }
+
+/**
+ * Limpia una URL para usarla como enlace clicable (href).
+ * Permite solo esquemas http/https o rutas relativas (sin esquema).
+ * Bloquea esquemas peligrosos como javascript: o data: que provocarían XSS.
+ * Devuelve null si queda vacía o si el esquema no está permitido.
+ */
+function ds_clean_url(string $value, int $maxLength = 500): ?string
+{
+    $value = ds_clean_string($value, $maxLength);
+    if ($value === '') {
+        return null;
+    }
+    // Si la cadena empieza con "esquema:", solo aceptar http/https.
+    if (preg_match('/^\s*([a-z][a-z0-9+.\-]*)\s*:/i', $value, $m)) {
+        $scheme = strtolower($m[1]);
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return null;
+        }
+    }
+    return $value;
+}

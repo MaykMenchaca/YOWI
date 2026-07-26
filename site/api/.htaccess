@@ -10,12 +10,18 @@ Options -Indexes
 # 1) Sustituye el patrón de abajo por el dominio EXACTO de tu frontend en Vercel.
 #    Puedes duplicar la línea SetEnvIf para permitir varios (preview + producción).
 # 2) Recuerda escapar los puntos con \. en la expresión regular.
+#
+# SEGURIDAD: usa SIEMPRE dominios EXACTOS. NO habilites un comodín tipo
+# "^https://[a-z0-9-]+\.vercel\.app$": como aquí se emite tambien
+# Access-Control-Allow-Credentials: true, un comodín dejaría que CUALQUIER
+# subdominio *.vercel.app (incluido uno de un atacante) leyera la sesión/CSRF
+# de un admin logueado. Añade cada preview por su nombre exacto si lo necesitas.
 # ─────────────────────────────────────────────────────────────────────────────
 <IfModule mod_setenvif.c>
-    # Ej.: dominio de producción en Vercel
+    # Ej.: dominio de producción en Vercel (reemplaza por el tuyo, exacto)
     SetEnvIf Origin "^https://tu-tienda\.vercel\.app$"        DS_CORS_ORIGIN=$0
-    # Ej.: previews de Vercel (opcional; comenta si quieres restringir):
-    SetEnvIf Origin "^https://[a-z0-9-]+\.vercel\.app$"       DS_CORS_ORIGIN=$0
+    # Ej.: un preview concreto (añade el hash exacto que te dé Vercel):
+    # SetEnvIf Origin "^https://tu-tienda-git-main-tu-usuario\.vercel\.app$" DS_CORS_ORIGIN=$0
     # Ej.: dominio propio:
     # SetEnvIf Origin "^https://www\.tudominio\.com$"          DS_CORS_ORIGIN=$0
 </IfModule>

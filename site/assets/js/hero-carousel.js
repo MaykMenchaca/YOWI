@@ -11,6 +11,15 @@
     });
   }
 
+  // Solo permite http/https o rutas relativas; bloquea javascript:, data:, etc.
+  function safeHref(s) {
+    var v = String(s == null ? "" : s).trim();
+    if (!v) return "";
+    var m = /^([a-z][a-z0-9+.\-]*)\s*:/i.exec(v);
+    if (m && m[1].toLowerCase() !== "http" && m[1].toLowerCase() !== "https") return "";
+    return v;
+  }
+
   function build(hero, banners) {
     var reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var n = banners.length;
@@ -21,7 +30,8 @@
       var alt = b.titulo ? escAttr(b.titulo) : "Promoción";
       var img = '<img src="' + escAttr(apiUrl(b.imagen)) + '" alt="' + alt +
         '" class="w-full h-full object-cover" loading="' + (i === 0 ? "eager" : "lazy") + '"/>';
-      var inner = b.enlace ? '<a href="' + escAttr(b.enlace) + '" class="block w-full h-full">' + img + '</a>' : img;
+      var href = safeHref(b.enlace);
+      var inner = href ? '<a href="' + escAttr(href) + '" class="block w-full h-full">' + img + '</a>' : img;
       return '<div class="ds-slide absolute inset-0 transition-opacity duration-500 ' +
         (i === 0 ? "opacity-100" : "opacity-0 pointer-events-none") + '">' + inner + '</div>';
     }).join("");

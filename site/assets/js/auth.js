@@ -86,6 +86,12 @@
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 }) + " MXN";
   }
 
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
   function renderOrders(orders, container) {
     if (!orders.length) {
       container.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-on-surface-variant">Aún no tienes pedidos.</td></tr>';
@@ -94,11 +100,11 @@
     container.innerHTML = orders.map(function (order) {
       return (
         '<tr class="hover:bg-surface-container-low transition-colors">' +
-          '<td class="py-4 px-4 font-medium">#DS-' + order.id + '</td>' +
-          '<td class="py-4 px-4 text-on-surface-variant">' + order.created_at + '</td>' +
+          '<td class="py-4 px-4 font-medium">#DS-' + esc(order.id) + '</td>' +
+          '<td class="py-4 px-4 text-on-surface-variant">' + esc(order.created_at) + '</td>' +
           '<td class="py-4 px-4 font-price-display text-[16px]">' + money(order.total) + '</td>' +
           '<td class="py-4 px-4">' +
-            '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-secondary-fixed/50 text-on-secondary-fixed-variant">' + order.estado + '</span>' +
+            '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-secondary-fixed/50 text-on-secondary-fixed-variant">' + esc(order.estado) + '</span>' +
           '</td>' +
           '<td class="py-4 px-4 text-right text-on-surface-variant">' + order.items.length + ' producto(s)</td>' +
         '</tr>'
