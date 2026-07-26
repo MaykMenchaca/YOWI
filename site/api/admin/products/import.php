@@ -105,7 +105,9 @@ $omitidos      = [];
 $linea         = 1;    // encabezados = línea 1
 $MAX_FILAS     = 2000;
 
-$findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? LIMIT 1');
+// El upsert distingue por nombre + marca + cantidad: dos presentaciones del mismo
+// producto (ej. "Creakong" 1000 g y 300 g) son productos distintos, no el mismo.
+$findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? LIMIT 1');
 $findCat  = $pdo->prepare('SELECT id FROM categories WHERE slug = ? LIMIT 1');
 $insCat   = $pdo->prepare('INSERT INTO categories (nombre, slug, orden) VALUES (?, ?, 0)');
 $insProd  = $pdo->prepare(
@@ -180,7 +182,7 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
     $activo      = $toBool($get($row, $cols, 'activo'), 1);
 
     try {
-        $findProd->execute([$nombre, $marca]);
+        $findProd->execute([$nombre, $marca, $cantidad]);
         $existingId = (int) ($findProd->fetchColumn() ?: 0);
 
         if ($existingId > 0) {
