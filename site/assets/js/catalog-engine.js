@@ -93,13 +93,87 @@
     });
   }
 
+  // Normaliza texto para buscar: minusculas, sin acentos, trim.
+  function normalizeText(s) {
+    return String(s == null ? "" : s)
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  // Distancia de edicion (Levenshtein) entre dos palabras cortas.
+  function levenshtein(a, b) {
+    if (a === b) return 0;
+    var la = a.length, lb = b.length;
+    if (!la) return lb;
+    if (!lb) return la;
+    var prev = [], i, j;
+    for (j = 0; j <= lb; j++) prev[j] = j;
+    for (i = 1; i <= la; i++) {
+      var cur = [i], ca = a.charCodeAt(i - 1);
+      for (j = 1; j <= lb; j++) {
+        var cost = ca === b.charCodeAt(j - 1) ? 0 : 1;
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+      }
+      prev = cur;
+    }
+    return prev[lb];
+  }
+
+  // Errores de dedo permitidos segun el largo de la palabra buscada.
+  function fuzzyTolerance(len) {
+    if (len <= 2) return 0;
+    if (len <= 6) return 1;
+    return 2;
+  }
+
+  // Puntua un token de busqueda contra las palabras de un campo.
+  // 0 = no casa; mayor = mejor (exacto > empieza-con > contiene > difuso).
+  function tokenScore(token, words) {
+    var best = 0, tol = fuzzyTolerance(token.length), i, w, d;
+    for (i = 0; i < words.length; i++) {
+      w = words[i];
+      if (!w) continue;
+      if (w === token) return 100;
+      if (w.indexOf(token) === 0) { best = Math.max(best, 90); continue; }
+      if (w.indexOf(token) > -1) { best = Math.max(best, 70); continue; }
+      if (tol > 0) {
+        d = levenshtein(token, w);
+        if (d <= tol) best = Math.max(best, 60 - d * 10);
+      }
+    }
+    return best;
+  }
+
+  // Busqueda difusa: tolera acentos y errores de dedo. Devuelve los
+  // productos que casan, ordenados por relevancia (mejor primero).
   function applySearch(productos, query) {
-    if (!query) return productos;
-    var q = query.trim().toLowerCase();
-    if (!q) return productos;
-    return productos.filter(function (p) {
-      return p.nombre.toLowerCase().indexOf(q) > -1 || p.marca.toLowerCase().indexOf(q) > -1;
+    var qn = normalizeText(query);
+    if (!qn) return productos;
+    var tokens = qn.split(/\s+/).filter(Boolean);
+    if (!tokens.length) return productos;
+
+    var scored = [];
+    productos.forEach(function (p) {
+      var nombreW = normalizeText(p.nombre).split(/\s+/).filter(Boolean);
+      var marcaW  = normalizeText(p.marca).split(/\s+/).filter(Boolean);
+      var catW    = normalizeText(p.categoria).split(/\s+/).filter(Boolean);
+
+      var total = 0, allMatch = true;
+      for (var t = 0; t < tokens.length; t++) {
+        var tok = tokens[t];
+        // El nombre pesa mas que la marca, y la marca mas que la categoria.
+        var s = tokenScore(tok, nombreW);
+        s = Math.max(s, tokenScore(tok, marcaW) * 0.8);
+        s = Math.max(s, tokenScore(tok, catW) * 0.6);
+        if (s <= 0) { allMatch = false; break; }
+        total += s;
+      }
+      if (allMatch) scored.push({ p: p, score: total });
     });
+
+    scored.sort(function (a, b) { return b.score - a.score; });
+    return scored.map(function (x) { return x.p; });
   }
 
   function renderFeatured(productos, container, limit) {
@@ -155,6 +229,9 @@
         var result = applyFilters(productos, readFilters(filtersRoot));
         result = applySearch(result, searchInput ? searchInput.value : "");
         renderGrid(result, grid);
+        if (!result.length) {
+          grid.innerHTML = '<p class="p-6 text-center text-gray-500 col-span-full font-bold">No encontramos productos con esa búsqueda. Prueba con otra palabra.</p>';
+        }
         if (countEl) countEl.textContent = result.length + " producto" + (result.length === 1 ? "" : "s");
       }).catch(function () {
         grid.innerHTML = '<p class="p-6 text-center text-gray-600 col-span-full">No se pudo cargar el catálogo. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';
