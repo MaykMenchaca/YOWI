@@ -12,4 +12,4 @@ echo.
 echo   (Ctrl+C para detener)
 echo.
 start "" http://localhost:8080
-php -S localhost:8080 -t site
+php -d upload_max_filesize=16M -d post_max_size=20M -S localhost:8080 -t site

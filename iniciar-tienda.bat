@@ -93,4 +93,4 @@ echo             (admin@ds.com / AdminDS2026)
 echo   ============================================================
 echo.
 start "" http://localhost:8080
-"%PHP%" -S localhost:8080 -t site
+"%PHP%" -d upload_max_filesize=16M -d post_max_size=20M -S localhost:8080 -t site

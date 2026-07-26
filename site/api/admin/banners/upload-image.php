@@ -15,10 +15,10 @@ if (empty($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
 }
 
 $file     = $_FILES['imagen'];
-$maxBytes = 3 * 1024 * 1024; // banners pueden ser un poco más grandes que un producto
+$maxBytes = 8 * 1024 * 1024; // los banners suelen ser imágenes grandes (alta resolución)
 
 if ($file['size'] > $maxBytes) {
-    ds_json_error('El archivo supera el límite de 3 MB', 400);
+    ds_json_error('El archivo supera el límite de 8 MB', 400);
 }
 
 // Detección del MIME real, con fallbacks si fileinfo no está disponible.

@@ -62,6 +62,9 @@ extension=mysqli
 extension=mbstring
 extension=fileinfo
 extension=openssl
+; Permitir subir imágenes de promoción/productos sin toparse con el límite por defecto (2M).
+upload_max_filesize=16M
+post_max_size=20M
 "@
 Set-Content -Path (Join-Path $phpDir "php.ini") -Value $ini -Encoding ASCII
 
