@@ -105,6 +105,25 @@ if ($tablasExisten) {
     ok("Importadas " . count($statements) . " sentencias de sql/schema.sql.");
 }
 
+// ── 3.5 Aplicar migraciones (crea/actualiza tablas nuevas en BD existentes) ───
+paso('Migraciones');
+$migDir = $ROOT . '/sql/migrations';
+$revisadas = 0;
+if (is_dir($migDir)) {
+    $migFiles = glob($migDir . '/*.sql');
+    sort($migFiles);
+    foreach ($migFiles as $mf) {
+        $msql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($mf));
+        $mstmts = array_filter(array_map('trim', explode(';', $msql)), fn($s) => $s !== '');
+        foreach ($mstmts as $mstmt) {
+            // Idempotente: si ya está aplicada (o no aplica en este motor) se omite.
+            try { $pdo->exec($mstmt); } catch (Throwable $e) { /* ya aplicada */ }
+        }
+        $revisadas++;
+    }
+}
+ok("Migraciones revisadas: {$revisadas}.");
+
 // ── 4. Sembrar productos (solo si el catálogo está vacío) ─────────────────────
 paso('Productos');
 $nProd = (int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();

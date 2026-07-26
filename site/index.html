@@ -51,8 +51,8 @@ button:active,a[href]:active{transform:scale(.97);}
 </header>
 
 <main class="min-h-screen">
-  <!-- Hero Section -->
-  <div class="relative bg-ink py-32 px-4 md:px-12 overflow-hidden flex items-center justify-center min-h-[600px]">
+  <!-- Hero Section (si hay promociones, hero-carousel.js lo convierte en carrusel) -->
+  <div id="hero" class="relative bg-ink py-32 px-4 md:px-12 overflow-hidden flex items-center justify-center min-h-[600px]">
     <div class="absolute inset-0 opacity-50" style="background:repeating-linear-gradient(-8deg,transparent,transparent 60px,#1a2030 60px,#1a2030 62px)"></div>
     <div class="relative z-10 max-w-[1280px] w-full mx-auto flex flex-col items-start">
       <h1 class="font-display font-extrabold uppercase tracking-tight text-white mb-6" style="font-size:clamp(3rem,8vw,5.5rem);line-height:0.92;letter-spacing:-0.02em;">Suplementos originales<br>al mejor precio</h1>
@@ -157,6 +157,7 @@ button:active,a[href]:active{transform:scale(.97);}
 </footer>
 
 <script src="assets/js/config.js" defer></script>
+<script src="assets/js/hero-carousel.js" defer></script>
 <script src="assets/js/api-client.js" defer></script>
 <script src="assets/js/catalog-engine.js" defer></script>
 <script src="assets/js/cart.js" defer></script>

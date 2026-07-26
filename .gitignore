@@ -30,3 +30,6 @@ Thumbs.db
 
 # Backend PHP — credenciales reales de base de datos (nunca subir por git)
 site/api/config/env.php
+
+# Imágenes de promociones subidas desde el admin (se crean al subir)
+site/assets/img/banners/
