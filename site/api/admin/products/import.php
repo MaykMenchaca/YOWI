@@ -89,6 +89,14 @@ $get = static function (array $row, array $cols, string $key): string {
 
 $pdo = ds_get_pdo();
 
+// Reemplazo total del catálogo (opcional): borra todos los productos ANTES de importar.
+// Se hace aquí, con los encabezados ya validados, para que un archivo malformado nunca
+// borre nada. Seguro: order_items.producto_id es ON DELETE SET NULL (no rompe pedidos).
+$borrados = 0;
+if (($_POST['replace_all'] ?? '') === '1') {
+    $borrados = (int) $pdo->exec('DELETE FROM products');
+}
+
 $catCache      = [];   // slug => id  (evita consultar/crear la misma categoría dos veces)
 $creados       = 0;
 $actualizados  = 0;
@@ -199,6 +207,7 @@ ds_json_success([
     'creados'            => $creados,
     'actualizados'       => $actualizados,
     'categorias_creadas' => $catsCreadas,
+    'borrados'           => $borrados,
     'omitidos'           => $omitidos,
     'total_procesadas'   => $creados + $actualizados + count($omitidos),
 ]);

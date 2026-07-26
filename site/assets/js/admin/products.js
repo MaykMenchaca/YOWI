@@ -272,6 +272,8 @@
   function openImportModal() {
     var m = document.getElementById("import-modal");
     document.getElementById("import-file").value = "";
+    var replaceEl = document.getElementById("import-replace");
+    if (replaceEl) replaceEl.checked = false;
     var res = document.getElementById("import-results");
     res.classList.add("hidden");
     res.innerHTML = "";
@@ -306,18 +308,27 @@
       showAlert("Elige un archivo CSV primero", "error");
       return;
     }
+    var replaceEl = document.getElementById("import-replace");
+    var replaceAll = replaceEl && replaceEl.checked;
+    if (replaceAll && !confirm("Vas a BORRAR todos los productos actuales y reemplazarlos por los del archivo. Esta acción no se puede deshacer. ¿Continuar?")) {
+      return;
+    }
     var btn = document.getElementById("import-submit");
     btn.disabled = true;
     btn.textContent = "Importando…";
 
     var fd = new FormData();
     fd.append("csv", input.files[0]);
+    if (replaceAll) fd.append("replace_all", "1");
 
     DSAdminApi.apiFetch("../api/admin/products/import.php", { method: "POST", body: fd })
       .then(function (data) {
         var res = document.getElementById("import-results");
+        var borrados = data.borrados
+          ? '<p class="text-red-300 font-medium">🗑️ ' + data.borrados + ' producto(s) anterior(es) borrado(s)</p>'
+          : '';
         var html =
-          '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' +
+          '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' + borrados +
           '<p class="text-green-300 font-semibold">✓ ' + data.creados + ' creados · ' +
           data.actualizados + ' actualizados · ' + data.categorias_creadas + ' categorías nuevas</p>';
         if (data.omitidos && data.omitidos.length) {
