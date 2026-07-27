@@ -94,6 +94,7 @@
     return productos.filter(function (p) {
       if (filtros.categoria && filtros.categoria.length && filtros.categoria.indexOf(p.categoria) === -1) return false;
       if (filtros.marca && filtros.marca.length && filtros.marca.indexOf(p.marca) === -1) return false;
+      if (filtros.precioMin != null && p.precio < filtros.precioMin) return false;
       if (filtros.precioMax != null && p.precio > filtros.precioMax) return false;
       if (filtros.soloDisponibles && p.stock <= 0) return false;
       return true;
@@ -155,6 +156,17 @@
   // Busqueda difusa: tolera acentos y errores de dedo. Devuelve los
   // productos que casan, ordenados por relevancia (mejor primero).
   function applySearch(productos, query) {
+    // Usa el módulo difuso compartido (mismo comportamiento en todos los buscadores).
+    if (global.DSFuzzy) {
+      return global.DSFuzzy.filterSort(productos, query, function (p) {
+        return [
+          { text: p.nombre, weight: 1 },
+          { text: p.marca, weight: 0.8 },
+          { text: p.categoria, weight: 0.6 },
+        ];
+      });
+    }
+    // Fallback (por si fuzzy.js no cargó).
     var qn = normalizeText(query);
     if (!qn) return productos;
     var tokens = qn.split(/\s+/).filter(Boolean);
@@ -216,13 +228,55 @@
     var categoria = Array.prototype.map.call(
       root.querySelectorAll('input[name="categoria"]:checked'), function (el) { return el.value; }
     );
-    var priceInput = root.querySelector('input[name="precio_max"]');
+    var marcaSel = root.querySelector('select[name="marca"]');
+    var marca = marcaSel && marcaSel.value ? [marcaSel.value] : [];
+    var minInput = root.querySelector('input[name="precio_min"]');
+    var maxInput = root.querySelector('input[name="precio_max"]');
     var dispoInput = root.querySelector('input[name="solo_disponibles"]');
     return {
       categoria: categoria,
-      precioMax: priceInput && priceInput.value ? Number(priceInput.value) : null,
+      marca: marca,
+      precioMin: minInput && minInput.value !== "" ? Number(minInput.value) : null,
+      precioMax: maxInput && maxInput.value !== "" ? Number(maxInput.value) : null,
       soloDisponibles: !!(dispoInput && dispoInput.checked),
     };
+  }
+
+  // Construye los filtros dinámicos (categorías, marcas, rango de precio) a partir
+  // de los productos reales cargados. Se llama una sola vez.
+  function populateFilters(root, productos) {
+    // Categorías (checkboxes)
+    var catBox = document.getElementById("cat-filters");
+    if (catBox) {
+      var cats = {};
+      productos.forEach(function (p) { if (p.categoria) cats[p.categoria] = true; });
+      var catList = Object.keys(cats).sort(function (a, b) { return a.localeCompare(b, "es"); });
+      catBox.innerHTML = catList.length
+        ? catList.map(function (c) {
+            return '<label class="flex items-center gap-3 cursor-pointer font-medium text-sm hover:text-brand transition">' +
+              '<input type="checkbox" name="categoria" value="' + esc(c) + '" class="accent-brand w-5 h-5 shrink-0"/> ' + esc(c) + '</label>';
+          }).join("")
+        : '<p class="text-gray-400 text-sm">Sin categorías</p>';
+    }
+    // Marcas (desplegable)
+    var marcaSel = document.getElementById("marca-filter");
+    if (marcaSel) {
+      var marcas = {};
+      productos.forEach(function (p) { if (p.marca) marcas[p.marca] = true; });
+      var marcaList = Object.keys(marcas).sort(function (a, b) { return a.localeCompare(b, "es"); });
+      marcaSel.innerHTML = '<option value="">Todas las marcas</option>' +
+        marcaList.map(function (m) { return '<option value="' + esc(m) + '">' + esc(m) + '</option>'; }).join("");
+    }
+    // Rango de precio (placeholders = mín/máx reales)
+    var precios = productos.map(function (p) { return Number(p.precio) || 0; });
+    if (precios.length) {
+      var lo = Math.floor(Math.min.apply(null, precios));
+      var hi = Math.ceil(Math.max.apply(null, precios));
+      var minI = root.querySelector('input[name="precio_min"]');
+      var maxI = root.querySelector('input[name="precio_max"]');
+      if (minI) { minI.setAttribute("placeholder", "Desde $" + lo); minI.setAttribute("min", lo); minI.setAttribute("max", hi); }
+      if (maxI) { maxI.setAttribute("placeholder", "Hasta $" + hi); maxI.setAttribute("min", lo); maxI.setAttribute("max", hi); }
+    }
   }
 
   function bootstrapCatalogo() {
@@ -231,9 +285,11 @@
     var countEl = document.getElementById("product-count");
     var searchInput = document.getElementById("search-input");
     var filtersRoot = document.querySelector("aside") || document;
+    var filtersBuilt = false;
 
     function refresh() {
       fetchProductos().then(function (productos) {
+        if (!filtersBuilt) { populateFilters(filtersRoot, productos); filtersBuilt = true; }
         var result = applyFilters(productos, readFilters(filtersRoot));
         result = applySearch(result, searchInput ? searchInput.value : "");
         renderGrid(result, grid);
@@ -247,15 +303,22 @@
       });
     }
 
-    filtersRoot.querySelectorAll('input[name="categoria"], input[name="precio_max"], input[name="solo_disponibles"]')
-      .forEach(function (el) { el.addEventListener("change", refresh); el.addEventListener("input", refresh); });
+    // Delegación de eventos: cubre también los filtros creados dinámicamente.
+    var FILTER_NAMES = ["categoria", "marca", "precio_min", "precio_max", "solo_disponibles"];
+    filtersRoot.addEventListener("change", function (e) {
+      if (e.target && FILTER_NAMES.indexOf(e.target.name) !== -1) refresh();
+    });
+    filtersRoot.addEventListener("input", function (e) {
+      if (e.target && (e.target.name === "precio_min" || e.target.name === "precio_max")) refresh();
+    });
     if (searchInput) searchInput.addEventListener("input", refresh);
 
     var clearBtn = document.getElementById("clear-filters-btn");
     if (clearBtn) {
       clearBtn.addEventListener("click", function () {
         filtersRoot.querySelectorAll('input[name="categoria"], input[name="solo_disponibles"]').forEach(function (el) { el.checked = false; });
-        filtersRoot.querySelectorAll('input[name="precio_max"]').forEach(function (el) { el.value = el.max || ""; });
+        filtersRoot.querySelectorAll('input[name="precio_min"], input[name="precio_max"]').forEach(function (el) { el.value = ""; });
+        var ms = filtersRoot.querySelector('select[name="marca"]'); if (ms) ms.value = "";
         if (searchInput) searchInput.value = "";
         refresh();
       });

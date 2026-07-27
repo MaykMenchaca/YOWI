@@ -47,13 +47,19 @@
 
   function render() {
     if (!grid) return;
-    var q = norm(searchInput ? searchInput.value : "");
-    var list = allBrands.filter(function (b) {
-      var n = norm(b.nombre);
-      if (activeLetter !== "TODO" && n.charAt(0).toUpperCase() !== activeLetter) return false;
-      if (q && n.indexOf(q) === -1) return false;
-      return true;
+    // 1) Filtro por letra.
+    var byLetter = allBrands.filter(function (b) {
+      return activeLetter === "TODO" || norm(b.nombre).charAt(0).toUpperCase() === activeLetter;
     });
+    // 2) Búsqueda difusa (tolera errores de dedo), igual que el catálogo.
+    var q = searchInput ? searchInput.value : "";
+    var list;
+    if (q && global.DSFuzzy) {
+      list = global.DSFuzzy.filterSort(byLetter, q, function (b) { return [{ text: b.nombre, weight: 1 }]; });
+    } else {
+      var qn = norm(q);
+      list = byLetter.filter(function (b) { return !qn || norm(b.nombre).indexOf(qn) !== -1; });
+    }
     if (!list.length) {
       grid.innerHTML = '<p style="grid-column:1/-1" class="text-center text-gray-500 py-10">No se encontraron marcas.</p>';
       return;

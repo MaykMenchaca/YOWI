@@ -70,21 +70,44 @@
   }
 
   // ── tabla ─────────────────────────────────────────────────────────────────────
+  // Se cargan TODOS los productos una vez (allProducts) y se filtra/pagina en el
+  // cliente, para que la búsqueda sea difusa (tolerante a errores) como en el catálogo.
+  var allProducts = null;
+
+  function fetchAllProducts() {
+    return DSAdminApi.apiFetch("../api/admin/products/list.php?limit=9999")
+      .then(function (data) { allProducts = data.data || []; return allProducts; });
+  }
+
   function loadProducts(page) {
     currentPage = page || 1;
-    var q   = (document.getElementById("search-q") || {}).value || "";
-    var cat = (document.getElementById("filter-cat") || {}).value || "";
-    var url = "../api/admin/products/list.php?page=" + currentPage + "&limit=" + LIMIT;
-    if (q)   url += "&q="   + encodeURIComponent(q);
-    if (cat) url += "&cat=" + encodeURIComponent(cat);
+    var run = allProducts ? Promise.resolve(allProducts) : fetchAllProducts();
+    run.then(function () {
+      var q   = (document.getElementById("search-q") || {}).value.trim();
+      var cat = (document.getElementById("filter-cat") || {}).value || "";
+      var list = allProducts;
+      if (cat) list = list.filter(function (p) { return String(p.category_id) === String(cat); });
+      if (q) {
+        if (window.DSFuzzy) {
+          list = window.DSFuzzy.filterSort(list, q, function (p) {
+            return [{ text: p.nombre, weight: 1 }, { text: p.marca, weight: 0.8 }, { text: p.categoria, weight: 0.6 }];
+          });
+        } else {
+          var qn = q.toLowerCase();
+          list = list.filter(function (p) { return (p.nombre + " " + p.marca).toLowerCase().indexOf(qn) !== -1; });
+        }
+      }
+      totalProducts = list.length;
+      var start = (currentPage - 1) * LIMIT;
+      renderTable(list.slice(start, start + LIMIT));
+      renderPagination(list.length, currentPage, LIMIT);
+    }).catch(function (err) { showAlert("Error al cargar productos: " + err.message, "error"); });
+  }
 
-    DSAdminApi.apiFetch(url)
-      .then(function (data) {
-        totalProducts = data.total;
-        renderTable(data.data);
-        renderPagination(data.total, data.page, data.limit);
-      })
-      .catch(function (err) { showAlert("Error al cargar productos: " + err.message, "error"); });
+  // Fuerza recargar desde el servidor (tras crear/editar/borrar/importar).
+  function reloadProducts(page) {
+    allProducts = null;
+    loadProducts(page || 1);
   }
 
   function renderTable(products) {
@@ -200,7 +223,7 @@
       method: "POST",
       body: { id: id },
     })
-      .then(function () { loadProducts(currentPage); showAlert("Producto ocultado", "success"); })
+      .then(function () { reloadProducts(currentPage); showAlert("Producto ocultado", "success"); })
       .catch(function (err) { showAlert(err.message, "error"); });
   }
 
@@ -248,7 +271,7 @@
     })
       .then(function () {
         closeModal();
-        loadProducts(currentPage);
+        reloadProducts(currentPage);
         showAlert(editingId ? "Producto actualizado" : "Producto creado", "success");
       })
       .catch(function (err) { showAlert(err.message, "error"); });
@@ -295,7 +318,7 @@
     }
     DSAdminApi.apiFetch("../api/admin/products/delete-all.php", { method: "POST", body: { confirm: "BORRAR" } })
       .then(function (data) {
-        loadProducts(1);
+        reloadProducts(1);
         showAlert((data.borrados || 0) + " producto(s) borrado(s). El catálogo está vacío.", "success");
       })
       .catch(function (err) { showAlert("Error al vaciar: " + err.message, "error"); });
@@ -359,8 +382,8 @@
         html += "</div>";
         res.innerHTML = html;
         res.classList.remove("hidden");
-        // Refrescar categorías (pudieron crearse nuevas) y la tabla.
-        loadCategories().then(function () { loadProducts(1); });
+        // Refrescar categorías (pudieron crearse nuevas) y la tabla (recarga forzada).
+        loadCategories().then(function () { reloadProducts(1); });
       })
       .catch(function (err) { showAlert("Error al importar: " + err.message, "error"); })
       .finally(function () {
