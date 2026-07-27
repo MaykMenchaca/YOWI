@@ -62,9 +62,14 @@
   <main class="flex-1 p-8 overflow-auto">
     <div class="flex items-center justify-between mb-6">
       <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Categorías</h1>
-      <button id="new-category-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
-        + Nueva categoría
-      </button>
+      <div class="flex items-center gap-3">
+        <button id="wipe-cats-btn" class="border border-red-700 text-red-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-red-900/40 transition-colors min-h-[44px]" title="Elimina las categorías que no tienen productos">
+          Eliminar vacías
+        </button>
+        <button id="new-category-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
+          + Nueva categoría
+        </button>
+      </div>
     </div>
 
     <div id="alert-banner" class="hidden mb-4"></div>

@@ -347,7 +347,8 @@
         var html =
           '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' + borrados +
           '<p class="text-green-300 font-semibold">✓ ' + data.creados + ' creados · ' +
-          data.actualizados + ' actualizados · ' + data.categorias_creadas + ' categorías nuevas</p>';
+          data.actualizados + ' actualizados · ' + data.categorias_creadas + ' categorías nuevas · ' +
+          (data.marcas_creadas || 0) + ' marcas nuevas</p>';
         if (data.omitidos && data.omitidos.length) {
           html += '<p class="text-amber-300 mt-2 font-medium">' + data.omitidos.length + ' fila(s) omitida(s):</p>' +
             '<ul class="text-slate-400 text-xs mt-1 list-disc pl-5 space-y-0.5 max-h-40 overflow-auto">' +

@@ -98,9 +98,11 @@ if (($_POST['replace_all'] ?? '') === '1') {
 }
 
 $catCache      = [];   // slug => id  (evita consultar/crear la misma categoría dos veces)
+$brandCache    = [];   // slug => true (evita consultar/crear la misma marca dos veces)
 $creados       = 0;
 $actualizados  = 0;
 $catsCreadas   = 0;
+$marcasCreadas = 0;
 $omitidos      = [];
 $linea         = 1;    // encabezados = línea 1
 $MAX_FILAS     = 2000;
@@ -110,6 +112,8 @@ $MAX_FILAS     = 2000;
 $findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? AND unidad <=> ? LIMIT 1');
 $findCat  = $pdo->prepare('SELECT id FROM categories WHERE slug = ? LIMIT 1');
 $insCat   = $pdo->prepare('INSERT INTO categories (nombre, slug, orden) VALUES (?, ?, 0)');
+$findBrand = $pdo->prepare('SELECT id FROM brands WHERE slug = ? LIMIT 1');
+$insBrand  = $pdo->prepare('INSERT INTO brands (nombre, slug, activo) VALUES (?, ?, 1)');
 $insProd  = $pdo->prepare(
     'INSERT INTO products (nombre, marca, category_id, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
@@ -169,6 +173,20 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
         $catCache[$slug] = $catId;
     }
 
+    // Asegurar que la marca exista en el catálogo de marcas, para poder gestionarla
+    // aparte (logo, editar, ocultar). No bloquea la fila si algo falla.
+    $bslug = $slugify($marca);
+    if ($bslug !== '' && !isset($brandCache[$bslug])) {
+        $findBrand->execute([$bslug]);
+        if ((int) ($findBrand->fetchColumn() ?: 0) === 0) {
+            try {
+                $insBrand->execute([mb_substr($marca, 0, 120), mb_substr($bslug, 0, 140)]);
+                $marcasCreadas++;
+            } catch (\Throwable $e) { /* colisión: otra fila ya la creó */ }
+        }
+        $brandCache[$bslug] = true;
+    }
+
     // Campos opcionales.
     $cantidad    = mb_substr($get($row, $cols, 'cantidad'), 0, 80);
     $unidad      = mb_substr($get($row, $cols, 'unidad'), 0, 20) ?: null;
@@ -210,6 +228,7 @@ ds_json_success([
     'creados'            => $creados,
     'actualizados'       => $actualizados,
     'categorias_creadas' => $catsCreadas,
+    'marcas_creadas'     => $marcasCreadas,
     'borrados'           => $borrados,
     'omitidos'           => $omitidos,
     'total_procesadas'   => $creados + $actualizados + count($omitidos),

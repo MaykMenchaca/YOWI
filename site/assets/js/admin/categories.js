@@ -76,6 +76,24 @@
       .catch(function (err) { showAlert(err.message, "error"); });
   }
 
+  // Eliminar categorías vacías (sin productos). Las que tienen productos no se pueden
+  // borrar por la restricción de la base de datos; se reportan como "en uso".
+  function wipeCategories() {
+    var typed = prompt("Esto elimina las categorías que NO tienen productos.\n\nEscribe BORRAR (en mayúsculas) para confirmar:");
+    if (typed !== "BORRAR") {
+      if (typed !== null) showAlert("Cancelado: no escribiste BORRAR.", "error");
+      return;
+    }
+    DSAdminApi.apiFetch("../api/admin/categories/delete-all.php", { method: "POST", body: { confirm: "BORRAR" } })
+      .then(function (data) {
+        loadCategories();
+        var msg = (data.borradas || 0) + " categoría(s) vacía(s) eliminada(s)";
+        if (data.en_uso) msg += " · " + data.en_uso + " se conservaron (tienen productos)";
+        showAlert(msg, "success");
+      })
+      .catch(function (err) { showAlert("Error al eliminar: " + err.message, "error"); });
+  }
+
   function showAlert(msg, type) {
     var el = document.getElementById("alert-banner");
     if (!el) return;
@@ -101,6 +119,7 @@
     document.getElementById("new-category-btn").addEventListener("click", function () {
       openModal(null, "", 0);
     });
+    document.getElementById("wipe-cats-btn").addEventListener("click", wipeCategories);
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
 
     // Cerrar con Escape cuando el modal está abierto.

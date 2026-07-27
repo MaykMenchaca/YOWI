@@ -183,6 +183,21 @@
     document.getElementById("import-modal").classList.add("hidden");
   }
 
+  // Vaciar marcas: borra TODAS (acción destructiva, confirmación por escrito).
+  function wipeBrands() {
+    var typed = prompt("Esto BORRA todas las marcas y no se puede deshacer.\n\nEscribe BORRAR (en mayúsculas) para confirmar:");
+    if (typed !== "BORRAR") {
+      if (typed !== null) showAlert("Cancelado: no escribiste BORRAR.", "error");
+      return;
+    }
+    DSAdminApi.apiFetch("../api/admin/brands/delete-all.php", { method: "POST", body: { confirm: "BORRAR" } })
+      .then(function (data) {
+        loadBrands();
+        showAlert((data.borrados || 0) + " marca(s) borrada(s).", "success");
+      })
+      .catch(function (err) { showAlert("Error al vaciar: " + err.message, "error"); });
+  }
+
   function downloadTemplate() {
     var rows = [
       "nombre,imagen,enlace,orden,activo",
@@ -248,6 +263,7 @@
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
     form.addEventListener("submit", submitForm);
 
+    document.getElementById("wipe-brands-btn").addEventListener("click", wipeBrands);
     document.getElementById("import-btn").addEventListener("click", openImportModal);
     document.getElementById("import-close").addEventListener("click", closeImportModal);
     document.getElementById("import-cancel").addEventListener("click", closeImportModal);
