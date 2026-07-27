@@ -286,6 +286,21 @@
     document.getElementById("import-modal").classList.add("hidden");
   }
 
+  // Vaciar catálogo: borra TODOS los productos (acción destructiva, doble confirmación).
+  function wipeCatalog() {
+    var typed = prompt("Esto BORRA todos los productos del catálogo y no se puede deshacer.\n\nEscribe BORRAR (en mayúsculas) para confirmar:");
+    if (typed !== "BORRAR") {
+      if (typed !== null) showAlert("Cancelado: no escribiste BORRAR.", "error");
+      return;
+    }
+    DSAdminApi.apiFetch("../api/admin/products/delete-all.php", { method: "POST", body: { confirm: "BORRAR" } })
+      .then(function (data) {
+        loadProducts(1);
+        showAlert((data.borrados || 0) + " producto(s) borrado(s). El catálogo está vacío.", "success");
+      })
+      .catch(function (err) { showAlert("Error al vaciar: " + err.message, "error"); });
+  }
+
   function downloadTemplate() {
     var rows = [
       "nombre,marca,categoria,cantidad,unidad,descripcion,precio,precio_original,stock,imagen,badge,destacado,activo",
@@ -364,6 +379,7 @@
     form.addEventListener("submit", submitForm);
 
     // Importación CSV.
+    document.getElementById("wipe-btn").addEventListener("click", wipeCatalog);
     document.getElementById("import-btn").addEventListener("click", openImportModal);
     document.getElementById("import-close").addEventListener("click", closeImportModal);
     document.getElementById("import-cancel").addEventListener("click", closeImportModal);
