@@ -2,7 +2,7 @@
    Clave de localStorage: "ds_cart" → array de líneas {producto_id, nombre, precio, cantidad, imagen}. */
 (function (global) {
   var STORAGE_KEY = "ds_cart";
-  var WA_NUMBER = "5218330000000";
+  var WA_NUMBER = "5218344241599";
 
   function getCart() {
     try {

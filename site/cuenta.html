@@ -81,22 +81,10 @@ button:active,a[href]:active{transform:scale(.97);}
 <!-- Left Sidebar -->
 <aside class="md:col-span-3 card-custom rounded-lg p-4 sticky top-28">
 <nav class="flex flex-col gap-2 font-body-md text-body-md">
-<a class="flex items-center gap-3 px-4 py-3 rounded-md bg-surface-container text-brand font-medium ring-1 ring-primary/20" href="#">
-<span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span>
-                        Mis datos
-                    </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#">
-<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-                        Mis pedidos
-                    </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#">
-<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
-                        Favoritos
-                    </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#">
-<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
-                        Direcciones
-                    </a>
+<a data-tab="datos" class="account-tab flex items-center gap-3 px-4 py-3 rounded-md bg-surface-container text-brand font-medium ring-1 ring-primary/20" href="#"><span class="material-symbols-outlined" data-icon="manage_accounts">manage_accounts</span> Mis datos</a>
+<a data-tab="pedidos" class="account-tab flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#"><span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span> Mis pedidos</a>
+<a data-tab="favoritos" class="account-tab flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#"><span class="material-symbols-outlined" data-icon="favorite">favorite</span> Favoritos</a>
+<a data-tab="direcciones" class="account-tab flex items-center gap-3 px-4 py-3 rounded-md text-gray-500 hover:bg-surface hover:text-brand transition-colors" href="#"><span class="material-symbols-outlined" data-icon="location_on">location_on</span> Direcciones</a>
 <div class="h-px bg-outline-variant/30 my-2"></div>
 <a class="flex items-center gap-3 px-4 py-3 rounded-md text-error hover:bg-error-container/20 transition-colors" href="#" data-logout-btn="">
 <span class="material-symbols-outlined" data-icon="logout">logout</span>
@@ -106,14 +94,15 @@ button:active,a[href]:active{transform:scale(.97);}
 </aside>
 <!-- Right Content Area -->
 <div class="md:col-span-9 flex flex-col gap-gutter">
-<!-- Profile Card -->
+<!-- Panel: Mis datos -->
+<div data-panel="datos">
 <section class="card-custom rounded-xl p-8">
 <div class="flex justify-between items-start mb-6">
 <div>
 <h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink mb-2">Información Personal</h2>
 <p class="font-body text-sm text-gray-500">Gestiona tus datos de contacto y preferencias.</p>
 </div>
-<button class="btn-primary px-4 py-2 rounded font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+<button id="edit-profile-btn" class="btn-primary px-4 py-2 rounded font-bold uppercase tracking-widest text-xs flex items-center gap-2">
 <span class="material-symbols-outlined text-sm">edit</span> Editar
                         </button>
 </div>
@@ -130,18 +119,14 @@ button:active,a[href]:active{transform:scale(.97);}
 <label class="block font-bold uppercase tracking-widest text-xs text-outline mb-1 uppercase tracking-wider">Teléfono</label>
 <div class="font-body-md text-body-md text-ink" data-field="telefono">—</div>
 </div>
-<div>
-<label class="block font-bold uppercase tracking-widest text-xs text-outline mb-1 uppercase tracking-wider">Nivel Atleta</label>
-<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest text-xs bg-[#378ADD] text-white">
-                                Miembro Pro
-                            </span>
-</div>
 </div>
 </section>
-<!-- Recent Orders Card -->
+</div>
+<!-- Panel: Mis pedidos -->
+<div data-panel="pedidos" class="hidden">
 <section class="card-custom rounded-xl p-8">
 <div class="flex justify-between items-center mb-6">
-<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink">Pedidos recientes</h2>
+<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink">Mis pedidos</h2>
 <a class="font-body text-sm text-secondary-container hover:underline flex items-center" href="#">
                             Ver todos <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
 </a>
@@ -163,6 +148,27 @@ button:active,a[href]:active{transform:scale(.97);}
 </table>
 </div>
 </section>
+</div>
+<!-- Panel: Favoritos -->
+<div data-panel="favoritos" class="hidden"><section class="card-custom rounded-xl p-12 text-center text-gray-500"><span class="material-symbols-outlined text-5xl text-gray-300">favorite</span><p class="mt-3 font-bold text-ink">Favoritos — próximamente</p><p class="text-sm mt-1">Pronto podrás guardar aquí tus productos favoritos.</p></section></div>
+<!-- Panel: Direcciones -->
+<div data-panel="direcciones" class="hidden"><section class="card-custom rounded-xl p-12 text-center text-gray-500"><span class="material-symbols-outlined text-5xl text-gray-300">location_on</span><p class="mt-3 font-bold text-ink">Direcciones — próximamente</p><p class="text-sm mt-1">Pronto podrás guardar aquí tus direcciones de envío.</p></section></div>
+</div>
+<!-- Modal editar perfil -->
+<div id="edit-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+<div class="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">
+<h3 class="font-display font-extrabold text-xl uppercase text-ink mb-4">Editar datos</h3>
+<form id="edit-form" class="space-y-4">
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Nombre completo</label>
+<input name="nombre" type="text" class="w-full border border-gray-300 rounded px-4 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Teléfono</label>
+<input name="telefono" type="tel" class="w-full border border-gray-300 rounded px-4 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<p data-edit-error class="text-error text-sm hidden"></p>
+<div class="flex gap-3 pt-2">
+<button type="submit" class="flex-1 btn-primary py-2.5 rounded font-bold uppercase tracking-widest text-xs">Guardar</button>
+<button type="button" id="edit-cancel" class="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded font-bold uppercase tracking-widest text-xs hover:bg-gray-50">Cancelar</button>
+</div>
+</form>
 </div>
 </div>
 </main>
@@ -195,7 +201,7 @@ button:active,a[href]:active{transform:scale(.97);}
     </div>
     <div class="flex flex-col gap-4">
       <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Contacto</span>
-      <a class="flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#0F7A3A] hover:bg-[#0B6E34] transition py-3 px-4 min-h-[44px]" href="https://wa.me/5218330000000">
+      <a class="flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#0F7A3A] hover:bg-[#0B6E34] transition py-3 px-4 min-h-[44px]" href="https://wa.me/5218344241599">
         <span class="material-symbols-outlined">chat</span> WhatsApp
       </a>
     </div>

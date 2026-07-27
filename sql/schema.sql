@@ -79,6 +79,13 @@ CREATE TABLE IF NOT EXISTS brands (
     KEY idx_brands_orden  (orden)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Settings (contenido editable desde el admin, ej. la página "Nosotros") ────────
+CREATE TABLE IF NOT EXISTS settings (
+    clave      VARCHAR(60)  NOT NULL PRIMARY KEY,
+    valor      TEXT         NULL,
+    updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── Usuarios (sin cambios) ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
     id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

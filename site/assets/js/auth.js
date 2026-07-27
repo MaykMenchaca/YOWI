@@ -94,24 +94,27 @@
     var logoutBtn = document.querySelector("[data-logout-btn]");
     if (!profileBox && !ordersBox && !logoutBtn) return;
 
+    var currentUser = null;
+
+    function fillProfile(user) {
+      if (!profileBox) return;
+      profileBox.querySelectorAll("[data-field]").forEach(function (el) {
+        var field = el.getAttribute("data-field");
+        if (user[field] !== undefined) el.textContent = user[field] || "";
+      });
+    }
+
     global.DSApi.apiFetch("api/auth/me.php")
       .then(function (data) {
         global.DSApi.setCsrfToken(data.csrf_token);
-        if (!data.user) {
-          window.location.href = "login.html";
-          return;
-        }
-        if (profileBox) {
-          profileBox.querySelectorAll("[data-field]").forEach(function (el) {
-            var field = el.getAttribute("data-field");
-            if (data.user[field] !== undefined) el.textContent = data.user[field] || "";
-          });
-        }
+        if (!data.user) { window.location.href = "login.html"; return; }
+        currentUser = data.user;
+        fillProfile(currentUser);
         if (ordersBox) {
           global.DSApi.apiFetch("api/orders/list.php").then(function (orders) {
             renderOrders(orders, ordersBox);
           }).catch(function () {
-            ordersBox.innerHTML = '<p class="text-on-surface-variant p-4">No se pudieron cargar tus pedidos. Recarga la página para reintentar.</p>';
+            ordersBox.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-on-surface-variant">No se pudieron cargar tus pedidos.</td></tr>';
           });
         }
       })
@@ -123,6 +126,53 @@
         global.DSApi.apiFetch("api/auth/logout.php", { method: "POST" }).then(function () {
           window.location.href = "login.html";
         });
+      });
+    }
+
+    // ── Pestañas: conmutar paneles ──
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".account-tab"));
+    var ACT = ["bg-surface-container", "text-brand", "font-medium", "ring-1", "ring-primary/20"];
+    var INACT = ["text-gray-500", "hover:bg-surface", "hover:text-brand", "transition-colors"];
+    function showPanel(name) {
+      document.querySelectorAll("[data-panel]").forEach(function (p) {
+        p.classList.toggle("hidden", p.getAttribute("data-panel") !== name);
+      });
+      tabs.forEach(function (t) {
+        var on = t.getAttribute("data-tab") === name;
+        ACT.forEach(function (c) { t.classList.toggle(c, on); });
+        INACT.forEach(function (c) { t.classList.toggle(c, !on); });
+      });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener("click", function (e) { e.preventDefault(); showPanel(t.getAttribute("data-tab")); });
+    });
+
+    // ── Editar perfil ──
+    var editBtn = document.getElementById("edit-profile-btn");
+    var modal = document.getElementById("edit-modal");
+    var editForm = document.getElementById("edit-form");
+    if (editBtn && modal && editForm) {
+      var errBox = editForm.querySelector("[data-edit-error]");
+      editBtn.addEventListener("click", function () {
+        editForm.querySelector('[name="nombre"]').value = (currentUser && currentUser.nombre) || "";
+        editForm.querySelector('[name="telefono"]').value = (currentUser && currentUser.telefono) || "";
+        if (errBox) errBox.classList.add("hidden");
+        modal.classList.remove("hidden");
+      });
+      var cancel = document.getElementById("edit-cancel");
+      if (cancel) cancel.addEventListener("click", function () { modal.classList.add("hidden"); });
+      editForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var nombre = editForm.querySelector('[name="nombre"]').value.trim();
+        var telefono = editForm.querySelector('[name="telefono"]').value.trim();
+        if (!nombre) { if (errBox) { errBox.textContent = "El nombre no puede estar vacío."; errBox.classList.remove("hidden"); } return; }
+        global.DSApi.apiFetch("api/auth/update-profile.php", { method: "POST", body: { nombre: nombre, telefono: telefono } })
+          .then(function (d) {
+            if (currentUser) { currentUser.nombre = d.nombre; currentUser.telefono = d.telefono; }
+            fillProfile(currentUser || d);
+            modal.classList.add("hidden");
+          })
+          .catch(function (er) { if (errBox) { errBox.textContent = er.message; errBox.classList.remove("hidden"); } });
       });
     }
   }

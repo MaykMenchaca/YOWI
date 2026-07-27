@@ -1,5 +1,5 @@
 (function () {
-  var WA = "https://wa.me/5218330000000?text=Hola%20DS%2C%20me%20interesa%20un%20producto%20de%20su%20cat%C3%A1logo.";
+  var WA = "https://wa.me/5218344241599?text=Hola%20DS%2C%20me%20interesa%20un%20producto%20de%20su%20cat%C3%A1logo.";
 
   document.addEventListener("DOMContentLoaded", function () {
     // --- WhatsApp: cualquier botón/enlace con texto "WhatsApp" abre el chat ---
