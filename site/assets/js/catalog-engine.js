@@ -68,11 +68,16 @@
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
     return (
       '<div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
-        '<a href="' + detailUrl + '" class="block">' +
-          '<div class="h-40 bg-gray-100 mb-3 flex items-center justify-center overflow-hidden p-2">' +
-            '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
-          '</div>' +
-        '</a>' +
+        '<div class="relative mb-3">' +
+          '<a href="' + detailUrl + '" class="block">' +
+            '<div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden p-2">' +
+              '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
+            '</div>' +
+          '</a>' +
+          '<button type="button" class="favorite-btn absolute top-2 right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 shadow hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
+            '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 0;">favorite</span>' +
+          '</button>' +
+        '</div>' +
         '<div class="text-[11px] uppercase font-extrabold text-gray-500 tracking-wide mb-1">' + esc(p.marca) + '</div>' +
         '<h3 class="font-bold text-base leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
         '<div class="font-body text-sm text-gray-400 mb-4">' + esc(qtyLabel(p)) + '</div>' +
@@ -87,6 +92,7 @@
   function renderGrid(productos, container) {
     if (!container) return;
     container.innerHTML = productos.map(productCardHTML).join("");
+    if (global.DSFavorites) global.DSFavorites.decorate(container);
   }
 
   function applyFilters(productos, filtros) {
@@ -217,6 +223,12 @@
         else if (field === "cantidad") el.textContent = qtyLabel(p);
         else if (p[field] !== undefined) el.textContent = p[field];
       });
+      // Fija el id del producto en los botones de la ficha (carrito + favorito).
+      // Esto además arregla "Agregar al carrito", que en la ficha quedaba sin id.
+      container.querySelectorAll(".add-to-cart-btn, .favorite-btn").forEach(function (btn) {
+        btn.setAttribute("data-product-id", p.id);
+      });
+      if (global.DSFavorites) global.DSFavorites.decorate(container);
       return p;
     }).catch(function () {
       container.innerHTML = '<p class="text-gray-600">No se pudo cargar el producto. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';

@@ -67,6 +67,12 @@ button:active,a[href]:active{transform:scale(.97);}
           <p class="text-gray-500 text-sm mt-3">Confirmamos disponibilidad y el costo de envío contigo por WhatsApp antes de cobrar.</p>
         </div>
 
+        <!-- Selector de dirección guardada (solo con sesión y direcciones) -->
+        <div id="saved-address-wrapper" class="hidden mb-5">
+          <label for="saved-address" class="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-1.5">Usar dirección guardada</label>
+          <select id="saved-address" class="w-full border-2 border-gray-200 bg-white p-3 text-sm text-ink font-medium outline-none focus:border-brand transition min-h-[44px]"></select>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
           <div class="sm:col-span-2">
             <label for="nombre" class="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-1.5">Nombre completo <span class="text-error">*</span></label>
@@ -193,6 +199,7 @@ button:active,a[href]:active{transform:scale(.97);}
 <script src="assets/js/api-client.js" defer></script>
 <script src="assets/js/catalog-engine.js" defer></script>
 <script src="assets/js/cart.js" defer></script>
+<script src="assets/js/addresses.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>
 <script src="assets/js/mobile-nav.js" defer></script>

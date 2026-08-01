@@ -150,9 +150,28 @@ button:active,a[href]:active{transform:scale(.97);}
 </section>
 </div>
 <!-- Panel: Favoritos -->
-<div data-panel="favoritos" class="hidden"><section class="card-custom rounded-xl p-12 text-center text-gray-500"><span class="material-symbols-outlined text-5xl text-gray-300">favorite</span><p class="mt-3 font-bold text-ink">Favoritos — próximamente</p><p class="text-sm mt-1">Pronto podrás guardar aquí tus productos favoritos.</p></section></div>
+<div data-panel="favoritos" class="hidden">
+<section class="card-custom rounded-xl p-8">
+<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink mb-6">Mis favoritos</h2>
+<div id="favorites-list" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<p class="col-span-full text-center text-gray-500 py-6">Cargando favoritos…</p>
+</div>
+</section>
+</div>
 <!-- Panel: Direcciones -->
-<div data-panel="direcciones" class="hidden"><section class="card-custom rounded-xl p-12 text-center text-gray-500"><span class="material-symbols-outlined text-5xl text-gray-300">location_on</span><p class="mt-3 font-bold text-ink">Direcciones — próximamente</p><p class="text-sm mt-1">Pronto podrás guardar aquí tus direcciones de envío.</p></section></div>
+<div data-panel="direcciones" class="hidden">
+<section class="card-custom rounded-xl p-8">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink">Mis direcciones</h2>
+<button id="add-address-btn" class="btn-primary px-4 py-2 rounded font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span> Agregar
+</button>
+</div>
+<div id="addresses-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<p class="col-span-full text-center text-gray-500 py-6">Cargando direcciones…</p>
+</div>
+</section>
+</div>
 </div>
 <!-- Modal editar perfil -->
 <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
@@ -167,6 +186,43 @@ button:active,a[href]:active{transform:scale(.97);}
 <div class="flex gap-3 pt-2">
 <button type="submit" class="flex-1 btn-primary py-2.5 rounded font-bold uppercase tracking-widest text-xs">Guardar</button>
 <button type="button" id="edit-cancel" class="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded font-bold uppercase tracking-widest text-xs hover:bg-gray-50">Cancelar</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Modal dirección -->
+<div id="address-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
+<div class="bg-white rounded-xl w-full max-w-lg p-6 shadow-2xl my-8">
+<h3 id="address-modal-title" class="font-display font-extrabold text-xl uppercase text-ink mb-4">Nueva dirección</h3>
+<form id="address-form" class="space-y-3">
+<input type="hidden" name="id"/>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Etiqueta</label>
+<input name="etiqueta" type="text" placeholder="Casa, Trabajo…" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Nombre completo</label>
+<input name="nombre" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Teléfono</label>
+<input name="telefono" type="tel" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Código postal</label>
+<input name="cp" type="text" inputmode="numeric" maxlength="5" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div class="sm:col-span-2"><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Calle y número</label>
+<input name="calle" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Colonia</label>
+<input name="colonia" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Ciudad</label>
+<input name="ciudad" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Estado</label>
+<input name="estado" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Referencias</label>
+<input name="referencias" type="text" class="w-full border border-gray-300 rounded px-3 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+</div>
+<label class="flex items-center gap-2 text-sm text-ink font-medium cursor-pointer">
+<input name="es_predeterminada" type="checkbox" class="accent-brand w-5 h-5"/> Usar como dirección predeterminada
+</label>
+<p data-address-error class="text-error text-sm hidden"></p>
+<div class="flex gap-3 pt-1">
+<button type="submit" class="flex-1 btn-primary py-2.5 rounded font-bold uppercase tracking-widest text-xs">Guardar</button>
+<button type="button" id="address-cancel" class="flex-1 border border-gray-300 text-gray-600 py-2.5 rounded font-bold uppercase tracking-widest text-xs hover:bg-gray-50">Cancelar</button>
 </div>
 </form>
 </div>
@@ -209,6 +265,9 @@ button:active,a[href]:active{transform:scale(.97);}
 </footer>
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/api-client.js" defer></script>
+<script src="assets/js/cart.js" defer></script>
+<script src="assets/js/favorites.js" defer></script>
+<script src="assets/js/addresses.js" defer></script>
 <script src="assets/js/auth.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>

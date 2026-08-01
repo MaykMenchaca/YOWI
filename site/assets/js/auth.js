@@ -117,8 +117,38 @@
             ordersBox.innerHTML = '<tr><td colspan="5" class="py-6 px-4 text-center text-on-surface-variant">No se pudieron cargar tus pedidos.</td></tr>';
           });
         }
+        loadFavorites();
       })
       .catch(function () { window.location.href = "login.html"; });
+
+    // ── Favoritos ──
+    var favBox = document.getElementById("favorites-list");
+    function loadFavorites() {
+      if (!favBox) return;
+      global.DSApi.apiFetch("api/favorites/list.php")
+        .then(function (list) { renderFavorites(list, favBox); })
+        .catch(function () {
+          favBox.innerHTML = '<p class="col-span-full text-center text-error py-6">No se pudieron cargar tus favoritos.</p>';
+        });
+    }
+    // favorites.js llama a esto tras alternar un corazón para refrescar el panel.
+    global.DSAccountFavoritesReload = loadFavorites;
+
+    if (favBox) {
+      // Agregar al carrito desde una tarjeta de favorito (datos ya embebidos).
+      favBox.addEventListener("click", function (e) {
+        var addBtn = e.target.closest(".fav-add-btn");
+        if (!addBtn || !global.DSCart) return;
+        global.DSCart.addItem({
+          id: addBtn.getAttribute("data-id"),
+          nombre: addBtn.getAttribute("data-nombre"),
+          precio: Number(addBtn.getAttribute("data-precio")) || 0,
+          imagen: addBtn.getAttribute("data-imagen"),
+        }, 1);
+        addBtn.textContent = "Agregado ✓";
+        setTimeout(function () { addBtn.textContent = "Agregar al carrito"; }, 1500);
+      });
+    }
 
     if (logoutBtn) {
       logoutBtn.addEventListener("click", function (e) {
@@ -185,6 +215,41 @@
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
+  }
+
+  function qtyLabel(p) {
+    var c = String(p.cantidad == null ? "" : p.cantidad).trim();
+    var u = String(p.unidad == null ? "" : p.unidad).trim();
+    return u ? (c + " " + u).trim() : c;
+  }
+
+  function renderFavorites(list, container) {
+    if (!list || !list.length) {
+      container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-10">' +
+        '<span class="material-symbols-outlined text-5xl text-gray-300">favorite</span>' +
+        '<p class="mt-3 font-bold text-ink">Aún no tienes favoritos</p>' +
+        '<p class="text-sm mt-1">Marca el corazón en cualquier producto para guardarlo aquí. <a href="catalogo.html" class="text-brand underline">Ver catálogo</a></p></div>';
+      return;
+    }
+    container.innerHTML = list.map(function (p) {
+      var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
+      return (
+        '<div class="bg-white border border-gray-200 p-3 flex flex-col relative">' +
+          '<button type="button" class="favorite-btn is-fav absolute top-2 right-2 flex items-center justify-center h-9 w-9 rounded-full bg-white/90 shadow hover:bg-white transition" data-product-id="' + esc(p.id) + '" aria-label="Quitar de favoritos" aria-pressed="true">' +
+            '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;color:#E11D48;">favorite</span>' +
+          '</button>' +
+          '<a href="' + detailUrl + '" class="block h-28 bg-gray-100 mb-2 flex items-center justify-center overflow-hidden p-2">' +
+            '<img class="max-h-full object-contain" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
+          '</a>' +
+          '<div class="text-[10px] uppercase font-extrabold text-gray-500 tracking-wide">' + esc(p.marca) + '</div>' +
+          '<h3 class="font-bold text-sm leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
+          '<div class="text-xs text-gray-400 mb-2">' + esc(qtyLabel(p)) + '</div>' +
+          '<div class="text-brand font-extrabold text-base mt-auto mb-2">' + money(p.precio) + '</div>' +
+          '<button type="button" class="fav-add-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-3 py-2 min-h-[44px] w-full text-xs hover:opacity-90 transition-opacity" ' +
+            'data-id="' + esc(p.id) + '" data-nombre="' + esc(p.nombre) + '" data-precio="' + esc(p.precio) + '" data-imagen="' + esc(p.imagen) + '">Agregar al carrito</button>' +
+        '</div>'
+      );
+    }).join("");
   }
 
   function renderOrders(orders, container) {

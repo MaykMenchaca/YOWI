@@ -97,6 +97,38 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Favoritos por usuario (wishlist) ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS favorites (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED NOT NULL,
+    product_id INT UNSIGNED NOT NULL,
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_favorites_user    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
+    CONSTRAINT fk_favorites_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_favorites_user_product (user_id, product_id),
+    KEY idx_favorites_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Direcciones de envío guardadas por usuario ────────────────────────────────────
+CREATE TABLE IF NOT EXISTS user_addresses (
+    id               INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id          INT UNSIGNED NOT NULL,
+    etiqueta         VARCHAR(60)  NULL,
+    nombre           VARCHAR(150) NOT NULL,
+    telefono         VARCHAR(30)  NULL,
+    calle            VARCHAR(255) NOT NULL,
+    colonia          VARCHAR(150) NULL,
+    cp               VARCHAR(10)  NULL,
+    ciudad           VARCHAR(120) NULL,
+    estado           VARCHAR(120) NULL,
+    referencias      VARCHAR(255) NULL,
+    es_predeterminada TINYINT(1)  NOT NULL DEFAULT 0,
+    created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_addresses_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    KEY idx_addresses_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── Pedidos (sin cambios funcionales) ────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS orders (
     id               INT UNSIGNED  AUTO_INCREMENT PRIMARY KEY,

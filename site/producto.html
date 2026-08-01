@@ -97,7 +97,12 @@ button:active,a[href]:active{transform:scale(.97);}
 
       <div class="flex flex-col gap-4 mt-auto">
         <!-- The button requested by Contract -->
-        <button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-widest px-8 py-4 w-full hover:opacity-90 transition text-center min-h-[44px]" data-product-id="">Agregar al carrito</button>
+        <div class="flex gap-3">
+          <button type="button" class="add-to-cart-btn flex-1 bg-lime text-ink font-extrabold uppercase tracking-widest px-8 py-4 hover:opacity-90 transition text-center min-h-[44px]" data-product-id="">Agregar al carrito</button>
+          <button type="button" class="favorite-btn flex items-center justify-center min-h-[44px] min-w-[44px] px-4 border-2 border-gray-200 text-gray-500 hover:border-brand transition" data-product-id="" aria-label="Agregar a favoritos" aria-pressed="false">
+            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 0;">favorite</span>
+          </button>
+        </div>
         <!-- The whatsapp button for backward compatibility visually -->
         <a href="https://wa.me/5218344241599" class="bg-[#0F7A3A] text-white font-extrabold uppercase tracking-widest px-8 py-4 w-full flex justify-center items-center gap-2 hover:bg-[#0B6E34] transition min-h-[44px]">
           <span class="material-symbols-outlined">chat</span>
@@ -139,6 +144,7 @@ button:active,a[href]:active{transform:scale(.97);}
 
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/api-client.js" defer></script>
+<script src="assets/js/favorites.js" defer></script>
 <script src="assets/js/catalog-engine.js" defer></script>
 <script src="assets/js/cart.js" defer></script>
 <script src="assets/enhance.js" defer></script>
