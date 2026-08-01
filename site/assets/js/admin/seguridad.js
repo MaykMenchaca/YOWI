@@ -28,6 +28,26 @@
     boxEnabled.classList.toggle("hidden", !enabled);
   }
 
+  function showRecoveryCodes(codes) {
+    var box = document.getElementById("recovery-box");
+    var list = document.getElementById("recovery-list");
+    if (!box || !list || !codes || !codes.length) return;
+    list.innerHTML = codes.map(function (c) {
+      return '<li class="bg-slate-900 border border-slate-700 px-3 py-1.5 tracking-widest select-all">' +
+        String(c).replace(/[&<>"']/g, "") + "</li>";
+    }).join("");
+    box.classList.remove("hidden");
+    var copyBtn = document.getElementById("btn-copy-codes");
+    if (copyBtn) {
+      copyBtn.onclick = function () {
+        var text = codes.join("\n");
+        if (navigator.clipboard) navigator.clipboard.writeText(text);
+        copyBtn.textContent = "Copiado ✓";
+        setTimeout(function () { copyBtn.textContent = "Copiar todos"; }, 1500);
+      };
+    }
+  }
+
   function loadStatus() {
     DSAdminApi.apiFetch("../api/admin/auth/2fa-status.php")
       .then(function (d) { render(!!d.enabled); })
@@ -69,7 +89,24 @@
       btnActivate.addEventListener("click", function () {
         var code = (document.getElementById("activate-code").value || "").trim();
         DSAdminApi.apiFetch("../api/admin/auth/2fa-activate.php", { method: "POST", body: { code: code } })
-          .then(function () { alertMsg("2FA activado correctamente. Se te pedirá el código en tu próximo inicio de sesión.", true); render(true); })
+          .then(function (d) {
+            alertMsg("2FA activado. Guarda tus códigos de recuperación abajo.", true);
+            render(true);
+            showRecoveryCodes(d && d.recovery_codes);
+          })
+          .catch(function (err) { alertMsg(err.message, false); });
+      });
+    }
+
+    var btnRegen = document.getElementById("btn-regen");
+    if (btnRegen) {
+      btnRegen.addEventListener("click", function () {
+        var code = (document.getElementById("regen-code").value || "").trim();
+        DSAdminApi.apiFetch("../api/admin/auth/2fa-recovery.php", { method: "POST", body: { code: code } })
+          .then(function (d) {
+            alertMsg("Nuevos códigos generados. Los anteriores ya no sirven.", true);
+            showRecoveryCodes(d && d.recovery_codes);
+          })
           .catch(function (err) { alertMsg(err.message, false); });
       });
     }

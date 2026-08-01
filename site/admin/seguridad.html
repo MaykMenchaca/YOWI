@@ -69,14 +69,33 @@
         </div>
       </div>
 
-      <!-- Estado: ACTIVADO -> desactivar -->
-      <div id="twofa-enabled" class="hidden mt-5 space-y-3">
-        <p class="text-slate-300 text-sm">El 2FA está activo en tu cuenta. Para desactivarlo, ingresa un código actual de tu app:</p>
-        <div class="flex gap-3 items-center">
-          <input id="disable-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
-            class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-          <button id="btn-disable" class="border border-red-500 text-red-400 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-red-500 hover:text-white transition-colors min-h-[44px]">Desactivar 2FA</button>
+      <!-- Estado: ACTIVADO -> regenerar códigos / desactivar -->
+      <div id="twofa-enabled" class="hidden mt-5 space-y-5">
+        <div>
+          <p class="text-slate-300 text-sm mb-2">El 2FA está activo. <span id="recovery-remaining" class="text-slate-400"></span></p>
+          <p class="text-slate-400 text-xs mb-2">Si pierdes tu teléfono, usa un código de recuperación en lugar del código de la app. Puedes regenerarlos (los anteriores dejarán de servir):</p>
+          <div class="flex gap-3 items-center">
+            <input id="regen-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+              class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
+            <button id="btn-regen" class="border border-slate-500 text-slate-200 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-slate-700 transition-colors min-h-[44px]">Regenerar códigos</button>
+          </div>
         </div>
+        <div class="border-t border-slate-700 pt-4">
+          <p class="text-slate-300 text-sm mb-2">Para desactivar el 2FA, ingresa un código actual de tu app:</p>
+          <div class="flex gap-3 items-center">
+            <input id="disable-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+              class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
+            <button id="btn-disable" class="border border-red-500 text-red-400 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-red-500 hover:text-white transition-colors min-h-[44px]">Desactivar 2FA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Códigos de recuperación (se muestran una vez al activar o regenerar) -->
+      <div id="recovery-box" class="hidden mt-5 border-t border-slate-700 pt-5">
+        <h3 class="font-display font-extrabold uppercase text-lime text-sm">Códigos de recuperación</h3>
+        <p class="text-slate-300 text-sm mt-1 mb-3">⚠️ Guárdalos en un lugar seguro. Se muestran <b>una sola vez</b>. Cada código sirve una vez si no tienes tu app a la mano.</p>
+        <ul id="recovery-list" class="grid grid-cols-2 gap-2 font-mono text-sm text-slate-100"></ul>
+        <button id="btn-copy-codes" class="mt-3 text-cobalt-500 text-xs underline">Copiar todos</button>
       </div>
     </section>
   </main>

@@ -7,6 +7,7 @@ require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Recovery.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
@@ -43,14 +44,19 @@ if (!password_verify($pass, $admin['password_hash'])) {
     ds_json_error('Credenciales incorrectas', 401);
 }
 
-// Segundo factor (TOTP): si está activo, exigir un código válido antes de crear la sesión.
+// Segundo factor: si está activo, exigir un código TOTP válido o un código de
+// recuperación de un solo uso antes de crear la sesión.
 if ((int) $admin['totp_enabled'] === 1) {
-    $totp = preg_replace('/\D+/', '', (string) ($body['totp'] ?? ''));
-    if ($totp === '') {
+    $factor = trim((string) ($body['totp'] ?? ''));
+    if ($factor === '') {
         // Contraseña correcta pero falta el 2FA: NO se inicia sesión; el front pide el código.
         ds_json_success(['twofa_required' => true]);
     }
-    if (!ds_totp_verify((string) $admin['totp_secret'], $totp)) {
+    $digits = preg_replace('/\D+/', '', $factor);
+    $totpOk = $digits !== '' && ds_totp_verify((string) $admin['totp_secret'], $digits);
+    // Si no es un TOTP válido, probar como código de recuperación (formato con guion/letras).
+    $recoveryOk = !$totpOk && ds_consume_recovery_code($pdo, (int) $admin['id'], $factor);
+    if (!$totpOk && !$recoveryOk) {
         ds_login_record('admin', $email, $ip, false);
         ds_json_error('Código de verificación inválido', 401);
     }
