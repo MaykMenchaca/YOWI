@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
+require __DIR__ . '/../../lib/Image.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 ds_require_admin();
@@ -60,8 +61,10 @@ if (!file_exists($htaccess)) {
     );
 }
 
-if (!move_uploaded_file($file['tmp_name'], $destDir . $safeName)) {
-    ds_json_error('Error al guardar la imagen en el servidor', 500);
+if (!ds_reencode_image($file['tmp_name'], $destDir . $safeName, $mime)) {
+    if (!move_uploaded_file($file['tmp_name'], $destDir . $safeName)) {
+        ds_json_error('Error al guardar la imagen en el servidor', 500);
+    }
 }
 
 ds_json_success(['url' => 'assets/img/banners/' . $safeName]);
