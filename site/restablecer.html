@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Restablecer contraseña — Distribuidor de Suplementos</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png"/>
+<link rel="stylesheet" href="assets/css/app.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-paper text-ink font-body antialiased flex flex-col min-h-screen">
+<header class="flex items-center justify-between px-4 md:px-12 py-4 bg-ink border-b-2 border-lime sticky top-0 z-50">
+  <a href="index.html" class="flex items-center gap-3 hover:opacity-90 shrink-0"><img src="assets/img/logo-ds-clean.png" alt="Distribuidor de Suplementos" class="h-12 w-auto" /><span class="hidden sm:block font-display font-extrabold text-sm md:text-base uppercase tracking-tight text-white leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></a>
+</header>
+<main class="flex-grow flex items-center justify-center pt-32 pb-12 px-4">
+<div class="w-full max-w-md bg-white border border-gray-200 rounded-lg p-8">
+<h1 class="text-ink mb-2" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2rem;line-height:1;">Nueva contraseña</h1>
+<p class="font-body text-sm text-gray-500 mb-6">Escribe tu nueva contraseña (mínimo 8 caracteres).</p>
+<form id="reset-form" class="space-y-4">
+<div>
+<label class="block font-bold uppercase tracking-widest text-xs text-ink mb-2" for="password">Nueva contraseña</label>
+<input class="block w-full px-4 py-3 border border-gray-200 rounded bg-white text-ink focus:outline-none focus:ring-1 focus:ring-[#378ADD] focus:border-[#378ADD]" id="password" name="password" placeholder="••••••••" required type="password" minlength="8"/>
+</div>
+<div>
+<label class="block font-bold uppercase tracking-widest text-xs text-ink mb-2" for="confirm_password">Confirmar contraseña</label>
+<input class="block w-full px-4 py-3 border border-gray-200 rounded bg-white text-ink focus:outline-none focus:ring-1 focus:ring-[#378ADD] focus:border-[#378ADD]" id="confirm_password" name="confirm_password" placeholder="••••••••" required type="password" minlength="8"/>
+</div>
+<p data-form-ok class="text-sm text-green-600 hidden"></p>
+<button class="w-full py-3 px-4 bg-brand hover:opacity-90 text-white font-display font-extrabold uppercase tracking-wide text-lg rounded-none min-h-[44px] transition" type="submit">Guardar contraseña</button>
+</form>
+<div class="mt-6 pt-4 border-t border-gray-200 text-center">
+<a class="font-bold uppercase tracking-widest text-xs text-brand hover:text-[#0D4A80]" href="login.html">Ir a iniciar sesión</a>
+</div>
+</div>
+</main>
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/api-client.js" defer></script>
+<script src="assets/js/auth.js" defer></script>
+</body></html>

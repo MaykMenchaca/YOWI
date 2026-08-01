@@ -272,9 +272,63 @@
     }).join("");
   }
 
+  function showFormOk(form, message) {
+    var box = form.querySelector("[data-form-ok]");
+    if (box) { box.textContent = message; box.classList.remove("hidden"); }
+  }
+
+  function bindForgotForm() {
+    var form = document.getElementById("forgot-form");
+    if (!form) return;
+    ensureCsrf().catch(function () {});
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = form.querySelector('[name="email"]').value;
+      setBusy(form, true);
+      ensureCsrf()
+        .then(function () {
+          return global.DSApi.apiFetch("api/auth/password-forgot.php", { method: "POST", body: { email: email } });
+        })
+        .then(function (d) {
+          showFormOk(form, (d && d.message) || "Si el correo está registrado, te enviamos instrucciones.");
+          form.querySelector('[type="submit"]').textContent = "Enviado";
+        })
+        .catch(function (err) { showFormError(form, err.message); setBusy(form, false); });
+    });
+  }
+
+  function bindResetForm() {
+    var form = document.getElementById("reset-form");
+    if (!form) return;
+    var token = new URLSearchParams(window.location.search).get("token") || "";
+    ensureCsrf().catch(function () {});
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var password = form.querySelector('[name="password"]').value;
+      var confirmPass = form.querySelector('[name="confirm_password"]').value;
+      if (password.length < 8) { showFormError(form, "La contraseña debe tener al menos 8 caracteres"); return; }
+      if (password !== confirmPass) { showFormError(form, "Las contraseñas no coinciden"); return; }
+      setBusy(form, true);
+      ensureCsrf()
+        .then(function () {
+          return global.DSApi.apiFetch("api/auth/password-reset.php", {
+            method: "POST",
+            body: { token: token, password: password, confirm_password: confirmPass },
+          });
+        })
+        .then(function (d) {
+          showFormOk(form, (d && d.message) || "Tu contraseña se actualizó.");
+          setTimeout(function () { window.location.href = "login.html"; }, 1500);
+        })
+        .catch(function (err) { showFormError(form, err.message); setBusy(form, false); });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     bindLoginForm();
     bindRegistroForm();
     bindCuentaPage();
+    bindForgotForm();
+    bindResetForm();
   });
 })(window);

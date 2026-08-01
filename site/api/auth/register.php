@@ -7,6 +7,7 @@ require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/Csrf.php';
 require __DIR__ . '/../lib/Validate.php';
 require __DIR__ . '/../lib/RateLimit.php';
+require __DIR__ . '/../lib/Mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ds_json_error('Método no permitido', 405);
@@ -50,6 +51,25 @@ $insert = $pdo->prepare(
 $insert->execute([$nombre, $email, $telefono !== '' ? $telefono : null, $hash]);
 
 $userId = (int) $pdo->lastInsertId();
+
+// Si el correo está configurado, enviar verificación (no bloquea: la cuenta ya queda
+// activa y logueada; la verificación es informativa hasta que se decida exigirla).
+if (ds_email_enabled()) {
+    try {
+        [$plain, $hash] = ds_make_token();
+        $pdo->prepare(
+            'INSERT INTO email_verifications (user_id, token_hash, expires_at) VALUES (?, ?, (NOW() + INTERVAL 24 HOUR))'
+        )->execute([$userId, $hash]);
+        $base = ds_app_url() ?: '';
+        $link = $base . '/api/auth/verify-email.php?token=' . $plain;
+        $texto = "¡Bienvenido a Distribuidor de Suplementos!\n\n"
+               . "Confirma tu correo con este enlace (válido 24 horas):\n{$link}\n";
+        ds_send_mail($email, 'Confirma tu correo — Distribuidor de Suplementos', $texto);
+    } catch (Throwable $e) {
+        error_log('register.php verification email: ' . $e->getMessage());
+    }
+}
+
 ds_login_user($userId);
 
 ds_json_success(['id' => $userId, 'nombre' => $nombre, 'email' => $email], 201);
