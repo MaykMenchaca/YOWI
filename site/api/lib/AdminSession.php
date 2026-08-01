@@ -31,6 +31,8 @@ function ds_login_admin(int $adminId): void
 {
     ds_admin_session_start();
     session_regenerate_id(true);
+    // Rotar el CSRF de admin al autenticarse (se renueva al cargar el panel vía me.php).
+    unset($_SESSION['admin_csrf']);
     $_SESSION['admin_id'] = $adminId;
 }
 

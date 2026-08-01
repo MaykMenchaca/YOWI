@@ -31,7 +31,13 @@ $stmt = $pdo->prepare('SELECT id, nombre, email, password_hash FROM admins WHERE
 $stmt->execute([$email]);
 $admin = $stmt->fetch();
 
-if (!$admin || !password_verify($pass, $admin['password_hash'])) {
+// Igualar el tiempo cuando el admin no existe (anti-timing-oracle).
+if (!$admin) {
+    ds_dummy_password_check();
+    ds_login_record('admin', $email, $ip, false);
+    ds_json_error('Credenciales incorrectas', 401);
+}
+if (!password_verify($pass, $admin['password_hash'])) {
     ds_login_record('admin', $email, $ip, false);
     ds_json_error('Credenciales incorrectas', 401);
 }

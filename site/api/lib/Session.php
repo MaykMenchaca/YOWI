@@ -51,6 +51,9 @@ function ds_login_user(int $userId): void
 {
     ds_session_start();
     session_regenerate_id(true);
+    // Rotar el token CSRF al autenticarse: el cliente obtiene uno nuevo al recargar
+    // (me.php). Evita que un token pre-login quede válido tras iniciar sesión.
+    unset($_SESSION['csrf_token']);
     $_SESSION['user_id'] = $userId;
 }
 

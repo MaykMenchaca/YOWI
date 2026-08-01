@@ -1,0 +1,57 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .htaccess de la RAÍZ del repositorio.
+#
+# IMPORTANTE: lo ideal es que el docroot (public_html) apunte a la carpeta `site/`,
+# no a la raíz del repo. Mientras el docroot sea el repo completo, este archivo es
+# la defensa que impide servir por web el historial de git, el esquema de la BD y
+# los scripts internos. Cubre tanto seguridad de perímetro (cabeceras, HTTPS) como
+# el bloqueo de rutas sensibles.
+# ─────────────────────────────────────────────────────────────────────────────
+
+Options -Indexes
+
+# ── 1. Bloquear rutas sensibles si el repo completo quedara expuesto ──────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Carpetas que NUNCA deben servirse por web.
+    RewriteRule ^(\.git|\.github|\.claude|sql|scripts|docs|node_modules|design-system|graphify-out)(/|$) - [F,L]
+
+    # Forzar HTTPS (evita que cookies de sesión viajen en claro).
+    # HTTP_HOST + HTTPS: si no viene por https, redirigir 301.
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ── 2. Bloquear archivos por extensión / dotfiles ─────────────────────────────
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(sql|md|log|sh|bat|ps1|ini|lock|example|dist|yml|yaml|toml|py)$">
+        Require all denied
+    </FilesMatch>
+    # Dotfiles: .git, .env, .htpasswd, .gitignore, etc. (excepto .htaccess/.well-known).
+    <FilesMatch "^\.(?!well-known)">
+        Require all denied
+    </FilesMatch>
+    # Archivos de proyecto que no deben descargarse.
+    <FilesMatch "^(package\.json|package-lock\.json|composer\.(json|lock)|tailwind\.config\.js|CLAUDE\.md|PRODUCT\.md|DESIGN\.md|FUNCIONES\.md)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+# ── 3. Cabeceras de seguridad (aplican aunque el docroot sea la raíz) ──────────
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    # HSTS: activar solo cuando el HTTPS esté estable en todos los subdominios.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    # CSP en modo Report-Only al inicio: NO rompe nada, solo reporta. Permite Google
+    # Fonts, Material Symbols y el CDN de Tailwind (que usa el panel admin). Cuando
+    # se auto-hospede Tailwind y se quiten los inline handlers, migrar a enforce
+    # (cabecera Content-Security-Policy) quitando 'unsafe-inline'.
+    Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>

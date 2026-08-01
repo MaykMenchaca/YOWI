@@ -30,7 +30,14 @@ $stmt = $pdo->prepare('SELECT id, nombre, email, password_hash FROM users WHERE 
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
-if (!$user || !password_verify($password, $user['password_hash'])) {
+// Si el usuario no existe, gastar el mismo tiempo con un hash dummy: así el
+// atacante no distingue "email inexistente" de "contraseña incorrecta" por timing.
+if (!$user) {
+    ds_dummy_password_check();
+    ds_login_record('cliente', $email, $ip, false);
+    ds_json_error('Credenciales inválidas', 401);
+}
+if (!password_verify($password, $user['password_hash'])) {
     ds_login_record('cliente', $email, $ip, false);
     ds_json_error('Credenciales inválidas', 401);
 }
