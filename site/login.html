@@ -71,7 +71,7 @@ button:active,a[href]:active{transform:scale(.97);}
 </div>
 <input class="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded bg-white text-ink font-body-md text-body-md focus:outline-none focus:ring-1 focus:ring-[#378ADD] focus:border-[#378ADD] transition-colors" id="password" name="password" placeholder="••••••••" required="" type="password"/>
 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-<button aria-label="Mostrar contraseña" class="text-outline-variant hover:text-brand transition-colors focus:outline-none" onclick="togglePassword()" type="button">
+<button id="toggle-password-btn" aria-label="Mostrar contraseña" class="text-outline-variant hover:text-brand transition-colors focus:outline-none" type="button">
 <span class="material-symbols-outlined" id="toggleIcon" style="font-variation-settings: 'FILL' 0;">visibility</span>
 </button>
 </div>
@@ -138,20 +138,7 @@ button:active,a[href]:active{transform:scale(.97);}
     </div>
   </div>
 </footer>
-<script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.textContent = 'visibility_off';
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.textContent = 'visibility';
-            }
-        }
-    </script>
+<script src="assets/js/login-toggle.js" defer></script>
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/api-client.js" defer></script>
 <script src="assets/js/auth.js" defer></script>

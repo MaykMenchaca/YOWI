@@ -71,7 +71,7 @@
         '<div class="relative mb-3">' +
           '<a href="' + detailUrl + '" class="block">' +
             '<div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden p-2">' +
-              '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
+              '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
             '</div>' +
           '</a>' +
           '<button type="button" class="favorite-btn absolute top-2 right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 shadow hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
@@ -231,7 +231,7 @@
       if (global.DSFavorites) global.DSFavorites.decorate(container);
       return p;
     }).catch(function () {
-      container.innerHTML = '<p class="text-gray-600">No se pudo cargar el producto. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';
+      container.innerHTML = '<p class="text-gray-600">No se pudo cargar el producto. Revisa tu conexión e <button type="button" class="js-reload text-brand underline">reintenta</button>.</p>';
       return null;
     });
   }
@@ -310,7 +310,7 @@
         }
         if (countEl) countEl.textContent = result.length + " producto" + (result.length === 1 ? "" : "s");
       }).catch(function () {
-        grid.innerHTML = '<p class="p-6 text-center text-gray-600 col-span-full">No se pudo cargar el catálogo. Revisa tu conexión e <button type="button" onclick="location.reload()" class="text-brand underline">reintenta</button>.</p>';
+        grid.innerHTML = '<p class="p-6 text-center text-gray-600 col-span-full">No se pudo cargar el catálogo. Revisa tu conexión e <button type="button" class="js-reload text-brand underline">reintenta</button>.</p>';
         if (countEl) countEl.textContent = "";
       });
     }

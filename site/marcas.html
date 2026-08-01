@@ -167,17 +167,7 @@ button:active,a[href]:active{transform:scale(.97);}
 <a class="fixed bottom-6 right-6 w-14 h-14 bg-[#0F7A3A] text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50" href="#">
 <span class="material-symbols-outlined icon-fill">chat</span>
 </a>
-<script>
-        // Simple script for letter filter interaction
-        document.querySelectorAll('.letter-filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(!this.classList.contains('cursor-not-allowed')) {
-                    document.querySelectorAll('.letter-filter-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                }
-            });
-        });
-    </script>
+<script src="assets/js/marcas-letters.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>
 <script src="assets/js/mobile-nav.js" defer></script>

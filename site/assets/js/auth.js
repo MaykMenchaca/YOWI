@@ -239,7 +239,7 @@
             '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;color:#E11D48;">favorite</span>' +
           '</button>' +
           '<a href="' + detailUrl + '" class="block h-28 bg-gray-100 mb-2 flex items-center justify-center overflow-hidden p-2">' +
-            '<img class="max-h-full object-contain" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" onerror="this.onerror=null;this.src=\'assets/img/producto-placeholder.svg\'"/>' +
+            '<img class="max-h-full object-contain" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
           '</a>' +
           '<div class="text-[10px] uppercase font-extrabold text-gray-500 tracking-wide">' + esc(p.marca) + '</div>' +
           '<h3 class="font-bold text-sm leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +

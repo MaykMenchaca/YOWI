@@ -1,0 +1,9 @@
+# CSP propia del panel de administración. Sobrescribe la del storefront para este
+# subdirectorio. El panel usa el CDN de Tailwind y algunos <script> inline (config de
+# Tailwind y lógica por página), por eso aquí se permiten 'unsafe-inline' y ese CDN.
+# El riesgo es acotado: el panel está tras login + 2FA (obligatorio) y, si se activa,
+# el Basic Auth de hPanel. Para endurecerlo a script-src 'self' habría que auto-hospedar
+# Tailwind y externalizar los scripts inline de cada página admin.
+<IfModule mod_headers.c>
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
