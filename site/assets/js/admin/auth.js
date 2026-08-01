@@ -15,6 +15,12 @@
             window.location.replace("index.html");
             return;
           }
+          // 2FA obligatorio: si no lo ha activado, forzar el enrolamiento antes de operar.
+          var IS_SECURITY_PAGE = window.location.pathname.indexOf("seguridad.html") !== -1;
+          if (data.needs_2fa && !IS_SECURITY_PAGE) {
+            window.location.replace("seguridad.html?enrolar=1");
+            return;
+          }
           var nameEl = document.getElementById("admin-name");
           if (nameEl) nameEl.textContent = data.admin.nombre;
         } else {

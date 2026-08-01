@@ -16,7 +16,7 @@ if ($adminId === null) {
 }
 
 $pdo  = ds_get_pdo();
-$stmt = $pdo->prepare('SELECT id, nombre, email FROM admins WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, nombre, email, totp_enabled FROM admins WHERE id = ?');
 $stmt->execute([$adminId]);
 $admin = $stmt->fetch();
 
@@ -27,5 +27,7 @@ if (!$admin) {
 
 ds_json_success([
     'admin'      => ['id' => (int) $admin['id'], 'nombre' => $admin['nombre'], 'email' => $admin['email']],
+    // 2FA obligatorio: si aún no lo activó, el front lo lleva a enrolarse antes de operar.
+    'needs_2fa'  => (int) $admin['totp_enabled'] !== 1,
     'csrf_token' => ds_admin_csrf_token(),
 ]);

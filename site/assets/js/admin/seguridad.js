@@ -62,6 +62,10 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     if (!badge) return; // no estamos en la página de seguridad
+    // Si llegó forzado por el 2FA obligatorio, mostrar aviso.
+    if (new URLSearchParams(window.location.search).get("enrolar") === "1") {
+      alertMsg("Por seguridad, debes activar la verificación en dos pasos (2FA) antes de usar el panel.", false);
+    }
     ensureCsrf().then(loadStatus).catch(loadStatus);
 
     var btnSetup = document.getElementById("btn-setup");

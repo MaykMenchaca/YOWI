@@ -85,4 +85,31 @@ function ds_admin_csrf_check(?string $submitted): void
     if ($submitted === null || $expected === '' || !hash_equals($expected, $submitted)) {
         ds_json_error('Token de seguridad inválido', 403);
     }
+    // Auditoría automática: toda acción de escritura admin pasa por aquí. Se registra
+    // la ruta como "acción". No audita el login (aún no hay admin_id en sesión).
+    $script = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+    $accion = trim(preg_replace('#^.*/admin/#', '', $script), '/');
+    $accion = $accion !== '' ? $accion : basename($script);
+    ds_admin_log($accion, null);
+}
+
+/**
+ * Registra una acción del admin en admin_audit_log. No hace nada si no hay admin en
+ * sesión. Es defensivo (no rompe la petición si la tabla no existe todavía).
+ */
+function ds_admin_log(string $accion, ?string $detalle = null): void
+{
+    $adminId = $_SESSION['admin_id'] ?? null;
+    if (empty($adminId) || !function_exists('ds_get_pdo')) {
+        return;
+    }
+    try {
+        $ip = substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
+        $stmt = ds_get_pdo()->prepare(
+            'INSERT INTO admin_audit_log (admin_id, accion, detalle, ip) VALUES (?, ?, ?, ?)'
+        );
+        $stmt->execute([(int) $adminId, mb_substr($accion, 0, 80), $detalle !== null ? mb_substr($detalle, 0, 255) : null, $ip]);
+    } catch (Throwable $e) {
+        error_log('ds_admin_log: ' . $e->getMessage());
+    }
 }
