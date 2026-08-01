@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seguridad — DS Admin</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: {
+        "fontFamily": { "display": ['"Barlow Condensed"', 'sans-serif'], "body": ['"Barlow"', 'sans-serif'] },
+        colors: { "ink": "#0B0F1A", "brand": "#1F5FD9", "lime": "#8FD11F", "paper": "#F7F8FA", cobalt: { 600:"#185FA5",500:"#378ADD",700:"#0D4A80" } } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Barlow', sans-serif; }</style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
+    <div class="px-5 py-5 border-b border-slate-700">
+      <div class="flex items-center gap-2"><img src="../assets/img/logo-ds-clean.png" alt="DS" class="h-9 w-auto"/><span class="font-display font-extrabold text-white text-sm uppercase tracking-tight leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
+      <p class="text-slate-500 text-[11px] mt-0.5 uppercase tracking-widest">Panel de administración</p>
+    </div>
+    <nav class="flex-1 py-4">
+      <a href="index.html"       class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard</a>
+      <a href="productos.html"   class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> Productos</a>
+      <a href="categorias.html"  class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg> Categorías</a>
+      <a href="marcas.html"      class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1.2" fill="currentColor"/></svg> Marcas</a>
+      <a href="pedidos.html"     class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Pedidos</a>
+      <a href="promociones.html" class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12l10-9 10 9"/><rect x="4" y="12" width="16" height="9" rx="1"/><path d="M9 21v-6h6v6"/></svg> Promociones</a>
+      <a href="nosotros.html"    class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Nosotros</a>
+      <a href="seguridad.html"   class="flex items-center gap-3 px-5 py-2.5 bg-brand text-white text-sm font-semibold"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg> Seguridad</a>
+    </nav>
+    <div class="px-5 py-4 border-t border-slate-700">
+      <p class="text-slate-400 text-xs mb-2" id="admin-name"></p>
+      <button id="logout-btn" class="text-slate-400 hover:text-red-400 text-xs transition-colors">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 p-8 overflow-auto">
+    <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3 mb-6">Seguridad</h1>
+
+    <div id="alert-banner" class="hidden mb-4"></div>
+
+    <!-- Verificación en dos pasos (2FA) -->
+    <section class="bg-slate-800 border border-slate-700 p-6 max-w-2xl">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="font-display font-extrabold uppercase text-lime text-sm">Verificación en dos pasos (2FA)</h2>
+          <p class="text-slate-400 text-sm mt-1">Añade una capa extra: además de tu contraseña, pediremos un código de 6 dígitos de tu app autenticadora (Google Authenticator, Authy, etc.).</p>
+        </div>
+        <span id="twofa-badge" class="shrink-0 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded bg-slate-700 text-slate-300">—</span>
+      </div>
+
+      <!-- Estado: DESACTIVADO -> activar -->
+      <div id="twofa-disabled" class="hidden mt-5">
+        <button id="btn-setup" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Activar 2FA</button>
+
+        <div id="setup-box" class="hidden mt-5 border-t border-slate-700 pt-5 space-y-4">
+          <p class="text-slate-300 text-sm">1) En tu app autenticadora, agrega una cuenta e ingresa esta clave manualmente:</p>
+          <code id="secret-code" class="block bg-slate-900 border border-slate-600 px-4 py-3 text-lime tracking-[0.2em] break-all select-all"></code>
+          <p class="text-slate-500 text-xs">También puedes usar el enlace de configuración: <a id="otpauth-link" href="#" class="text-cobalt-500 underline break-all"></a></p>
+          <p class="text-slate-300 text-sm">2) Escribe el código de 6 dígitos que muestra la app para confirmar:</p>
+          <div class="flex gap-3 items-center">
+            <input id="activate-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+              class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
+            <button id="btn-activate" class="bg-brand text-white font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Confirmar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado: ACTIVADO -> desactivar -->
+      <div id="twofa-enabled" class="hidden mt-5 space-y-3">
+        <p class="text-slate-300 text-sm">El 2FA está activo en tu cuenta. Para desactivarlo, ingresa un código actual de tu app:</p>
+        <div class="flex gap-3 items-center">
+          <input id="disable-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
+            class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
+          <button id="btn-disable" class="border border-red-500 text-red-400 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-red-500 hover:text-white transition-colors min-h-[44px]">Desactivar 2FA</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/admin/api-client.js"></script>
+  <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/seguridad.js"></script>
+</body>
+</html>

@@ -35,23 +35,44 @@
     var form = document.getElementById("login-form");
     var errEl = document.getElementById("login-error");
     if (!form) return;
+    var totpField = document.getElementById("totp-field");
+    var totpInput = document.getElementById("totp");
+
+    function showError(msg) {
+      errEl.textContent = msg;
+      errEl.classList.remove("hidden");
+    }
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       errEl.textContent = "";
+      errEl.classList.add("hidden");
 
       var email = form.querySelector('[name="email"]').value.trim();
       var pass  = form.querySelector('[name="password"]').value;
+      var totp  = totpInput ? totpInput.value.trim() : "";
+
+      var body = { email: email, password: pass, csrf_token: csrf };
+      if (totp) body.totp = totp;
 
       DSAdminApi.apiFetch("../api/admin/auth/login.php", {
         method: "POST",
-        body: { email: email, password: pass, csrf_token: csrf },
+        body: body,
       })
-        .then(function () {
+        .then(function (data) {
+          // Contraseña correcta pero falta el segundo factor: mostrar el campo de código.
+          if (data && data.twofa_required) {
+            if (totpField) totpField.classList.remove("hidden");
+            if (totpInput) totpInput.focus();
+            showError("Ingresa el código de tu app autenticadora.");
+            return;
+          }
           window.location.replace("index.html");
         })
         .catch(function (err) {
-          errEl.textContent = err.message || "Credenciales incorrectas";
+          // Si ya estábamos en el paso 2FA, mantener el campo visible.
+          if (totpField && !totpField.classList.contains("hidden") && totpInput) totpInput.focus();
+          showError(err.message || "Credenciales incorrectas");
         });
     });
   }

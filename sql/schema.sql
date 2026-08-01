@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS admins (
     nombre        VARCHAR(150)   NOT NULL,
     email         VARCHAR(190)   NOT NULL,
     password_hash VARCHAR(255)   NOT NULL,
+    totp_secret   VARCHAR(64)    NULL,
+    totp_enabled  TINYINT(1)     NOT NULL DEFAULT 0,
     created_at    DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_admins_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -88,13 +90,39 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- ── Usuarios (sin cambios) ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
-    id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nombre        VARCHAR(150) NOT NULL,
-    email         VARCHAR(190) NOT NULL,
-    telefono      VARCHAR(30)  NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre         VARCHAR(150) NOT NULL,
+    email          VARCHAR(190) NOT NULL,
+    telefono       VARCHAR(30)  NULL,
+    password_hash  VARCHAR(255) NOT NULL,
+    email_verified TINYINT(1)   NOT NULL DEFAULT 0,
+    created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_users_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Tokens de verificación de email y recuperación de contraseña ──────────────
+CREATE TABLE IF NOT EXISTS email_verifications (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED NOT NULL,
+    token_hash CHAR(64)     NOT NULL,
+    expires_at DATETIME     NOT NULL,
+    used_at    DATETIME     NULL,
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_emailver_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_emailver_token (token_hash),
+    KEY idx_emailver_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS password_resets (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED NOT NULL,
+    token_hash CHAR(64)     NOT NULL,
+    expires_at DATETIME     NOT NULL,
+    used_at    DATETIME     NULL,
+    created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pwreset_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_pwreset_token (token_hash),
+    KEY idx_pwreset_user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Favoritos por usuario (wishlist) ──────────────────────────────────────────────

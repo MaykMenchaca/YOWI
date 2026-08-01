@@ -6,6 +6,7 @@ require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
 require __DIR__ . '/../../lib/RateLimit.php';
+require __DIR__ . '/../../lib/Totp.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
@@ -27,7 +28,7 @@ $ip = ds_client_ip();
 ds_login_throttle_check('admin', $email, $ip);
 
 $pdo  = ds_get_pdo();
-$stmt = $pdo->prepare('SELECT id, nombre, email, password_hash FROM admins WHERE email = ?');
+$stmt = $pdo->prepare('SELECT id, nombre, email, password_hash, totp_secret, totp_enabled FROM admins WHERE email = ?');
 $stmt->execute([$email]);
 $admin = $stmt->fetch();
 
@@ -40,6 +41,19 @@ if (!$admin) {
 if (!password_verify($pass, $admin['password_hash'])) {
     ds_login_record('admin', $email, $ip, false);
     ds_json_error('Credenciales incorrectas', 401);
+}
+
+// Segundo factor (TOTP): si está activo, exigir un código válido antes de crear la sesión.
+if ((int) $admin['totp_enabled'] === 1) {
+    $totp = preg_replace('/\D+/', '', (string) ($body['totp'] ?? ''));
+    if ($totp === '') {
+        // Contraseña correcta pero falta el 2FA: NO se inicia sesión; el front pide el código.
+        ds_json_success(['twofa_required' => true]);
+    }
+    if (!ds_totp_verify((string) $admin['totp_secret'], $totp)) {
+        ds_login_record('admin', $email, $ip, false);
+        ds_json_error('Código de verificación inválido', 401);
+    }
 }
 
 ds_login_record('admin', $email, $ip, true);
