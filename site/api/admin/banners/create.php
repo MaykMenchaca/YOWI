@@ -13,7 +13,7 @@ $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);
 
 $titulo = ds_clean_string((string)($body['titulo'] ?? ''), 150) ?: null;
-$imagen = ds_clean_string((string)($body['imagen'] ?? ''), 255);
+$imagen = ds_clean_url((string)($body['imagen'] ?? ''), 255) ?? '';
 $enlace = ds_clean_url((string)($body['enlace'] ?? ''), 500);
 $orden  = ds_to_positive_int($body['orden'] ?? 0);
 $activo = isset($body['activo']) ? (int)(bool)$body['activo'] : 1;

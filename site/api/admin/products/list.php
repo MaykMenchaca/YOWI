@@ -5,6 +5,8 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') ds_json_error('Método no permitido', 405);
+
 ds_require_admin();
 
 $page  = max(1, (int)($_GET['page']  ?? 1));

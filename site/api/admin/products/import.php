@@ -195,7 +195,8 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
     if ($precioOrig !== null && $precioOrig <= $precio) $precioOrig = null; // solo si es un "tachado" válido
     $stockNum    = $toNumber($get($row, $cols, 'stock'));
     $stock       = $stockNum !== null && $stockNum > 0 ? (int) $stockNum : 0;
-    $imagen      = mb_substr($get($row, $cols, 'imagen'), 0, 255);
+    // Solo rutas relativas o http/https; esquema peligroso o vacío -> '' (usa placeholder).
+    $imagen      = ds_clean_url($get($row, $cols, 'imagen'), 255) ?? '';
     $badge       = mb_substr($get($row, $cols, 'badge'), 0, 30) ?: null;
     $destacado   = $toBool($get($row, $cols, 'destacado'), 0);
     $activo      = $toBool($get($row, $cols, 'activo'), 1);

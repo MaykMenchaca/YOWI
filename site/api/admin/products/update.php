@@ -24,7 +24,8 @@ $precio_orig = isset($body['precio_original']) && $body['precio_original'] !== '
     ? ds_to_positive_float($body['precio_original'])
     : null;
 $stock       = ds_to_positive_int($body['stock'] ?? 0);
-$imagen      = ds_clean_string((string)($body['imagen'] ?? ''), 255);
+// Solo rutas relativas o http/https; un esquema peligroso o vacío deja '' (conserva la actual).
+$imagen      = ds_clean_url((string)($body['imagen'] ?? ''), 255) ?? '';
 $badge       = ds_clean_string((string)($body['badge'] ?? ''), 30) ?: null;
 $destacado   = !empty($body['destacado']) ? 1 : 0;
 $activo      = isset($body['activo']) ? (int)(bool)$body['activo'] : 1;

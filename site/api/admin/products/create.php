@@ -23,7 +23,8 @@ $precio_orig = isset($body['precio_original']) && $body['precio_original'] !== '
     ? ds_to_positive_float($body['precio_original'])
     : null;
 $stock       = ds_to_positive_int($body['stock'] ?? 0);
-$imagen      = ds_clean_string((string)($body['imagen'] ?? 'assets/img/producto-placeholder.svg'), 255);
+// Solo rutas relativas o http/https; bloquea javascript:/data:. Fallback al placeholder.
+$imagen      = ds_clean_url((string)($body['imagen'] ?? ''), 255) ?? 'assets/img/producto-placeholder.svg';
 $badge       = ds_clean_string((string)($body['badge'] ?? ''), 30) ?: null;
 $destacado   = !empty($body['destacado']) ? 1 : 0;
 $activo      = isset($body['activo']) ? (int)(bool)$body['activo'] : 1;

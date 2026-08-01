@@ -4,6 +4,10 @@
 
 declare(strict_types=1);
 
+// Endurecimiento de errores en producción (display_errors off + logging). Es lo primero
+// que corre en cada endpoint porque database.php se incluye al inicio de todos ellos.
+require_once __DIR__ . '/../lib/Bootstrap.php';
+
 function ds_get_pdo(): PDO
 {
     static $pdo = null;
