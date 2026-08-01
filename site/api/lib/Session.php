@@ -3,9 +3,14 @@
 
 declare(strict_types=1);
 
+// Caducidad de sesión. Idle = tras inactividad; absoluta = desde el login, pase lo que pase.
+if (!defined('DS_IDLE_TIMEOUT'))     define('DS_IDLE_TIMEOUT', 3600);       // 60 min
+if (!defined('DS_ABSOLUTE_TIMEOUT')) define('DS_ABSOLUTE_TIMEOUT', 43200);  // 12 h
+
 function ds_session_start(): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
+        ds_session_enforce_timeout();
         return;
     }
     ini_set('session.cookie_httponly', '1');
@@ -30,6 +35,25 @@ function ds_session_start(): void
         ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
     }
     session_start();
+    ds_session_enforce_timeout();
+}
+
+// Cierra la sesión de CLIENTE si superó el timeout de inactividad o el absoluto.
+// Solo toca las claves del cliente (no las de admin, que coexisten).
+function ds_session_enforce_timeout(): void
+{
+    if (empty($_SESSION['user_id'])) {
+        return;
+    }
+    $now   = time();
+    $last  = (int) ($_SESSION['user_last_activity'] ?? $now);
+    $login = (int) ($_SESSION['user_login_time'] ?? $now);
+    if (($now - $last) > DS_IDLE_TIMEOUT || ($now - $login) > DS_ABSOLUTE_TIMEOUT) {
+        unset($_SESSION['user_id'], $_SESSION['csrf_token'],
+              $_SESSION['user_last_activity'], $_SESSION['user_login_time']);
+        return;
+    }
+    $_SESSION['user_last_activity'] = $now;
 }
 
 function ds_current_user_id(): ?int
@@ -55,6 +79,8 @@ function ds_login_user(int $userId): void
     // (me.php). Evita que un token pre-login quede válido tras iniciar sesión.
     unset($_SESSION['csrf_token']);
     $_SESSION['user_id'] = $userId;
+    $_SESSION['user_login_time'] = time();
+    $_SESSION['user_last_activity'] = time();
 }
 
 function ds_logout_user(): void

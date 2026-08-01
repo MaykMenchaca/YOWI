@@ -4,14 +4,38 @@
 
 declare(strict_types=1);
 
+// Caducidad de sesión (mismas constantes que el cliente; guardadas por si Session.php
+// no se cargó en este endpoint admin).
+if (!defined('DS_IDLE_TIMEOUT'))     define('DS_IDLE_TIMEOUT', 3600);       // 60 min
+if (!defined('DS_ABSOLUTE_TIMEOUT')) define('DS_ABSOLUTE_TIMEOUT', 43200);  // 12 h
+
 function ds_admin_session_start(): void
 {
-    if (session_status() === PHP_SESSION_ACTIVE) return;
+    if (session_status() === PHP_SESSION_ACTIVE) { ds_admin_enforce_timeout(); return; }
     ini_set('session.cookie_httponly', '1');
     ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', '1');
     ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
     session_start();
+    ds_admin_enforce_timeout();
+}
+
+// Cierra la sesión de ADMIN si superó el timeout de inactividad o el absoluto.
+// Solo toca las claves de admin (no las de cliente).
+function ds_admin_enforce_timeout(): void
+{
+    if (empty($_SESSION['admin_id'])) {
+        return;
+    }
+    $now   = time();
+    $last  = (int) ($_SESSION['admin_last_activity'] ?? $now);
+    $login = (int) ($_SESSION['admin_login_time'] ?? $now);
+    if (($now - $last) > DS_IDLE_TIMEOUT || ($now - $login) > DS_ABSOLUTE_TIMEOUT) {
+        unset($_SESSION['admin_id'], $_SESSION['admin_csrf'],
+              $_SESSION['admin_last_activity'], $_SESSION['admin_login_time']);
+        return;
+    }
+    $_SESSION['admin_last_activity'] = $now;
 }
 
 function ds_current_admin_id(): ?int
@@ -34,6 +58,8 @@ function ds_login_admin(int $adminId): void
     // Rotar el CSRF de admin al autenticarse (se renueva al cargar el panel vía me.php).
     unset($_SESSION['admin_csrf']);
     $_SESSION['admin_id'] = $adminId;
+    $_SESSION['admin_login_time'] = time();
+    $_SESSION['admin_last_activity'] = time();
 }
 
 function ds_logout_admin(): void
