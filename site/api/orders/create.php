@@ -6,6 +6,7 @@ require __DIR__ . '/../lib/Response.php';
 require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/Csrf.php';
 require __DIR__ . '/../lib/Validate.php';
+require __DIR__ . '/../lib/RateLimit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ds_json_error('Método no permitido', 405);
@@ -13,6 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $body = ds_read_json_body();
 ds_csrf_check($body['csrf_token'] ?? null);
+
+// Anti-abuso: máx. 20 pedidos por IP cada 60 min (frena spam de pedidos).
+ds_rate_limit_ip('order', ds_client_ip(), 20, 60);
 
 $nombreCliente = ds_clean_string((string) ($body['nombre_cliente'] ?? ''), 150);
 $ciudad = ds_clean_string((string) ($body['ciudad'] ?? ''), 120);
