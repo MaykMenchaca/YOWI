@@ -221,7 +221,10 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 - [x] **F1.5** — panel: SKU en modal (precarga siempre), tabla, búsqueda, "Exportar CSV" (commit `f04aabe`)
 - [x] **F5.2** — restaurar respaldo con vista previa obligatoria, pedidos nunca se duplican (commit `44975ef`)
 - [x] **F1 completa** (F1.1-F1.5): SKU como identidad estable, de punta a punta
-- [ ] Resto de subfases (F2-F6) pendientes
+- [~] **Tanda 4 en curso**: F2.1+F2.2+F2.3 (motor de diff del importador, incluye fix de un bug
+      real: el UPDATE no aplicaba cambios de nombre/marca al reimportar) ∥ F5.3 (botones
+      Respaldar/Restaurar en las 7 páginas admin) — 2 agentes en paralelo
+- [ ] Resto de subfases (F2.4, F3-F6) pendientes
 
 ### Nota de verificación (Tanda 3)
 Ambos agentes (F1.5, F5.2) sin alertas de seguridad; F5.2 incluso rechazó correctamente
