@@ -218,8 +218,8 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 - [x] **F1.2+F1.4** — SKU en import/export CSV (commit `72ea8c8`)
 - [x] **F1.3** — SKU en alta/edición/listado admin y API pública (commit `7cf50cd`)
 - [x] **F5.1** — endpoint de respaldo, exportar por apartado (commit `08e6c79`)
-- [ ] **F1.5** — panel: campo SKU en el modal (⚠ precargar siempre el valor actual, `update.php`
-      sobrescribe sin COALESCE), columna en la tabla, búsqueda, botón "Exportar CSV"
+- [~] **Tanda 3 en curso**: F1.5 (panel: SKU en modal/tabla/búsqueda/exportar) ∥ F5.2 (restaurar
+      respaldo con vista previa) — 2 agentes en paralelo, sin archivos compartidos
 - [ ] Resto de subfases (F2-F6) pendientes
 
 ### Nota de seguridad (Tanda 2)
