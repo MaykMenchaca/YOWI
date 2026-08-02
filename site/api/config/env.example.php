@@ -20,6 +20,13 @@ return [
     'MAIL_FROM_NAME' => 'Distribuidor de Suplementos',
     'APP_URL'        => 'https://tudominio.com', // sin barra final; base para los enlaces del correo
 
+    // ── IP real del cliente tras proxy/CDN (opt-in) ───────────────────────────
+    // Vacío = usar solo REMOTE_ADDR (seguro por defecto). Si el sitio está detrás de
+    // un proxy de confianza (p. ej. Cloudflare), pon aquí la cabecera que inyecta la
+    // IP real del cliente ('CF-Connecting-IP', o 'X-Forwarded-For'). Solo actívala si
+    // el proxy SIEMPRE sobreescribe esa cabecera; si no, es falsificable.
+    'TRUSTED_IP_HEADER' => '', // p.ej. 'CF-Connecting-IP' si el sitio está tras Cloudflare
+
     // ── Debug (solo local) ────────────────────────────────────────────────────
     // 'DS_DEBUG' => '1',   // muestra errores en pantalla SOLO en desarrollo
 ];

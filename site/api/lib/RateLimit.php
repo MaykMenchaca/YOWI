@@ -17,7 +17,27 @@ const DS_LOGIN_ACCOUNT_MAX_FAILS = 15;
 
 function ds_client_ip(): string
 {
-    // Solo REMOTE_ADDR: X-Forwarded-For es falsificable y no se debe usar para límites.
+    // Por defecto, solo REMOTE_ADDR: X-Forwarded-For es falsificable y no se debe usar
+    // para límites. OPT-IN: si el operador configura TRUSTED_IP_HEADER en env.php (p. ej.
+    // 'CF-Connecting-IP' tras Cloudflare), se toma esa cabecera como IP real del cliente.
+    static $trusted = null;
+    if ($trusted === null) {
+        $envPath = __DIR__ . '/../config/env.php';
+        $env = file_exists($envPath) ? require $envPath : [];
+        $trusted = trim((string) ($env['TRUSTED_IP_HEADER'] ?? '')); // '' = desactivado
+    }
+    if ($trusted !== '') {
+        // 'CF-Connecting-IP' -> $_SERVER['HTTP_CF_CONNECTING_IP']
+        $key = 'HTTP_' . strtoupper(str_replace('-', '_', $trusted));
+        $val = trim((string) ($_SERVER[$key] ?? ''));
+        // X-Forwarded-For puede traer lista "cliente, proxy1, ..."; tomar el primero.
+        if ($val !== '' && strpos($val, ',') !== false) {
+            $val = trim(explode(',', $val)[0]);
+        }
+        if ($val !== '' && filter_var($val, FILTER_VALIDATE_IP)) {
+            return substr($val, 0, 45);
+        }
+    }
     return substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
 }
 
