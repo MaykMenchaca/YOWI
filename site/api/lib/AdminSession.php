@@ -13,9 +13,18 @@ function ds_admin_session_start(): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) { ds_admin_enforce_timeout(); return; }
     ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.use_strict_mode', '1');
-    ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+    // Simétrico con Session.php (cliente): en modo cross-site (frontend en otro dominio)
+    // la cookie admin necesita SameSite=None + Secure para viajar; si no, Lax.
+    $crossSite = getenv('DS_CROSS_SITE') === '1'
+        || (isset($_SERVER['DS_CROSS_SITE']) && $_SERVER['DS_CROSS_SITE'] === '1');
+    if ($crossSite) {
+        ini_set('session.cookie_samesite', 'None');
+        ini_set('session.cookie_secure', '1');
+    } else {
+        ini_set('session.cookie_samesite', 'Lax');
+        ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+    }
     session_start();
     ds_admin_enforce_timeout();
 }
@@ -78,6 +87,29 @@ function ds_admin_csrf_token(): string
     return $_SESSION['admin_csrf'];
 }
 
+// Endpoints exentos del enforcement de 2FA (enrolamiento / auth). Se comparan por
+// basename de SCRIPT_NAME. login/logout no tienen admin_id útil en este punto; setup/
+// activate/recovery deben poder usarse mientras totp_enabled sigue en 0.
+const DS_2FA_EXEMPT = [
+    'login.php', 'logout.php',
+    '2fa-setup.php', '2fa-activate.php', '2fa-recovery.php',
+];
+
+// Enforza en el servidor que el admin tenga 2FA activo antes de operar el panel.
+// El "2FA obligatorio" vivía solo en el front (needs_2fa), esquivable llamando la API.
+function ds_admin_require_2fa_enrolled(): void
+{
+    $base = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (in_array($base, DS_2FA_EXEMPT, true)) return;
+    $adminId = $_SESSION['admin_id'] ?? null;
+    if (empty($adminId) || !function_exists('ds_get_pdo')) return; // login flow lo maneja aparte
+    $stmt = ds_get_pdo()->prepare('SELECT totp_enabled FROM admins WHERE id = ?');
+    $stmt->execute([(int) $adminId]);
+    if ((int) $stmt->fetchColumn() !== 1) {
+        ds_json_error('Debes activar el 2FA antes de operar el panel.', 403);
+    }
+}
+
 function ds_admin_csrf_check(?string $submitted): void
 {
     ds_admin_session_start();
@@ -91,6 +123,9 @@ function ds_admin_csrf_check(?string $submitted): void
     $accion = trim(preg_replace('#^.*/admin/#', '', $script), '/');
     $accion = $accion !== '' ? $accion : basename($script);
     ds_admin_log($accion, null);
+    // 2FA obligatorio en servidor: bloquea escrituras si el admin no ha activado 2FA
+    // (salvo los endpoints de enrolamiento/auth en DS_2FA_EXEMPT).
+    ds_admin_require_2fa_enrolled();
 }
 
 /**
