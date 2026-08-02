@@ -56,9 +56,29 @@ function ds_session_enforce_timeout(): void
     $_SESSION['user_last_activity'] = $now;
 }
 
+// Invalida la sesión de cliente si la contraseña cambió (p. ej. tras un reset)
+// DESPUÉS del momento del login actual. Un lookup por PK por request autenticado.
+function ds_session_check_password_change(): void
+{
+    if (empty($_SESSION['user_id']) || !function_exists('ds_get_pdo')) return;
+    $login = (int) ($_SESSION['user_login_time'] ?? 0);
+    try {
+        $stmt = ds_get_pdo()->prepare('SELECT password_changed_at FROM users WHERE id = ?');
+        $stmt->execute([(int) $_SESSION['user_id']]);
+        $changed = $stmt->fetchColumn();
+        if ($changed && strtotime((string) $changed) > $login) {
+            unset($_SESSION['user_id'], $_SESSION['csrf_token'],
+                  $_SESSION['user_last_activity'], $_SESSION['user_login_time']);
+        }
+    } catch (Throwable $e) {
+        error_log('pw-change check: ' . $e->getMessage());
+    }
+}
+
 function ds_current_user_id(): ?int
 {
     ds_session_start();
+    ds_session_check_password_change();
     return isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
 }
 

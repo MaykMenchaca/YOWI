@@ -48,7 +48,8 @@ $newHash   = password_hash($password, PASSWORD_DEFAULT);
 
 $pdo->beginTransaction();
 try {
-    $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')->execute([$newHash, $userId]);
+    // password_changed_at = NOW() permite invalidar sesiones abiertas antes del reset.
+    $pdo->prepare('UPDATE users SET password_hash = ?, password_changed_at = NOW() WHERE id = ?')->execute([$newHash, $userId]);
     // Marcar este token como usado e invalidar cualquier otro del usuario.
     $pdo->prepare('UPDATE password_resets SET used_at = NOW() WHERE id = ?')->execute([(int) $row['id']]);
     $pdo->prepare('DELETE FROM password_resets WHERE user_id = ? AND used_at IS NULL')->execute([$userId]);

@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS users (
     email          VARCHAR(190) NOT NULL,
     telefono       VARCHAR(30)  NULL,
     password_hash  VARCHAR(255) NOT NULL,
+    password_changed_at DATETIME NULL,
     email_verified TINYINT(1)   NOT NULL DEFAULT 0,
     created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_users_email (email)
