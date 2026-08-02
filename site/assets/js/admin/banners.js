@@ -173,6 +173,9 @@
 
     document.getElementById("new-banner-btn").addEventListener("click", function () { openModal(null); });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
+    // Botón "Cancelar" del pie del modal (antes era un <script> inline en promociones.html).
+    var cancelBtn = document.getElementById("modal-cancel-btn");
+    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
     form.addEventListener("submit", submitForm);
 
     document.addEventListener("keydown", function (e) {

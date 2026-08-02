@@ -1,0 +1,8 @@
+/* Entrada del build de Tailwind del PANEL ADMIN. Se compila a admin.css (versionado).
+   Comando: npm run build:css:admin
+   Reemplaza el CDN de Tailwind (cdn.tailwindcss.com) para permitir CSP script-src 'self'. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { font-family: 'Barlow', sans-serif; }

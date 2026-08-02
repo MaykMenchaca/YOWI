@@ -261,6 +261,9 @@
 
     document.getElementById("new-brand-btn").addEventListener("click", function () { openModal(null); });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
+    // Botón "Cancelar" del pie del modal (antes era un <script> inline en marcas.html).
+    var cancelBtn = document.getElementById("modal-cancel-btn");
+    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
     form.addEventListener("submit", submitForm);
 
     document.getElementById("wipe-brands-btn").addEventListener("click", wipeBrands);

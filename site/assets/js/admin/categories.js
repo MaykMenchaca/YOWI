@@ -121,6 +121,9 @@
     });
     document.getElementById("wipe-cats-btn").addEventListener("click", wipeCategories);
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
+    // Botón "Cancelar" del pie del modal (antes era un <script> inline en categorias.html).
+    var cancelBtn = document.getElementById("modal-cancel-btn");
+    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
 
     // Cerrar con Escape cuando el modal está abierto.
     document.addEventListener("keydown", function (e) {
