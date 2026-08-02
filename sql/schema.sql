@@ -53,6 +53,9 @@ CREATE TABLE IF NOT EXISTS categories (
 -- ── Productos (reemplaza al catálogo JSON) ───────────────────────────────────────
 CREATE TABLE IF NOT EXISTS products (
     id               INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
+    -- Identidad estable del producto para reimportar el CSV sin duplicar (NULL permitido:
+    -- varios NULL no colisionan en un UNIQUE, así conviven los aún sin SKU).
+    sku              VARCHAR(64)       NULL,
     nombre           VARCHAR(255)      NOT NULL,
     marca            VARCHAR(120)      NOT NULL,
     category_id      INT UNSIGNED      NOT NULL,
