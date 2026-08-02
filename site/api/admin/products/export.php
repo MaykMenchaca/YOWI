@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+
+require __DIR__ . '/../../config/database.php';
+require __DIR__ . '/../../lib/Response.php';
+require __DIR__ . '/../../lib/AdminSession.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') ds_json_error('Método no permitido', 405);
+ds_require_admin();
+
+$pdo = ds_get_pdo();
+
+// Mismo orden de columnas que la plantilla del importador (site/assets/js/admin/products.js)
+// y que el propio import.php acepta, para que el CSV exportado se pueda reimportar tal cual.
+$COLS = ['sku', 'nombre', 'marca', 'categoria', 'cantidad', 'unidad', 'descripcion', 'precio', 'precio_original', 'stock', 'imagen', 'badge', 'destacado', 'activo'];
+
+$stmt = $pdo->query(
+    'SELECT p.sku, p.nombre, p.marca, c.nombre AS categoria, p.cantidad, p.unidad, p.descripcion,
+            p.precio, p.precio_original, p.stock, p.imagen, p.badge, p.destacado, p.activo
+     FROM products p
+     JOIN categories c ON c.id = p.category_id
+     ORDER BY p.id ASC'
+);
+
+$filename = 'catalogo-' . date('Y-m-d') . '.csv';
+
+http_response_code(200);
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename="' . $filename . '"');
+header('Cache-Control: no-store');
+
+$out = fopen('php://output', 'w');
+// BOM UTF-8 para que Excel abra los acentos correctamente (el importador lo quita al leer).
+fwrite($out, "\xEF\xBB\xBF");
+
+fputcsv($out, $COLS, ',', '"', '\\');
+
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    fputcsv($out, [
+        $row['sku'] ?? '',
+        $row['nombre'],
+        $row['marca'],
+        $row['categoria'],
+        $row['cantidad'],
+        $row['unidad'] ?? '',
+        $row['descripcion'] ?? '',
+        $row['precio'],
+        $row['precio_original'] ?? '',
+        $row['stock'] ?? '',
+        $row['imagen'],
+        $row['badge'] ?? '',
+        ((int) $row['destacado']) === 1 ? '1' : '0',
+        ((int) $row['activo']) === 1 ? '1' : '0',
+    ], ',', '"', '\\');
+}
+
+fclose($out);
+exit;

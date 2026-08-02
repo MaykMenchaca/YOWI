@@ -107,22 +107,28 @@ $omitidos      = [];
 $linea         = 1;    // encabezados = línea 1
 $MAX_FILAS     = 2000;
 
-// El upsert distingue por nombre + marca + cantidad + unidad: dos presentaciones del
-// mismo producto (ej. "Creakong" 1000 g y 300 g) son productos distintos, no el mismo.
-$findProd = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? AND unidad <=> ? LIMIT 1');
+// Emparejamiento de producto existente, en orden de prioridad:
+//   1) por SKU (si el CSV trae uno y ya existe en algún producto) — permite renombrar
+//      sin duplicar, es la identidad estable entre reimportaciones.
+//   2) fallback LEGACY: nombre + marca + cantidad + unidad (dos presentaciones del mismo
+//      producto, ej. "Creakong" 1000 g y 300 g, son productos distintos, no el mismo).
+//      Si este método encuentra y el CSV traía SKU, ese SKU se "bautiza" en el producto.
+$findBySku = $pdo->prepare('SELECT id FROM products WHERE sku = ? LIMIT 1');
+$findProd  = $pdo->prepare('SELECT id FROM products WHERE nombre = ? AND marca = ? AND cantidad = ? AND unidad <=> ? LIMIT 1');
 $findCat  = $pdo->prepare('SELECT id FROM categories WHERE slug = ? LIMIT 1');
 $insCat   = $pdo->prepare('INSERT INTO categories (nombre, slug, orden) VALUES (?, ?, 0)');
 $findBrand = $pdo->prepare('SELECT id FROM brands WHERE slug = ? LIMIT 1');
 $insBrand  = $pdo->prepare('INSERT INTO brands (nombre, slug, activo) VALUES (?, ?, 1)');
 $insProd  = $pdo->prepare(
-    'INSERT INTO products (nombre, marca, category_id, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    'INSERT INTO products (nombre, marca, category_id, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo, sku)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 );
+// sku=COALESCE(?, sku): celda vacía en el CSV ('sku' -> null aquí) = no tocar el SKU actual.
 $updProdImg = $pdo->prepare(
-    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=? WHERE id=?'
+    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=?, sku=COALESCE(?, sku) WHERE id=?'
 );
 $updProdNoImg = $pdo->prepare(
-    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, badge=?, destacado=?, activo=? WHERE id=?'
+    'UPDATE products SET category_id=?, cantidad=?, unidad=?, descripcion=?, precio=?, precio_original=?, stock=?, badge=?, destacado=?, activo=?, sku=COALESCE(?, sku) WHERE id=?'
 );
 
 while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
@@ -200,26 +206,54 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
     $badge       = mb_substr($get($row, $cols, 'badge'), 0, 30) ?: null;
     $destacado   = $toBool($get($row, $cols, 'destacado'), 0);
     $activo      = $toBool($get($row, $cols, 'activo'), 1);
+    $skuRaw      = mb_substr($get($row, $cols, 'sku'), 0, 64);
+    $sku         = $skuRaw !== '' ? $skuRaw : null;
+
+    // Emparejamiento: SKU primero, fallback legacy después (ver comentario de los prepared
+    // statements arriba). Si ambos métodos apuntan a productos EXISTENTES pero DISTINTOS,
+    // es una colisión real: el SKU del CSV ya está "tomado" por otro producto -> se omite.
+    $findProd->execute([$nombre, $marca, $cantidad, $unidad]);
+    $legacyId = (int) ($findProd->fetchColumn() ?: 0);
+
+    $existingId = 0;
+    if ($sku !== null) {
+        $findBySku->execute([$sku]);
+        $skuOwnerId = (int) ($findBySku->fetchColumn() ?: 0);
+        if ($skuOwnerId > 0) {
+            if ($legacyId > 0 && $legacyId !== $skuOwnerId) {
+                $omitidos[] = ['fila' => $linea, 'motivo' => "El SKU '$sku' ya pertenece a otro producto"];
+                continue;
+            }
+            $existingId = $skuOwnerId; // match por SKU (prioridad 1)
+        } else {
+            $existingId = $legacyId;   // SKU libre: fallback legacy (prioridad 2); se "bautiza" abajo
+        }
+    } else {
+        $existingId = $legacyId;       // sin SKU en la fila: fallback legacy de siempre
+    }
 
     try {
-        $findProd->execute([$nombre, $marca, $cantidad, $unidad]);
-        $existingId = (int) ($findProd->fetchColumn() ?: 0);
-
         if ($existingId > 0) {
             // Upsert: se actualiza. La imagen solo se pisa si el CSV trae una; si va vacía, se conserva.
+            // El SKU solo se pisa si el CSV trae uno (COALESCE); si va vacío, se conserva el actual.
             if ($imagen !== '') {
-                $updProdImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagen, $badge, $destacado, $activo, $existingId]);
+                $updProdImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagen, $badge, $destacado, $activo, $sku, $existingId]);
             } else {
-                $updProdNoImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $badge, $destacado, $activo, $existingId]);
+                $updProdNoImg->execute([$catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $badge, $destacado, $activo, $sku, $existingId]);
             }
             $actualizados++;
         } else {
             $imagenFinal = $imagen !== '' ? $imagen : 'assets/img/producto-placeholder.svg';
-            $insProd->execute([$nombre, $marca, $catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagenFinal, $badge, $destacado, $activo]);
+            $insProd->execute([$nombre, $marca, $catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagenFinal, $badge, $destacado, $activo, $sku]);
             $creados++;
         }
     } catch (\Throwable $e) {
-        $omitidos[] = ['fila' => $linea, 'motivo' => 'Error al guardar la fila'];
+        $isDupSku = $e instanceof \PDOException && ((int) $e->getCode() === 23000 || ($e->errorInfo[1] ?? null) === 1062);
+        if ($isDupSku && $sku !== null) {
+            $omitidos[] = ['fila' => $linea, 'motivo' => "El SKU '$sku' ya pertenece a otro producto"];
+        } else {
+            $omitidos[] = ['fila' => $linea, 'motivo' => 'Error al guardar la fila'];
+        }
         continue;
     }
 }
