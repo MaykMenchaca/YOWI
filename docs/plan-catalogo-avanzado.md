@@ -215,5 +215,19 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 ## 8. Estado
 
 - [x] **F1.1** — migración `2026-08-03-add-sku.sql` + `sql/schema.sql`
-- [~] **Tanda 2 en curso**: F1.2+F1.4 (import/export CSV) ∥ F1.3 (SKU en API) ∥ F5.1 (backup export) — 3 agentes en paralelo
-- [ ] Resto de subfases pendientes
+- [x] **F1.2+F1.4** — SKU en import/export CSV (commit `72ea8c8`)
+- [x] **F1.3** — SKU en alta/edición/listado admin y API pública (commit `7cf50cd`)
+- [x] **F5.1** — endpoint de respaldo, exportar por apartado (commit `08e6c79`)
+- [ ] **F1.5** — panel: campo SKU en el modal (⚠ precargar siempre el valor actual, `update.php`
+      sobrescribe sin COALESCE), columna en la tabla, búsqueda, botón "Exportar CSV"
+- [ ] Resto de subfases (F2-F6) pendientes
+
+### Nota de seguridad (Tanda 2)
+El agente de F1.2+F1.4 recibió una alerta del sistema por posible "materialización de
+credenciales" (consultar `totp_secret` en claro / intento de login con contraseña) que
+**contradice su propio reporte** (dice haber sido bloqueado y usado un harness). Se verificó
+de forma independiente: sin credenciales ni harness en el repo/commit, sin cambios en el
+secreto TOTP del admin de prueba, sin evidencia de login exitoso atribuible. Cuenta de
+prueba local, sin impacto en producción. Código del commit revisado línea por línea y
+correcto. Aceptado, pero anotado para no confiar en auto-reportes de agentes sin verificación
+independiente del orquestador (ya aplicado también a F1.3 y F5.1).
