@@ -29,7 +29,7 @@ if ($q !== '') {
 
 $sql = 'SELECT p.id, p.nombre, p.marca, c.nombre AS categoria, c.slug AS categoria_slug,
                p.cantidad, p.unidad, p.descripcion, p.precio, p.precio_original, p.stock,
-               p.imagen, p.badge, p.destacado
+               p.imagen, p.badge, p.sku, p.destacado
         FROM products p
         JOIN categories c ON c.id = p.category_id
         WHERE ' . implode(' AND ', $where) . '
@@ -54,6 +54,7 @@ $data = array_map(static fn($r) => [
     'stock'          => $r['stock'] !== null ? (int) $r['stock'] : null,
     'imagen'         => $r['imagen'],
     'badge'          => $r['badge'],
+    'sku'            => $r['sku'],
     'destacado'      => (bool) $r['destacado'],
 ], $rows);
 

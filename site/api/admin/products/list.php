@@ -19,8 +19,8 @@ $where  = [];
 $params = [];
 
 if ($q !== '') {
-    $where[] = '(p.nombre LIKE ? OR p.marca LIKE ?)';
-    $params[] = "%$q%"; $params[] = "%$q%";
+    $where[] = '(p.nombre LIKE ? OR p.marca LIKE ? OR p.sku LIKE ?)';
+    $params[] = "%$q%"; $params[] = "%$q%"; $params[] = "%$q%";
 }
 if ($cat > 0) {
     $where[] = 'p.category_id = ?';
@@ -38,7 +38,7 @@ $total = (int) $countStmt->fetchColumn();
 $stmt = $pdo->prepare(
     "SELECT p.id, p.nombre, p.marca, c.nombre AS categoria, c.id AS category_id,
             p.cantidad, p.unidad, p.precio, p.precio_original, p.stock, p.imagen,
-            p.badge, p.destacado, p.activo, p.created_at
+            p.badge, p.sku, p.destacado, p.activo, p.created_at
      FROM products p
      JOIN categories c ON c.id = p.category_id
      $whereClause
@@ -61,6 +61,7 @@ $data = array_map(static fn($r) => [
     'stock'          => $r['stock'] !== null ? (int) $r['stock'] : null,
     'imagen'         => $r['imagen'],
     'badge'          => $r['badge'],
+    'sku'            => $r['sku'],
     'destacado'      => (bool) $r['destacado'],
     'activo'         => (bool) $r['activo'],
     'created_at'     => $r['created_at'],

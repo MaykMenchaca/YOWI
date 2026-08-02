@@ -30,6 +30,7 @@ $stock       = (isset($body['stock']) && $body['stock'] !== '' && $body['stock']
 // Solo rutas relativas o http/https; un esquema peligroso o vacío deja '' (conserva la actual).
 $imagen      = ds_clean_url((string)($body['imagen'] ?? ''), 255) ?? '';
 $badge       = ds_clean_string((string)($body['badge'] ?? ''), 30) ?: null;
+$sku         = ds_clean_string((string)($body['sku'] ?? ''), 64) ?: null;
 $destacado   = !empty($body['destacado']) ? 1 : 0;
 $activo      = isset($body['activo']) ? (int)(bool)$body['activo'] : 1;
 
@@ -55,9 +56,16 @@ if ($imagen !== '') {
 
 $stmt = $pdo->prepare(
     'UPDATE products SET nombre=?, marca=?, category_id=?, cantidad=?, unidad=?, descripcion=?,
-     precio=?, precio_original=?, stock=?, imagen=?, badge=?, destacado=?, activo=?
+     precio=?, precio_original=?, stock=?, imagen=?, badge=?, sku=?, destacado=?, activo=?
      WHERE id=?'
 );
-$stmt->execute([$nombre, $marca, $cat_id, $cantidad, $unidad, $descripcion ?: null, $precio, $precio_orig, $stock, $imagenFinal, $badge, $destacado, $activo, $id]);
+try {
+    $stmt->execute([$nombre, $marca, $cat_id, $cantidad, $unidad, $descripcion ?: null, $precio, $precio_orig, $stock, $imagenFinal, $badge, $sku, $destacado, $activo, $id]);
+} catch (PDOException $e) {
+    if ((int) $e->getCode() === 23000 || ($e->errorInfo[1] ?? null) === 1062) {
+        ds_json_error('Ya existe un producto con ese SKU', 409);
+    }
+    throw $e;
+}
 
 ds_json_success(['updated' => $stmt->rowCount() > 0]);
