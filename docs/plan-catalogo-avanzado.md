@@ -214,5 +214,6 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 
 ## 8. Estado
 
-- [x] **F1.1** — migración `2026-08-03-add-sku.sql` + `sql/schema.sql` (hecho al iniciar)
+- [x] **F1.1** — migración `2026-08-03-add-sku.sql` + `sql/schema.sql`
+- [~] **Tanda 2 en curso**: F1.2+F1.4 (import/export CSV) ∥ F1.3 (SKU en API) ∥ F5.1 (backup export) — 3 agentes en paralelo
 - [ ] Resto de subfases pendientes
