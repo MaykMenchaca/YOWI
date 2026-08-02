@@ -22,7 +22,10 @@ $precio      = ds_to_positive_float($body['precio'] ?? 0);
 $precio_orig = isset($body['precio_original']) && $body['precio_original'] !== '' && $body['precio_original'] !== null
     ? ds_to_positive_float($body['precio_original'])
     : null;
-$stock       = ds_to_positive_int($body['stock'] ?? 0);
+// NULL = sin control de inventario; número (>=0) = inventario real, 0 = agotado.
+$stock       = (isset($body['stock']) && $body['stock'] !== '' && $body['stock'] !== null)
+    ? max(0, (int) $body['stock'])
+    : null;
 // Solo rutas relativas o http/https; bloquea javascript:/data:. Fallback al placeholder.
 $imagen      = ds_clean_url((string)($body['imagen'] ?? ''), 255) ?? 'assets/img/producto-placeholder.svg';
 $badge       = ds_clean_string((string)($body['badge'] ?? ''), 30) ?: null;

@@ -66,6 +66,7 @@
 
   function productCardHTML(p) {
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
+    var agotado = p.stock === 0; // NULL/undefined = sin control (ilimitado); >0 = disponible.
     return (
       '<div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
         '<div class="relative mb-3">' +
@@ -74,6 +75,9 @@
               '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
             '</div>' +
           '</a>' +
+          (agotado
+            ? '<span class="absolute top-2 left-2 bg-ink text-white text-[11px] font-extrabold uppercase tracking-wide px-2 py-1">Agotado</span>'
+            : '') +
           '<button type="button" class="favorite-btn absolute top-2 right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 shadow hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
             '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 0;">favorite</span>' +
           '</button>' +
@@ -83,7 +87,9 @@
         '<div class="font-body text-sm text-gray-400 mb-4">' + esc(qtyLabel(p)) + '</div>' +
         '<div class="mt-auto flex flex-col gap-3">' +
           '<div class="text-brand font-extrabold text-lg">' + money(p.precio) + '</div>' +
-          '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>' +
+          (agotado
+            ? '<button type="button" class="bg-gray-200 text-gray-400 font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm cursor-not-allowed" data-product-id="' + esc(p.id) + '" disabled>Agotado</button>'
+            : '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>') +
         '</div>' +
       '</div>'
     );
@@ -102,7 +108,7 @@
       if (filtros.marca && filtros.marca.length && filtros.marca.indexOf(p.marca) === -1) return false;
       if (filtros.precioMin != null && p.precio < filtros.precioMin) return false;
       if (filtros.precioMax != null && p.precio > filtros.precioMax) return false;
-      if (filtros.soloDisponibles && p.stock <= 0) return false;
+      if (filtros.soloDisponibles && p.stock != null && p.stock <= 0) return false;
       return true;
     });
   }

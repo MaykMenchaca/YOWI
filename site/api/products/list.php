@@ -51,7 +51,7 @@ $data = array_map(static fn($r) => [
     'descripcion'    => $r['descripcion'] ?? '',
     'precio'         => (float) $r['precio'],
     'precio_original'=> $r['precio_original'] !== null ? (float) $r['precio_original'] : null,
-    'stock'          => (int) $r['stock'],
+    'stock'          => $r['stock'] !== null ? (int) $r['stock'] : null,
     'imagen'         => $r['imagen'],
     'badge'          => $r['badge'],
     'destacado'      => (bool) $r['destacado'],

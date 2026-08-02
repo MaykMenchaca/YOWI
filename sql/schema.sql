@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS products (
     descripcion      TEXT              NULL,
     precio           DECIMAL(10,2)     NOT NULL DEFAULT 0.00,
     precio_original  DECIMAL(10,2)     NULL,
-    stock            SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    stock            SMALLINT UNSIGNED NULL DEFAULT NULL,
     imagen           VARCHAR(255)      NOT NULL DEFAULT 'assets/img/producto-placeholder.svg',
     badge            VARCHAR(30)       NULL,
     destacado        TINYINT(1)        NOT NULL DEFAULT 0,

@@ -123,7 +123,9 @@
           '<div class="text-slate-400 text-xs">' + esc(p.marca) + ' · ' + esc(p.categoria) + '</div></td>' +
         '<td class="px-3 py-3 text-slate-300 text-right">' + money(p.precio) + '</td>' +
         '<td class="px-3 py-3 text-center">' +
-          '<span class="px-2 py-0.5 rounded text-xs ' + (p.stock > 0 ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300') + '">' + p.stock + '</span></td>' +
+          (p.stock === null
+            ? '<span class="px-2 py-0.5 rounded text-xs bg-slate-700 text-slate-300">Sin control</span>'
+            : '<span class="px-2 py-0.5 rounded text-xs ' + (p.stock > 0 ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300') + '">' + (p.stock > 0 ? p.stock : 'Agotado') + '</span>') + '</td>' +
         '<td class="px-3 py-3 text-center">' + (p.destacado
           ? '<svg viewBox="0 0 24 24" class="w-4 h-4 inline-block text-yellow-400" fill="currentColor" aria-label="Destacado"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>'
           : '<span class="text-slate-600">—</span>') + '</td>' +
@@ -198,7 +200,7 @@
     f.querySelector('[name="descripcion"]').value = p.descripcion || "";
     f.querySelector('[name="precio"]').value      = p.precio || "";
     f.querySelector('[name="precio_original"]').value = p.precio_original || "";
-    f.querySelector('[name="stock"]').value       = p.stock !== undefined ? p.stock : "";
+    f.querySelector('[name="stock"]').value       = (p.stock === null || p.stock === undefined) ? "" : p.stock;
     f.querySelector('[name="badge"]').value       = p.badge || "";
     f.querySelector('[name="destacado"]').checked = !!p.destacado;
     f.querySelector('[name="activo"]').checked    = p.activo !== false;
@@ -255,7 +257,8 @@
         descripcion:     form.querySelector('[name="descripcion"]').value.trim(),
         precio:          parseFloat(form.querySelector('[name="precio"]').value) || 0,
         precio_original: parseFloat(form.querySelector('[name="precio_original"]').value) || null,
-        stock:           parseInt(form.querySelector('[name="stock"]').value, 10) || 0,
+        stock:           (function () { var v = form.querySelector('[name="stock"]').value.trim();
+                                         return v === '' ? null : Math.max(0, parseInt(v, 10) || 0); })(),
         imagen:          imagenUrl,
         badge:           form.querySelector('[name="badge"]').value.trim() || null,
         destacado:       form.querySelector('[name="destacado"]').checked ? 1 : 0,

@@ -193,8 +193,8 @@ while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
     $descripcion = mb_substr($get($row, $cols, 'descripcion'), 0, 5000) ?: null;
     $precioOrig  = $toNumber($get($row, $cols, 'precio_original'));
     if ($precioOrig !== null && $precioOrig <= $precio) $precioOrig = null; // solo si es un "tachado" válido
-    $stockNum    = $toNumber($get($row, $cols, 'stock'));
-    $stock       = $stockNum !== null && $stockNum > 0 ? (int) $stockNum : 0;
+    $stockNum    = $toNumber($get($row, $cols, 'stock')); // '' -> null; '0' -> 0.0
+    $stock       = $stockNum === null ? null : max(0, (int) $stockNum);
     // Solo rutas relativas o http/https; esquema peligroso o vacío -> '' (usa placeholder).
     $imagen      = ds_clean_url($get($row, $cols, 'imagen'), 255) ?? '';
     $badge       = mb_substr($get($row, $cols, 'badge'), 0, 30) ?: null;

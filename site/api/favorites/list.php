@@ -30,7 +30,7 @@ $result = array_map(static function (array $p): array {
         'imagen' => $p['imagen'],
         'cantidad' => $p['cantidad'],
         'unidad' => $p['unidad'],
-        'stock' => (int) $p['stock'],
+        'stock' => $p['stock'] !== null ? (int) $p['stock'] : null,
     ];
 }, $stmt->fetchAll());
 
