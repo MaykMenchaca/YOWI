@@ -3,6 +3,9 @@
 (function (global) {
   var STORAGE_KEY = "ds_cart";
   var WA_NUMBER = "5218344241599";
+  // El token CSRF se obtiene de forma asíncrona (me.php). Hasta que esté listo, el botón
+  // "Enviar" permanece deshabilitado para evitar un POST sin token (403 silencioso).
+  var csrfReady = false;
 
   function getCart() {
     try {
@@ -218,7 +221,16 @@
     var card = document.getElementById("shipping-card");
     var btn = document.getElementById("submit-order-btn");
     if (card) card.classList.toggle("hidden", !has);
-    if (btn) btn.disabled = !has;
+    if (btn) {
+      // Deshabilitar hasta que el carrito tenga items Y el CSRF esté listo.
+      btn.disabled = !has || !csrfReady;
+      if (has && !csrfReady) {
+        if (!btn.getAttribute("data-label")) btn.setAttribute("data-label", btn.textContent);
+        btn.textContent = "Preparando…";
+      } else if (btn.getAttribute("data-label")) {
+        btn.textContent = btn.getAttribute("data-label");
+      }
+    }
   }
 
   function submitOrder(form) {
@@ -237,9 +249,12 @@
     }
 
     var mensaje = buildWhatsAppMessage(items, d);
+    var waUrl = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensaje);
 
-    // Abrir WhatsApp de inmediato: no bloquear al usuario por la latencia del POST.
-    window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensaje), "_blank");
+    // Reservar la pestaña de WhatsApp AHORA, con el gesto del click (los pop-ups se
+    // bloquean si se abren en un callback async). Solo se redirige si el POST tiene éxito;
+    // si el pedido falla, se cierra y NO se abre WhatsApp (evita "pedido fantasma").
+    var waWin = window.open("", "_blank");
 
     if (global.DSApi) {
       global.DSApi.apiFetch("api/orders/create.php", {
@@ -261,8 +276,17 @@
           mensaje_whatsapp: mensaje,
         },
       })
-        .then(function () { saveCart([]); })
-        .catch(function (err) { console.warn("No se pudo registrar el pedido en el servidor:", err.message); });
+        .then(function () {
+          saveCart([]);
+          if (waWin) { waWin.location = waUrl; } else { window.open(waUrl, "_blank"); }
+        })
+        .catch(function (err) {
+          if (waWin) waWin.close();
+          showFieldError(form, "form", "No se pudo registrar el pedido: " + err.message + ". Intenta de nuevo.");
+        });
+    } else {
+      // Sin cliente API (degradado): abrir WhatsApp igual, sin regresión.
+      if (waWin) { waWin.location = waUrl; } else { window.open(waUrl, "_blank"); }
     }
   }
 
@@ -276,7 +300,12 @@
       fetch(global.DS_API_URL ? global.DS_API_URL("api/auth/me.php") : "api/auth/me.php", { credentials: "include" })
         .then(function (r) { return r.json(); })
         .then(function (j) { if (j && j.ok && j.data && j.data.csrf_token) global.DSApi.setCsrfToken(j.data.csrf_token); })
-        .catch(function () {});
+        .catch(function () {})
+        // Éxito o fallo: liberar el botón. Si falló, el POST se intentará y, si da 403,
+        // submitOrder muestra el error (no dejar el botón muerto para siempre).
+        .then(function () { csrfReady = true; syncCheckoutState(); });
+    } else {
+      csrfReady = true; // sin DSApi no hay token que esperar (flujo degradado)
     }
 
     document.addEventListener("click", function (e) {
