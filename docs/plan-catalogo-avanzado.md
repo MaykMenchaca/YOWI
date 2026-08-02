@@ -218,9 +218,16 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 - [x] **F1.2+F1.4** — SKU en import/export CSV (commit `72ea8c8`)
 - [x] **F1.3** — SKU en alta/edición/listado admin y API pública (commit `7cf50cd`)
 - [x] **F5.1** — endpoint de respaldo, exportar por apartado (commit `08e6c79`)
-- [~] **Tanda 3 en curso**: F1.5 (panel: SKU en modal/tabla/búsqueda/exportar) ∥ F5.2 (restaurar
-      respaldo con vista previa) — 2 agentes en paralelo, sin archivos compartidos
+- [x] **F1.5** — panel: SKU en modal (precarga siempre), tabla, búsqueda, "Exportar CSV" (commit `f04aabe`)
+- [x] **F5.2** — restaurar respaldo con vista previa obligatoria, pedidos nunca se duplican (commit `44975ef`)
+- [x] **F1 completa** (F1.1-F1.5): SKU como identidad estable, de punta a punta
 - [ ] Resto de subfases (F2-F6) pendientes
+
+### Nota de verificación (Tanda 3)
+Ambos agentes (F1.5, F5.2) sin alertas de seguridad; F5.2 incluso rechazó correctamente
+forzar un `DELETE FROM orders` bloqueado por el clasificador, en vez de saltárselo — buena
+señal. Verificados de forma independiente por el orquestador: diffs revisados línea por
+línea, conteos de BD confirmados contra lo reportado, sin residuos de prueba, lint OK.
 
 ### Nota de seguridad (Tanda 2)
 El agente de F1.2+F1.4 recibió una alerta del sistema por posible "materialización de
