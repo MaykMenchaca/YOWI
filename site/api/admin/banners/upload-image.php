@@ -61,10 +61,10 @@ if (!file_exists($htaccess)) {
     );
 }
 
+// Re-encodar SIEMPRE con GD (elimina payloads/EXIF). Si falla, se RECHAZA la subida.
 if (!ds_reencode_image($file['tmp_name'], $destDir . $safeName, $mime)) {
-    if (!move_uploaded_file($file['tmp_name'], $destDir . $safeName)) {
-        ds_json_error('Error al guardar la imagen en el servidor', 500);
-    }
+    @unlink($destDir . $safeName); // por si se creó un archivo parcial
+    ds_json_error('No se pudo procesar la imagen de forma segura. Revisa el archivo (JPG, PNG o WebP válido) e inténtalo de nuevo.', 422);
 }
 
 ds_json_success(['url' => 'assets/img/banners/' . $safeName]);
