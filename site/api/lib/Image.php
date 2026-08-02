@@ -7,8 +7,9 @@ declare(strict_types=1);
 
 /**
  * Re-encoda $src a $dest según el MIME (jpeg/png/webp). Conserva transparencia.
- * Devuelve true si se re-encodó; false si GD no está disponible o el formato no aplica
- * (en ese caso el llamador debe caer a move_uploaded_file).
+ * Devuelve true si se re-encodó; false si GD no está disponible o el formato no aplica.
+ * En ese caso el llamador debe RECHAZAR la subida (no guardar el archivo crudo), para no
+ * perder el saneamiento anti-polyglot.
  */
 function ds_reencode_image(string $src, string $dest, string $mime): bool
 {
