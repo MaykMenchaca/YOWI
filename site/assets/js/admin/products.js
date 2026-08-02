@@ -90,11 +90,11 @@
       if (q) {
         if (window.DSFuzzy) {
           list = window.DSFuzzy.filterSort(list, q, function (p) {
-            return [{ text: p.nombre, weight: 1 }, { text: p.marca, weight: 0.8 }, { text: p.categoria, weight: 0.6 }];
+            return [{ text: p.nombre, weight: 1 }, { text: p.marca, weight: 0.8 }, { text: p.categoria, weight: 0.6 }, { text: p.sku, weight: 0.8 }];
           });
         } else {
           var qn = q.toLowerCase();
-          list = list.filter(function (p) { return (p.nombre + " " + p.marca).toLowerCase().indexOf(qn) !== -1; });
+          list = list.filter(function (p) { return (p.nombre + " " + p.marca + " " + (p.sku || "")).toLowerCase().indexOf(qn) !== -1; });
         }
       }
       totalProducts = list.length;
@@ -113,7 +113,7 @@
   function renderTable(products) {
     if (!tableBody) return;
     if (!products || products.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Sin productos</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-slate-400">Sin productos</td></tr>';
       return;
     }
     tableBody.innerHTML = products.map(function (p) {
@@ -121,6 +121,7 @@
         '<td class="px-3 py-3"><img src="../' + esc(p.imagen) + '" alt="" class="w-12 h-12 object-contain rounded bg-slate-800"></td>' +
         '<td class="px-3 py-3"><div class="text-slate-200 font-medium line-clamp-2 max-w-xs">' + esc(p.nombre) + '</div>' +
           '<div class="text-slate-400 text-xs">' + esc(p.marca) + ' · ' + esc(p.categoria) + '</div></td>' +
+        '<td class="px-3 py-3 text-slate-400 text-xs font-mono">' + (p.sku ? esc(p.sku) : '<span class="text-slate-600">—</span>') + '</td>' +
         '<td class="px-3 py-3 text-slate-300 text-right">' + money(p.precio) + '</td>' +
         '<td class="px-3 py-3 text-center">' +
           (p.stock === null
@@ -194,6 +195,7 @@
     var f = form;
     f.querySelector('[name="nombre"]').value      = p.nombre || "";
     f.querySelector('[name="marca"]').value       = p.marca || "";
+    f.querySelector('[name="sku"]').value         = p.sku || "";
     f.querySelector('[name="category_id"]').value = p.category_id || "";
     f.querySelector('[name="cantidad"]').value    = p.cantidad || "";
     f.querySelector('[name="unidad"]').value      = p.unidad || "";
@@ -251,6 +253,7 @@
       var body = {
         nombre:          form.querySelector('[name="nombre"]').value.trim(),
         marca:           form.querySelector('[name="marca"]').value.trim(),
+        sku:             form.querySelector('[name="sku"]').value.trim() || null,
         category_id:     parseInt(form.querySelector('[name="category_id"]').value, 10),
         cantidad:        form.querySelector('[name="cantidad"]').value.trim(),
         unidad:          form.querySelector('[name="unidad"]').value.trim(),

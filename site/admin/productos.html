@@ -66,6 +66,10 @@
         <button id="import-btn" class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px]">
           Importar CSV
         </button>
+        <a id="export-csv-btn" href="../api/admin/products/export.php" download
+          class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px] inline-flex items-center">
+          Exportar CSV
+        </a>
         <button id="new-product-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
           + Nuevo producto
         </button>
@@ -76,7 +80,7 @@
 
     <!-- Filtros -->
     <div class="flex gap-3 mb-4">
-      <input id="search-q" type="search" placeholder="Buscar nombre o marca…"
+      <input id="search-q" type="search" placeholder="Buscar nombre, marca o SKU…"
         class="bg-slate-800 border border-slate-600 rounded-none px-4 py-2 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-brand w-64" />
       <select id="filter-cat"
         class="bg-slate-800 border border-slate-600 rounded-none px-3 py-2 text-slate-300 text-sm focus:outline-none focus:border-brand">
@@ -90,6 +94,7 @@
           <tr class="border-b border-slate-700 text-left text-slate-400 text-xs uppercase tracking-wide">
             <th class="px-3 py-3">Img</th>
             <th class="px-3 py-3">Nombre</th>
+            <th class="px-3 py-3">SKU</th>
             <th class="px-3 py-3 text-right">Precio</th>
             <th class="px-3 py-3 text-center">Stock</th>
             <th class="px-3 py-3 text-center">Dest.</th>
@@ -98,7 +103,7 @@
           </tr>
         </thead>
         <tbody id="products-tbody">
-          <tr><td colspan="7" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
+          <tr><td colspan="8" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,6 +129,11 @@
           <div>
             <label class="block text-slate-300 text-sm font-medium mb-1">Marca <span class="text-red-400">*</span></label>
             <input name="marca" type="text" required
+              class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          </div>
+          <div>
+            <label class="block text-slate-300 text-sm font-medium mb-1">SKU</label>
+            <input name="sku" type="text" placeholder="Ej: DS-00123 (opcional)"
               class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
           </div>
           <div>
