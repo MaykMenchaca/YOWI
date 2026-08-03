@@ -12,14 +12,22 @@ $pdo = ds_get_pdo();
 
 // Mismo orden de columnas que la plantilla del importador (site/assets/js/admin/products.js)
 // y que el propio import.php acepta, para que el CSV exportado se pueda reimportar tal cual.
-$COLS = ['sku', 'nombre', 'marca', 'categoria', 'cantidad', 'unidad', 'descripcion', 'precio', 'precio_original', 'stock', 'imagen', 'badge', 'destacado', 'activo'];
+$COLS = ['sku', 'nombre', 'marca', 'categoria', 'cantidad', 'unidad', 'descripcion', 'precio', 'precio_original', 'stock', 'imagen', 'imagenes', 'badge', 'sabores', 'destacado', 'activo'];
 
+// sabores/imagenes se arman con GROUP_CONCAT en el mismo formato "nombre:stock:precio|..."
+// y "url|url|..." que acepta el importador (F3.2/F4.2) — así "exportar y reimportar tal
+// cual" también conserva sabores y galería, no solo los campos base del producto.
 $stmt = $pdo->query(
-    'SELECT p.sku, p.nombre, p.marca, c.nombre AS categoria, p.cantidad, p.unidad, p.descripcion,
-            p.precio, p.precio_original, p.stock, p.imagen, p.badge, p.destacado, p.activo
+    "SELECT p.sku, p.nombre, p.marca, c.nombre AS categoria, p.cantidad, p.unidad, p.descripcion,
+            p.precio, p.precio_original, p.stock, p.imagen, p.badge, p.destacado, p.activo,
+            (SELECT GROUP_CONCAT(CONCAT(f.nombre, ':', COALESCE(f.stock, ''), ':', COALESCE(f.precio, ''))
+                                  ORDER BY f.orden SEPARATOR '|')
+             FROM product_flavors f WHERE f.product_id = p.id) AS sabores,
+            (SELECT GROUP_CONCAT(i.url ORDER BY i.orden SEPARATOR '|')
+             FROM product_images i WHERE i.product_id = p.id) AS imagenes
      FROM products p
      JOIN categories c ON c.id = p.category_id
-     ORDER BY p.id ASC'
+     ORDER BY p.id ASC"
 );
 
 $filename = 'catalogo-' . date('Y-m-d') . '.csv';
@@ -48,7 +56,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $row['precio_original'] ?? '',
         $row['stock'] ?? '',
         $row['imagen'],
+        $row['imagenes'] ?? '',
         $row['badge'] ?? '',
+        $row['sabores'] ?? '',
         ((int) $row['destacado']) === 1 ? '1' : '0',
         ((int) $row['activo']) === 1 ? '1' : '0',
     ], ',', '"', '\\');

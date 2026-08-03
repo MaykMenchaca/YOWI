@@ -5,6 +5,8 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
+require __DIR__ . '/../../lib/Flavors.php';
+require __DIR__ . '/../../lib/Gallery.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 ds_require_admin();
@@ -145,6 +147,39 @@ $updProdNoImg = $pdo->prepare(
     'UPDATE products SET nombre=?, marca=?, category_id=?, cantidad=?, unidad=?, descripcion=COALESCE(?, descripcion), precio=?, precio_original=?, stock=?, badge=COALESCE(?, badge), destacado=?, activo=?, sku=COALESCE(?, sku) WHERE id=?'
 );
 
+// Sabores (F3.2) y galería (F4.2): "columna vacía = no tocar" también aplica aquí. Estos
+// helpers arman una "foto" comparable del ANTES (BD) y el DESPUÉS (CSV ya parseado) solo
+// para el reporte de campos cambiados; la escritura real la hacen ds_sync_product_flavors()
+// / ds_sync_product_gallery() (site/api/lib/{Flavors,Gallery}.php), compartidas con el
+// editor del panel (F3.3/F4.3) para que ambos caminos se comporten igual.
+$findFlavors = $pdo->prepare('SELECT slug, nombre, stock, precio FROM product_flavors WHERE product_id = ? ORDER BY slug');
+$flavorsSnapshot = static function (int $productId) use ($findFlavors): array {
+    $findFlavors->execute([$productId]);
+    return array_map(static function ($r) {
+        return $r['slug'] . '|' . $r['nombre'] . '|' . ($r['stock'] === null ? '' : (int) $r['stock']) . '|' .
+            ($r['precio'] === null ? '' : number_format((float) $r['precio'], 2, '.', ''));
+    }, $findFlavors->fetchAll());
+};
+$flavorsTargetSnapshot = static function (array $parsed): array {
+    $rows = [];
+    foreach ($parsed as $f) {
+        $nombreF = trim((string) $f['nombre']);
+        if ($nombreF === '') continue;
+        $slugF = ds_slugify_flavor($nombreF);
+        if ($slugF === '') continue;
+        $rows[$slugF] = $slugF . '|' . mb_substr($nombreF, 0, 80) . '|' .
+            ($f['stock'] === null ? '' : max(0, (int) $f['stock'])) . '|' .
+            ($f['precio'] === null ? '' : number_format(max(0.0, (float) $f['precio']), 2, '.', ''));
+    }
+    ksort($rows);
+    return array_values($rows);
+};
+$findImages = $pdo->prepare('SELECT url FROM product_images WHERE product_id = ? ORDER BY orden');
+$gallerySnapshot = static function (int $productId) use ($findImages): array {
+    $findImages->execute([$productId]);
+    return array_map(static fn($r) => $r['url'], $findImages->fetchAll());
+};
+
 $pdo->beginTransaction();
 try {
     while (($row = fgetcsv($fh, 0, $delimiter)) !== false) {
@@ -225,6 +260,26 @@ try {
         $skuRaw      = mb_substr($get($row, $cols, 'sku'), 0, 64);
         $sku         = $skuRaw !== '' ? $skuRaw : null;
 
+        // Sabores: "Chocolate:10:899|Mocha::999|Fresa" -> nombre:stock:precio (los 2
+        // últimos opcionales). Celda vacía (null aquí) = no tocar los sabores existentes.
+        $saboresRaw    = $get($row, $cols, 'sabores');
+        $saboresParsed = $saboresRaw !== '' ? ds_parse_flavors_csv($saboresRaw, $toNumber) : null;
+
+        // Imágenes de galería: rutas/URLs separadas por "|". Celda vacía = no tocar.
+        // Si TODAS las URLs de la celda resultan inválidas, se trata igual que vacía
+        // (nunca se arriesga a vaciar la galería por un error de tipeo en el CSV).
+        $imagenesRaw    = $get($row, $cols, 'imagenes');
+        $imagenesParsed = null;
+        if ($imagenesRaw !== '') {
+            $urlsLimpias = [];
+            foreach (explode('|', $imagenesRaw) as $u) {
+                $clean = ds_clean_url(trim($u), 255);
+                if ($clean !== null) $urlsLimpias[] = $clean;
+            }
+            $urlsLimpias = array_values(array_unique($urlsLimpias));
+            if (!empty($urlsLimpias)) $imagenesParsed = $urlsLimpias;
+        }
+
         // Emparejamiento: SKU primero, fallback legacy después (ver comentario de los prepared
         // statements arriba). Si ambos métodos apuntan a productos EXISTENTES pero DISTINTOS,
         // es una colisión real: el SKU del CSV ya está "tomado" por otro producto -> se omite.
@@ -279,6 +334,12 @@ try {
                 if ($destacado !== (int) $current['destacado']) $campos[] = 'destacado';
                 if ($activo !== (int) $current['activo']) $campos[] = 'activo';
                 if ($skuEfectivo !== $current['sku']) $campos[] = 'sku';
+                if ($saboresParsed !== null && $flavorsSnapshot($existingId) !== $flavorsTargetSnapshot($saboresParsed)) {
+                    $campos[] = 'sabores';
+                }
+                if ($imagenesParsed !== null && $gallerySnapshot($existingId) !== $imagenesParsed) {
+                    $campos[] = 'imagenes';
+                }
 
                 $idsTocados[] = $existingId; // sigue en el CSV, no se desactiva con replace_all
 
@@ -293,6 +354,8 @@ try {
                     } else {
                         $updProdNoImg->execute([$nombre, $marca, $catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $badge, $destacado, $activo, $sku, $existingId]);
                     }
+                    if ($saboresParsed !== null) ds_sync_product_flavors($pdo, $existingId, $saboresParsed);
+                    if ($imagenesParsed !== null) ds_sync_product_gallery($pdo, $existingId, $imagenesParsed);
                     $actualizados++;
                     $filas[] = ['fila' => $linea, 'accion' => 'actualizado', 'sku' => $skuEfectivo, 'nombre' => $nombre, 'campos' => $campos, 'motivo' => null];
                 }
@@ -300,6 +363,8 @@ try {
                 $imagenFinal = $imagen !== '' ? $imagen : 'assets/img/producto-placeholder.svg';
                 $insProd->execute([$nombre, $marca, $catId, $cantidad, $unidad, $descripcion, $precio, $precioOrig, $stock, $imagenFinal, $badge, $destacado, $activo, $sku]);
                 $newId = (int) $pdo->lastInsertId();
+                if ($saboresParsed !== null) ds_sync_product_flavors($pdo, $newId, $saboresParsed);
+                if ($imagenesParsed !== null) ds_sync_product_gallery($pdo, $newId, $imagenesParsed);
                 $idsTocados[] = $newId;
                 $creados++;
                 $filas[] = ['fila' => $linea, 'accion' => 'creado', 'sku' => $sku, 'nombre' => $nombre, 'campos' => null, 'motivo' => null];

@@ -341,9 +341,9 @@
 
   function downloadTemplate() {
     var rows = [
-      "sku,nombre,marca,categoria,cantidad,unidad,descripcion,precio,precio_original,stock,imagen,badge,destacado,activo",
-      ",Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2,lb,Proteína de suero aislada,899.00,1099.00,15,,MÁS VENDIDO,1,1",
-      ",Creatina Monohidratada,Universal,Creatina,300,g,Creatina micronizada,349.00,,30,,,0,1",
+      "sku,nombre,marca,categoria,cantidad,unidad,descripcion,precio,precio_original,stock,imagen,imagenes,badge,sabores,destacado,activo",
+      ',Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2,lb,Proteína de suero aislada,899.00,1099.00,15,,,MÁS VENDIDO,"Chocolate:10:899|Vainilla:5:949|Fresa",1,1',
+      ",Creatina Monohidratada,Universal,Creatina,300,g,Creatina micronizada,349.00,,30,,,,,0,1",
     ].join("\r\n");
     // BOM para que Excel abra los acentos correctamente.
     var blob = new Blob(["﻿" + rows], { type: "text/csv;charset=utf-8;" });

@@ -249,8 +249,10 @@
         <input id="import-file" type="file" accept=".csv,text/csv,text/plain"
           class="block w-full text-sm text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-none file:border-0 file:text-sm file:font-bold file:uppercase file:bg-lime file:text-ink hover:file:opacity-90 file:cursor-pointer" />
         <p class="text-slate-500 text-xs mt-1">
-          Columnas: <code>sku, nombre, marca, categoria, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo</code>.
+          Columnas: <code>sku, nombre, marca, categoria, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, imagenes, badge, sabores, destacado, activo</code>.
           Obligatorias: nombre, marca, categoria, precio.
+          <code>imagenes</code>: varias rutas/URLs separadas por <code>|</code> (galería adicional).
+          <code>sabores</code>: <code>nombre:stock:precio|nombre2::precio2|nombre3</code> (stock y precio opcionales; vacío = usa el del producto / sin control de inventario).
         </p>
 
         <label class="flex items-start gap-2 mt-4 p-3 rounded border border-amber-800 bg-amber-900/20 cursor-pointer">
