@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>body { font-family: 'Barlow', sans-serif; }</style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen" data-backup-tipo="categorias">
 
   <!-- Sidebar -->
   <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
@@ -63,6 +63,17 @@
         <button id="wipe-cats-btn" class="border border-red-700 text-red-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-red-900/40 transition-colors min-h-[44px]" title="Elimina las categorías que no tienen productos">
           Eliminar vacías
         </button>
+        <a id="backup-export-btn" href="../api/admin/backup/export.php?tipo=categorias" download
+          title="Descarga un respaldo JSON de categorías"
+          class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px] inline-flex items-center">
+          Respaldar
+        </a>
+        <button id="backup-restore-btn" type="button"
+          title="Restaura categorías desde un respaldo JSON"
+          class="border border-amber-600 text-amber-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-amber-900/30 transition-colors min-h-[44px]">
+          Restaurar
+        </button>
+        <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
         <button id="new-category-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
           + Nueva categoría
         </button>
@@ -118,6 +129,7 @@
 
   <script src="../assets/js/admin/api-client.js"></script>
   <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/backup.js"></script>
   <script src="../assets/js/admin/categories.js"></script>
 </body>
 </html>
