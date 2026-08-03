@@ -230,7 +230,9 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
       cambios · rojo omitido) + contadores → Aplicar cambios (commit `2ca1f6f`)
 - [x] **F2 completa + F5 completa**: importación por diferencias con vista previa fiel de
       punta a punta (endpoint + panel), y respaldos descargables/restaurables en todo el panel
-- [ ] Resto de subfases (F3, F4, F6) pendientes
+- [x] **F3.1 + F4.1** — migraciones `product_flavors`, `product_images`, `order_items.sabor`
+      (commit `9acea93`)
+- [ ] Resto de subfases (F3.2-F3.7, F4.2-F4.5, F6) pendientes
 
 ### Nota de recuperación (Tanda 4)
 Los 2 agentes de la Tanda 4 murieron a mitad de tarea por el límite de gasto mensual de la
