@@ -216,6 +216,26 @@
           </div>
         </div>
 
+        <!-- Sabores -->
+        <div class="border-t border-slate-700 pt-4 mb-4">
+          <h3 class="font-display font-extrabold uppercase text-lime text-sm mb-2">Sabores</h3>
+          <p id="flavors-locked-msg" class="hidden text-slate-400 text-sm mb-2">Guarda el producto primero para agregar sabores.</p>
+          <div id="flavors-rows" class="space-y-2 mb-2"></div>
+          <button type="button" id="flavor-add-row-btn" class="text-brand hover:text-cobalt-500 text-sm font-semibold">+ Agregar sabor</button>
+          <p class="text-slate-500 text-xs mt-1">Precio y stock vacíos = usa el del producto / sin control de inventario.</p>
+        </div>
+
+        <!-- Galería de imágenes -->
+        <div class="border-t border-slate-700 pt-4 mb-4">
+          <h3 class="font-display font-extrabold uppercase text-lime text-sm mb-2">Galería de imágenes</h3>
+          <p id="gallery-locked-msg" class="hidden text-slate-400 text-sm mb-2">Guarda el producto primero para agregar imágenes a la galería.</p>
+          <input id="gallery-file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple class="hidden" />
+          <button type="button" id="gallery-upload-btn" class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-xs px-3 py-1.5 rounded-none hover:bg-slate-700 transition-colors mb-3">
+            Subir imágenes
+          </button>
+          <div id="gallery-thumbs" class="grid grid-cols-4 gap-3"></div>
+        </div>
+
         <div class="flex gap-3 pt-2 border-t border-slate-700">
           <button type="submit" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity">Guardar</button>
           <button type="button" id="modal-cancel-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cancelar</button>

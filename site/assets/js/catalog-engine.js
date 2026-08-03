@@ -64,9 +64,31 @@
     return u ? (c + " " + u).trim() : c;
   }
 
+  // Con sabores, el producto solo se ve agotado si TODOS sus sabores lo están —
+  // products.stock deja de mandar en cuanto el producto tiene sabores (F3).
+  function isAgotado(p) {
+    if (p.sabores && p.sabores.length) {
+      return p.sabores.every(function (s) { return s.stock === 0; });
+    }
+    return p.stock === 0; // NULL/undefined = sin control (ilimitado); >0 = disponible.
+  }
+
   function productCardHTML(p) {
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
-    var agotado = p.stock === 0; // NULL/undefined = sin control (ilimitado); >0 = disponible.
+    var agotado = isAgotado(p);
+    var tieneSabores = !!(p.sabores && p.sabores.length);
+    var precioHTML = (tieneSabores && p.precio_desde != null)
+      ? '<span class="text-gray-400 font-normal text-sm">Desde</span> ' + money(p.precio_desde)
+      : money(p.precio);
+    var botonHTML;
+    if (agotado) {
+      botonHTML = '<button type="button" class="bg-gray-200 text-gray-400 font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm cursor-not-allowed" data-product-id="' + esc(p.id) + '" disabled>Agotado</button>';
+    } else if (tieneSabores) {
+      // Con sabores, no se agrega "a ciegas": el botón lleva a la ficha a elegir uno.
+      botonHTML = '<a href="' + detailUrl + '" class="block text-center bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity">Elegir sabor</a>';
+    } else {
+      botonHTML = '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>';
+    }
     return (
       '<div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
         '<div class="relative mb-3">' +
@@ -86,10 +108,8 @@
         '<h3 class="font-bold text-base leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
         '<div class="font-body text-sm text-gray-400 mb-4">' + esc(qtyLabel(p)) + '</div>' +
         '<div class="mt-auto flex flex-col gap-3">' +
-          '<div class="text-brand font-extrabold text-lg">' + money(p.precio) + '</div>' +
-          (agotado
-            ? '<button type="button" class="bg-gray-200 text-gray-400 font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm cursor-not-allowed" data-product-id="' + esc(p.id) + '" disabled>Agotado</button>'
-            : '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>') +
+          '<div class="text-brand font-extrabold text-lg">' + precioHTML + '</div>' +
+          botonHTML +
         '</div>' +
       '</div>'
     );
@@ -108,7 +128,7 @@
       if (filtros.marca && filtros.marca.length && filtros.marca.indexOf(p.marca) === -1) return false;
       if (filtros.precioMin != null && p.precio < filtros.precioMin) return false;
       if (filtros.precioMax != null && p.precio > filtros.precioMax) return false;
-      if (filtros.soloDisponibles && p.stock != null && p.stock <= 0) return false;
+      if (filtros.soloDisponibles && isAgotado(p)) return false;
       return true;
     });
   }
@@ -213,6 +233,137 @@
     renderGrid((featured.length ? featured : productos).slice(0, limit || 4), container);
   }
 
+  // Chips de sabor (F3.6): un <button> por sabor, deshabilitado y tachado si está
+  // agotado. data-sabor-* lleva lo necesario para armar el carrito sin volver a pedir
+  // el producto (id, nombre para mostrar, precio EFECTIVO ya resuelto: el del sabor si
+  // tiene uno propio, si no el del producto).
+  function flavorChipsHTML(p) {
+    return p.sabores.map(function (s) {
+      var agotado = s.stock === 0;
+      var precioEfectivo = s.precio != null ? s.precio : p.precio;
+      return (
+        '<button type="button" class="flavor-chip px-4 py-2 border-2 rounded-full text-sm font-bold uppercase tracking-wide transition-colors min-h-[44px] ' +
+        (agotado
+          ? 'border-gray-200 text-gray-300 line-through cursor-not-allowed'
+          : 'border-gray-300 text-ink hover:border-brand') + '"' +
+        ' data-sabor-id="' + esc(s.id) + '" data-sabor-nombre="' + esc(s.nombre) + '" data-sabor-precio="' + esc(precioEfectivo) + '"' +
+        (agotado ? ' disabled' : '') +
+        ' aria-pressed="false">' + esc(s.nombre) + (agotado ? ' (Agotado)' : '') + '</button>'
+      );
+    }).join("");
+  }
+
+  function updatePriceDisplay(container, p, sabor) {
+    var el = container.querySelector('[data-field="precio"]');
+    if (!el) return;
+    var precio = sabor ? sabor.precio : p.precio;
+    el.textContent = money(precio);
+  }
+
+  // Habilita/deshabilita "Agregar al carrito" según el estado: producto agotado (nunca
+  // se habilita), producto con sabores sin elegir uno todavía ("Elige un sabor"), o listo
+  // para agregar (con o sin sabor elegido, según aplique).
+  function updateAddToCartState(container, p, sabor) {
+    var btn = container.querySelector(".add-to-cart-btn");
+    if (!btn) return;
+    var tieneSabores = !!(p.sabores && p.sabores.length);
+    if (!btn.getAttribute("data-label")) btn.setAttribute("data-label", btn.textContent);
+    var label = btn.getAttribute("data-label");
+
+    if (isAgotado(p)) {
+      btn.disabled = true;
+      btn.textContent = "Agotado";
+      return;
+    }
+    if (tieneSabores && !sabor) {
+      btn.disabled = true;
+      btn.textContent = "Elige un sabor";
+      btn.removeAttribute("data-sabor-id");
+      btn.removeAttribute("data-sabor-nombre");
+      btn.removeAttribute("data-sabor-precio");
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = label;
+    if (sabor) {
+      btn.setAttribute("data-sabor-id", sabor.id);
+      btn.setAttribute("data-sabor-nombre", sabor.nombre);
+      btn.setAttribute("data-sabor-precio", sabor.precio);
+    } else {
+      btn.removeAttribute("data-sabor-id");
+      btn.removeAttribute("data-sabor-nombre");
+      btn.removeAttribute("data-sabor-precio");
+    }
+  }
+
+  function wireFlavorChips(container, p) {
+    var chipsBox = container.querySelector("#flavor-chips");
+    if (!chipsBox) return;
+    chipsBox.addEventListener("click", function (e) {
+      var chip = e.target.closest(".flavor-chip");
+      if (!chip || chip.disabled) return;
+      chipsBox.querySelectorAll(".flavor-chip").forEach(function (c) {
+        c.classList.remove("border-brand", "bg-brand", "text-white");
+        if (!c.disabled) c.classList.add("border-gray-300", "text-ink");
+        c.setAttribute("aria-pressed", "false");
+      });
+      chip.classList.remove("border-gray-300", "text-ink");
+      chip.classList.add("border-brand", "bg-brand", "text-white");
+      chip.setAttribute("aria-pressed", "true");
+      var sabor = {
+        id: chip.getAttribute("data-sabor-id"),
+        nombre: chip.getAttribute("data-sabor-nombre"),
+        precio: parseFloat(chip.getAttribute("data-sabor-precio")),
+      };
+      updatePriceDisplay(container, p, sabor);
+      updateAddToCartState(container, p, sabor);
+    });
+  }
+
+  // Galería (F4.5): imagen principal + miniaturas de galería. Con 1 sola imagen (o
+  // ninguna extra) la tira de miniaturas se oculta y la ficha se ve como antes.
+  function renderGallery(p, container) {
+    var mainImg = container.querySelector('[data-field="imagen"]');
+    var thumbsBox = container.querySelector("#gallery-thumbs");
+    if (!thumbsBox) return;
+
+    var urls = [];
+    var seen = {};
+    [p.imagen].concat(p.imagenes || []).forEach(function (u) {
+      if (u && !seen[u]) { seen[u] = true; urls.push(u); }
+    });
+
+    if (urls.length <= 1) {
+      thumbsBox.innerHTML = "";
+      thumbsBox.classList.add("hidden");
+      return;
+    }
+
+    thumbsBox.classList.remove("hidden");
+    thumbsBox.innerHTML = urls.map(function (u, i) {
+      return (
+        '<button type="button" class="gallery-thumb bg-white border-2 ' + (i === 0 ? "border-brand" : "border-gray-200") +
+        ' aspect-square p-2 transition-colors" data-url="' + esc(u) + '" aria-label="Ver imagen ' + (i + 1) + ' de ' + urls.length + '">' +
+          '<img class="object-contain w-full h-full' + (i === 0 ? "" : " opacity-60") + '" loading="lazy" src="' + esc(u) + '" alt="" data-fallback="assets/img/producto-placeholder.svg"/>' +
+        '</button>'
+      );
+    }).join("");
+
+    thumbsBox.addEventListener("click", function (e) {
+      var btn = e.target.closest(".gallery-thumb");
+      if (!btn) return;
+      var url = btn.getAttribute("data-url");
+      if (mainImg) mainImg.setAttribute("src", url);
+      thumbsBox.querySelectorAll(".gallery-thumb").forEach(function (t) {
+        var active = t === btn;
+        t.classList.toggle("border-brand", active);
+        t.classList.toggle("border-gray-200", !active);
+        var img = t.querySelector("img");
+        if (img) img.classList.toggle("opacity-60", !active);
+      });
+    });
+  }
+
   function renderProductDetail(id, container) {
     if (!container) return Promise.resolve(null);
     var idNum = parseInt(id, 10);
@@ -234,6 +385,22 @@
       container.querySelectorAll(".add-to-cart-btn, .favorite-btn").forEach(function (btn) {
         btn.setAttribute("data-product-id", p.id);
       });
+
+      var tieneSabores = !!(p.sabores && p.sabores.length);
+      var flavorSection = container.querySelector("#flavor-section");
+      if (flavorSection) {
+        if (tieneSabores) {
+          flavorSection.classList.remove("hidden");
+          var chipsBox = container.querySelector("#flavor-chips");
+          if (chipsBox) chipsBox.innerHTML = flavorChipsHTML(p);
+          wireFlavorChips(container, p);
+        } else {
+          flavorSection.classList.add("hidden");
+        }
+      }
+      updateAddToCartState(container, p, null);
+      renderGallery(p, container);
+
       if (global.DSFavorites) global.DSFavorites.decorate(container);
       return p;
     }).catch(function () {

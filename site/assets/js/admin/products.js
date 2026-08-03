@@ -174,9 +174,16 @@
     document.getElementById("image-preview").classList.add("hidden");
 
     if (!editingId) {
+      // Producto nuevo: sabores y galería necesitan un product_id real, que
+      // solo existe tras guardar. Se desbloquean al reabrir en modo edición.
+      setFlavorsLocked(true);
+      setGalleryLocked(true);
       showModal();
       return;
     }
+
+    setFlavorsLocked(false);
+    setGalleryLocked(false);
 
     // Cargar datos del producto a editar. Una sola llamada: se busca por id en la lista.
     // (YAGNI: no hay endpoint GET-by-id; el catálogo es pequeño.)
@@ -187,6 +194,9 @@
         fillForm(p);
       })
       .catch(function (err) { showAlert(err.message, "error"); });
+
+    loadFlavors(editingId);
+    loadGallery(editingId);
 
     showModal();
   }
@@ -218,7 +228,181 @@
     modal.classList.add("hidden");
     editingId = null;
     form.reset();
+    if (flavorsRows) flavorsRows.innerHTML = "";
+    if (galleryThumbs) { galleryThumbs.innerHTML = ""; galleryImages = []; }
     if (lastFocused && lastFocused.focus) lastFocused.focus(); // devolver el foco al disparador
+  }
+
+  // ── sabores (nombre + stock/precio propios; null = usa el del producto) ──────
+  var flavorsRows = null;
+  var flavorsLockedMsg = null;
+  var flavorAddBtn = null;
+
+  function flavorRowHtml(f) {
+    f = f || {};
+    var nombre = f.nombre != null ? f.nombre : "";
+    var stock  = (f.stock === null || f.stock === undefined) ? "" : String(f.stock);
+    var precio = (f.precio === null || f.precio === undefined) ? "" : String(f.precio);
+    return (
+      '<div class="flex gap-2 items-center flavor-row">' +
+        '<input type="text" class="flavor-nombre flex-1 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Nombre del sabor" value="' + esc(nombre) + '" />' +
+        '<input type="number" min="0" class="flavor-stock w-28 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Sin control" value="' + stock + '" />' +
+        '<input type="number" step="0.01" min="0" class="flavor-precio w-32 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Precio del producto" value="' + precio + '" />' +
+        '<button type="button" class="flavor-remove-btn text-red-400 hover:text-red-300 text-sm px-2 shrink-0">Quitar</button>' +
+      '</div>'
+    );
+  }
+
+  function addFlavorRow(f) {
+    flavorsRows.insertAdjacentHTML("beforeend", flavorRowHtml(f));
+  }
+
+  function renderFlavorRows(list) {
+    flavorsRows.innerHTML = "";
+    (list || []).forEach(function (f) { addFlavorRow(f); });
+  }
+
+  // Lee las filas actuales del DOM y arma el array a enviar a flavors.php.
+  // Filas con nombre vacío se ignoran (no se mandan).
+  function collectFlavorsFromDom() {
+    var rows = flavorsRows.querySelectorAll(".flavor-row");
+    var out = [];
+    rows.forEach(function (row) {
+      var nombre = row.querySelector(".flavor-nombre").value.trim();
+      if (!nombre) return;
+      var stockVal  = row.querySelector(".flavor-stock").value.trim();
+      var precioVal = row.querySelector(".flavor-precio").value.trim();
+      out.push({
+        nombre: nombre,
+        stock:  stockVal === "" ? null : Math.max(0, parseInt(stockVal, 10) || 0),
+        precio: precioVal === "" ? null : parseFloat(precioVal),
+      });
+    });
+    return out;
+  }
+
+  // Al crear un producto nuevo (sin id todavía) los sabores necesitan un
+  // product_id real, así que la sección queda bloqueada hasta guardar.
+  function setFlavorsLocked(locked) {
+    flavorsLockedMsg.classList.toggle("hidden", !locked);
+    flavorsRows.classList.toggle("hidden", locked);
+    flavorAddBtn.classList.toggle("hidden", locked);
+    if (locked) flavorsRows.innerHTML = "";
+  }
+
+  function loadFlavors(productId) {
+    return DSAdminApi.apiFetch("../api/admin/products/flavors.php?product_id=" + productId)
+      .then(function (data) { renderFlavorRows(data || []); })
+      .catch(function (err) { showAlert("Error al cargar sabores: " + err.message, "error"); });
+  }
+
+  // Reemplaza el conjunto completo de sabores del producto con lo que haya en el DOM.
+  function saveFlavors(productId) {
+    return DSAdminApi.apiFetch("../api/admin/products/flavors.php", {
+      method: "POST",
+      body: { product_id: productId, sabores: collectFlavorsFromDom() },
+    });
+  }
+
+  // ── galería de imágenes (además de la imagen principal del producto) ─────────
+  var galleryThumbs = null;
+  var galleryLockedMsg = null;
+  var galleryUploadBtn = null;
+  var galleryFileInput = null;
+  var galleryImages = []; // última lista conocida, para calcular el reorder
+
+  function galleryThumbHtml(img) {
+    return (
+      '<div class="relative border border-slate-600 rounded bg-slate-900 p-1 gallery-thumb" data-id="' + img.id + '">' +
+        '<img src="../' + esc(img.url) + '" alt="" class="w-full h-20 object-contain" />' +
+        '<button type="button" class="gallery-delete-btn absolute -top-1 -right-1 bg-red-900 text-red-200 text-xs w-5 h-5 leading-5 text-center rounded-full" title="Quitar de la galería">&times;</button>' +
+        '<div class="flex justify-between items-center mt-1">' +
+          '<button type="button" class="gallery-move-left-btn text-slate-300 hover:text-white text-xs px-1" title="Mover a la izquierda">&#9664;</button>' +
+          '<button type="button" class="gallery-principal-btn text-slate-400 hover:text-lime text-[10px] px-1" title="Usar como imagen principal">&#9733;</button>' +
+          '<button type="button" class="gallery-move-right-btn text-slate-300 hover:text-white text-xs px-1" title="Mover a la derecha">&#9654;</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderGalleryThumbs(list) {
+    galleryImages = list || [];
+    galleryThumbs.innerHTML = galleryImages.map(galleryThumbHtml).join("");
+  }
+
+  // Igual que los sabores: sin product_id real todavía no hay dónde guardar imágenes.
+  function setGalleryLocked(locked) {
+    galleryLockedMsg.classList.toggle("hidden", !locked);
+    galleryThumbs.classList.toggle("hidden", locked);
+    galleryUploadBtn.classList.toggle("hidden", locked);
+    if (locked) { galleryImages = []; galleryThumbs.innerHTML = ""; }
+  }
+
+  function loadGallery(productId) {
+    return DSAdminApi.apiFetch("../api/admin/products/images.php?product_id=" + productId)
+      .then(function (data) { renderGalleryThumbs(data); })
+      .catch(function (err) { showAlert("Error al cargar galería: " + err.message, "error"); });
+  }
+
+  // La galería se guarda de inmediato (no espera al submit del formulario):
+  // por cada archivo se sube con upload-image.php y luego se agrega con images.php.
+  function uploadGalleryFiles(files) {
+    if (!editingId) return;
+    var uploadOne = function (file) {
+      var fd = new FormData();
+      fd.append("imagen", file);
+      return DSAdminApi.apiFetch("../api/admin/products/upload-image.php", { method: "POST", body: fd })
+        .then(function (imgData) {
+          return DSAdminApi.apiFetch("../api/admin/products/images.php", {
+            method: "POST",
+            body: { action: "add", product_id: editingId, url: imgData.url },
+          });
+        });
+    };
+    var chain = Promise.resolve();
+    Array.prototype.forEach.call(files, function (file) {
+      chain = chain.then(function () { return uploadOne(file); });
+    });
+    return chain
+      .then(function () { return loadGallery(editingId); })
+      .catch(function (err) { showAlert("Error al subir imagen: " + err.message, "error"); });
+  }
+
+  function deleteGalleryImage(id) {
+    if (!confirm("¿Quitar esta imagen de la galería?")) return;
+    DSAdminApi.apiFetch("../api/admin/products/images.php", { method: "POST", body: { action: "delete", id: id } })
+      .then(function () { return loadGallery(editingId); })
+      .catch(function (err) { showAlert(err.message, "error"); });
+  }
+
+  // Reordenamiento simple: intercambia la posición con la miniatura vecina
+  // y reenvía el orden completo (no hace falta drag-and-drop real).
+  function moveGalleryImage(id, dir) {
+    var ids = galleryImages.map(function (g) { return g.id; });
+    var idx = ids.indexOf(id);
+    var swapWith = idx + dir;
+    if (idx === -1 || swapWith < 0 || swapWith >= ids.length) return;
+    var tmp = ids[idx]; ids[idx] = ids[swapWith]; ids[swapWith] = tmp;
+    DSAdminApi.apiFetch("../api/admin/products/images.php", {
+      method: "POST",
+      body: { action: "reorder", product_id: editingId, ids: ids },
+    })
+      .then(function (data) { renderGalleryThumbs(data); })
+      .catch(function (err) { showAlert(err.message, "error"); });
+  }
+
+  function setPrincipalImage(id) {
+    DSAdminApi.apiFetch("../api/admin/products/images.php", { method: "POST", body: { action: "set_principal", id: id } })
+      .then(function (data) {
+        document.getElementById("current-imagen").value = data.imagen || "";
+        var prev = document.getElementById("image-preview");
+        if (data.imagen) {
+          prev.src = "../" + data.imagen;
+          prev.classList.remove("hidden");
+        }
+        showAlert("Imagen principal actualizada", "success");
+      })
+      .catch(function (err) { showAlert(err.message, "error"); });
   }
 
   function softDelete(id) {
@@ -276,9 +460,26 @@
       return DSAdminApi.apiFetch(path, { method: "POST", body: body });
     })
       .then(function () {
+        var wasEditing = editingId;
+        // Los sabores se guardan junto con el producto (un solo botón "Guardar").
+        // No aplica al crear: la sección está bloqueada hasta que exista un id.
+        if (wasEditing) {
+          return saveFlavors(wasEditing)
+            .then(function () {
+              closeModal();
+              reloadProducts(currentPage);
+              showAlert("Producto actualizado", "success");
+            })
+            .catch(function (err) {
+              // El producto SÍ se guardó; el error es solo de los sabores.
+              closeModal();
+              reloadProducts(currentPage);
+              showAlert("Producto guardado, pero hubo un error al guardar los sabores: " + err.message, "error");
+            });
+        }
         closeModal();
         reloadProducts(currentPage);
-        showAlert(editingId ? "Producto actualizado" : "Producto creado", "success");
+        showAlert("Producto creado", "success");
       })
       .catch(function (err) { showAlert(err.message, "error"); });
   }
@@ -486,6 +687,38 @@
     tableBody = document.getElementById("products-tbody");
     modal     = document.getElementById("product-modal");
     form      = document.getElementById("product-form");
+
+    // Sabores
+    flavorsRows      = document.getElementById("flavors-rows");
+    flavorsLockedMsg = document.getElementById("flavors-locked-msg");
+    flavorAddBtn     = document.getElementById("flavor-add-row-btn");
+    flavorAddBtn.addEventListener("click", function () { addFlavorRow(); });
+    flavorsRows.addEventListener("click", function (e) {
+      var btn = e.target.closest(".flavor-remove-btn");
+      if (btn) btn.closest(".flavor-row").remove();
+    });
+
+    // Galería de imágenes
+    galleryThumbs     = document.getElementById("gallery-thumbs");
+    galleryLockedMsg  = document.getElementById("gallery-locked-msg");
+    galleryUploadBtn  = document.getElementById("gallery-upload-btn");
+    galleryFileInput  = document.getElementById("gallery-file-input");
+    galleryUploadBtn.addEventListener("click", function () { galleryFileInput.click(); });
+    galleryFileInput.addEventListener("change", function () {
+      if (galleryFileInput.files && galleryFileInput.files.length) {
+        uploadGalleryFiles(galleryFileInput.files);
+      }
+      galleryFileInput.value = "";
+    });
+    galleryThumbs.addEventListener("click", function (e) {
+      var thumb = e.target.closest(".gallery-thumb");
+      if (!thumb) return;
+      var id = parseInt(thumb.dataset.id, 10);
+      if (e.target.closest(".gallery-delete-btn")) deleteGalleryImage(id);
+      else if (e.target.closest(".gallery-move-left-btn")) moveGalleryImage(id, -1);
+      else if (e.target.closest(".gallery-move-right-btn")) moveGalleryImage(id, 1);
+      else if (e.target.closest(".gallery-principal-btn")) setPrincipalImage(id);
+    });
 
     document.getElementById("new-product-btn").addEventListener("click", function () { openModal(null); });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);

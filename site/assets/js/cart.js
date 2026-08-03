@@ -1,11 +1,20 @@
 /* DS Cart — carrito en localStorage + envío de pedido (WhatsApp + registro en BD).
-   Clave de localStorage: "ds_cart" → array de líneas {producto_id, nombre, precio, cantidad, imagen}. */
+   Clave de localStorage: "ds_cart" → array de líneas
+   {producto_id, sabor_id, sabor, nombre, precio, cantidad, imagen}.
+   Producto + sabor son líneas DISTINTAS: la identidad de una línea es
+   producto_id + sabor_id (sabor_id null = sin sabor), no solo producto_id. */
 (function (global) {
   var STORAGE_KEY = "ds_cart";
   var WA_NUMBER = "5218344241599";
   // El token CSRF se obtiene de forma asíncrona (me.php). Hasta que esté listo, el botón
   // "Enviar" permanece deshabilitado para evitar un POST sin token (403 silencioso).
   var csrfReady = false;
+
+  // Identidad de una línea del carrito: mismo producto CON distinto sabor son líneas
+  // distintas (ej. Chocolate y Vainilla del mismo producto conviven en el carrito).
+  function lineKey(productoId, saborId) {
+    return String(productoId) + "::" + (saborId == null || saborId === "" ? "" : String(saborId));
+  }
 
   function getCart() {
     try {
@@ -19,6 +28,8 @@
         .map(function (i) {
           return {
             producto_id: i.producto_id,
+            sabor_id: i.sabor_id != null && i.sabor_id !== "" ? i.sabor_id : null,
+            sabor: i.sabor ? String(i.sabor) : null,
             nombre: String(i.nombre || ""),
             precio: Math.max(0, Number(i.precio) || 0),
             cantidad: Math.max(0, parseInt(i.cantidad, 10) || 0),
@@ -48,17 +59,24 @@
     });
   }
 
-  function addItem(producto, cantidad) {
+  // sabor (opcional): {id, nombre, precio} — cuando el producto tiene sabores, el precio
+  // de la línea es el del sabor elegido (ya resuelto por catalog-engine.js: el propio si
+  // lo tiene, si no el del producto), nunca el precio "base" del producto a ciegas.
+  function addItem(producto, cantidad, sabor) {
     cantidad = cantidad || 1;
+    var saborId = sabor ? sabor.id : null;
     var items = getCart();
-    var existing = items.filter(function (i) { return String(i.producto_id) === String(producto.id); })[0];
+    var key = lineKey(producto.id, saborId);
+    var existing = items.filter(function (i) { return lineKey(i.producto_id, i.sabor_id) === key; })[0];
     if (existing) {
       existing.cantidad += cantidad;
     } else {
       items.push({
         producto_id: producto.id,
+        sabor_id: saborId,
+        sabor: sabor ? sabor.nombre : null,
         nombre: producto.nombre,
-        precio: producto.precio,
+        precio: sabor ? sabor.precio : producto.precio,
         cantidad: cantidad,
         imagen: producto.imagen,
       });
@@ -66,19 +84,21 @@
     saveCart(items);
   }
 
-  function removeItem(productoId) {
-    saveCart(getCart().filter(function (i) { return String(i.producto_id) !== String(productoId); }));
+  function removeItem(productoId, saborId) {
+    var key = lineKey(productoId, saborId);
+    saveCart(getCart().filter(function (i) { return lineKey(i.producto_id, i.sabor_id) !== key; }));
   }
 
-  function updateQty(productoId, delta) {
+  function updateQty(productoId, saborId, delta) {
     delta = parseInt(delta, 10);
     if (isNaN(delta)) return;
+    var key = lineKey(productoId, saborId);
     var items = getCart();
-    var item = items.filter(function (i) { return String(i.producto_id) === String(productoId); })[0];
+    var item = items.filter(function (i) { return lineKey(i.producto_id, i.sabor_id) === key; })[0];
     if (!item) return;
     item.cantidad += delta;
     if (item.cantidad <= 0) {
-      items = items.filter(function (i) { return String(i.producto_id) !== String(productoId); });
+      items = items.filter(function (i) { return lineKey(i.producto_id, i.sabor_id) !== key; });
     }
     saveCart(items);
   }
@@ -95,20 +115,22 @@
 
   function cartLineHTML(item) {
     var subtotal = money(item.precio * item.cantidad);
+    var saborAttr = item.sabor_id != null ? ' data-sabor-id="' + esc(item.sabor_id) + '"' : "";
+    var nombreLinea = item.sabor ? esc(item.nombre) + ' — ' + esc(item.sabor) : esc(item.nombre);
     return (
-      '<div class="bg-surface-container-lowest border custom-border rounded-lg p-stack-md flex flex-col sm:flex-row items-center gap-stack-md custom-shadow transition-shadow hover:shadow-md" data-cart-line="' + item.producto_id + '">' +
+      '<div class="bg-surface-container-lowest border custom-border rounded-lg p-stack-md flex flex-col sm:flex-row items-center gap-stack-md custom-shadow transition-shadow hover:shadow-md" data-cart-line="' + item.producto_id + '"' + saborAttr + '>' +
         '<img class="w-24 h-24 object-contain rounded bg-surface-container-low p-2" loading="lazy" src="' + esc(item.imagen) + '" alt="' + esc(item.nombre) + '"/>' +
         '<div class="flex-grow w-full text-center sm:text-left">' +
-          '<h3 class="font-headline-sm text-headline-sm text-[#042C53]">' + esc(item.nombre) + '</h3>' +
+          '<h3 class="font-headline-sm text-headline-sm text-[#042C53]">' + nombreLinea + '</h3>' +
         '</div>' +
         '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + money(item.precio) + '</div>' +
         '<div class="flex items-center gap-2 border custom-border rounded bg-surface">' +
-          '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="-1" data-id="' + item.producto_id + '"><span class="material-symbols-outlined text-sm">remove</span></button>' +
+          '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="-1" data-id="' + item.producto_id + '"' + saborAttr + '><span class="material-symbols-outlined text-sm">remove</span></button>' +
           '<span class="w-8 text-center font-body-md font-semibold">' + item.cantidad + '</span>' +
-          '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="1" data-id="' + item.producto_id + '"><span class="material-symbols-outlined text-sm">add</span></button>' +
+          '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="1" data-id="' + item.producto_id + '"' + saborAttr + '><span class="material-symbols-outlined text-sm">add</span></button>' +
         '</div>' +
         '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + subtotal + '</div>' +
-        '<button type="button" aria-label="Eliminar producto" class="text-error hover:text-error-container transition-colors p-2 cart-remove-btn" data-id="' + item.producto_id + '">' +
+        '<button type="button" aria-label="Eliminar producto" class="text-error hover:text-error-container transition-colors p-2 cart-remove-btn" data-id="' + item.producto_id + '"' + saborAttr + '>' +
           '<span class="material-symbols-outlined">delete</span>' +
         '</button>' +
       '</div>'
@@ -165,7 +187,8 @@
     var total = items.reduce(function (sum, i) { return sum + i.precio * i.cantidad; }, 0);
     var lines = ["Hola DS, quiero hacer este pedido:", ""];
     items.forEach(function (i) {
-      lines.push("• " + i.cantidad + "x " + i.nombre + " — " + money(i.precio));
+      var nombre = i.sabor ? i.nombre + " (" + i.sabor + ")" : i.nombre;
+      lines.push("• " + i.cantidad + "x " + nombre + " — " + money(i.precio));
     });
     lines.push("");
     lines.push("Subtotal: " + money(total));
@@ -268,6 +291,7 @@
           items: items.map(function (i) {
             return {
               producto_id: i.producto_id,
+              sabor_id: i.sabor_id,
               nombre_producto: i.nombre,
               precio_unitario: i.precio,
               cantidad: i.cantidad,
@@ -311,7 +335,7 @@
     document.addEventListener("click", function (e) {
       var qtyBtn = e.target.closest(".cart-qty-btn");
       if (qtyBtn) {
-        updateQty(qtyBtn.getAttribute("data-id"), parseInt(qtyBtn.getAttribute("data-delta"), 10));
+        updateQty(qtyBtn.getAttribute("data-id"), qtyBtn.getAttribute("data-sabor-id"), parseInt(qtyBtn.getAttribute("data-delta"), 10));
         var container = document.getElementById("cart-items");
         var summary = document.getElementById("cart-summary");
         if (container) renderCart(container);
@@ -321,7 +345,7 @@
       }
       var removeBtn = e.target.closest(".cart-remove-btn");
       if (removeBtn) {
-        removeItem(removeBtn.getAttribute("data-id"));
+        removeItem(removeBtn.getAttribute("data-id"), removeBtn.getAttribute("data-sabor-id"));
         var container2 = document.getElementById("cart-items");
         var summary2 = document.getElementById("cart-summary");
         if (container2) renderCart(container2);
@@ -330,11 +354,22 @@
         return;
       }
       var addBtn = e.target.closest(".add-to-cart-btn");
-      if (addBtn && global.DSCatalog) {
+      if (addBtn && !addBtn.disabled && global.DSCatalog) {
+        // Si la ficha ya eligió un sabor (F3.6), el propio botón lo lleva marcado en
+        // data-sabor-* (ver updateAddToCartState en catalog-engine.js); las tarjetas del
+        // catálogo sin sabores no traen esos atributos y sabor queda null.
+        var saborId = addBtn.getAttribute("data-sabor-id");
+        var sabor = saborId
+          ? {
+              id: saborId,
+              nombre: addBtn.getAttribute("data-sabor-nombre"),
+              precio: parseFloat(addBtn.getAttribute("data-sabor-precio")),
+            }
+          : null;
         global.DSCatalog.fetchProductos().then(function (productos) {
           var wanted = addBtn.getAttribute("data-product-id");
           var p = productos.filter(function (item) { return String(item.id) === String(wanted); })[0];
-          if (p) addItem(p, 1);
+          if (p) addItem(p, 1, sabor);
         }).catch(function () {
           alert("No se pudo agregar el producto. Revisa tu conexión e inténtalo de nuevo.");
         });

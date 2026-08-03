@@ -74,13 +74,9 @@ button:active,a[href]:active{transform:scale(.97);}
     <!-- Left: Image Gallery -->
     <div class="flex flex-col gap-4">
       <div class="bg-white border border-gray-200 aspect-square flex items-center justify-center p-8 relative">
-        <img class="max-w-full max-h-full object-contain" data-field="imagen" data-fallback="assets/img/producto-placeholder.svg" loading="lazy" src="assets/img/producto-placeholder.svg"/>
+        <img class="max-w-full max-h-full object-contain transition-opacity duration-200" data-field="imagen" data-fallback="assets/img/producto-placeholder.svg" loading="lazy" src="assets/img/producto-placeholder.svg"/>
       </div>
-      <div class="grid grid-cols-4 gap-4">
-        <div class="bg-white border-2 border-brand aspect-square p-2 cursor-pointer">
-          <img class="object-contain w-full h-full opacity-50" loading="lazy" src="assets/img/producto-placeholder.svg"/>
-        </div>
-      </div>
+      <div class="grid grid-cols-4 gap-4 hidden" id="gallery-thumbs"></div>
     </div>
 
     <!-- Right: Product Details -->
@@ -89,8 +85,13 @@ button:active,a[href]:active{transform:scale(.97);}
       <h1 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink mb-2" data-field="nombre">Nombre del Producto</h1>
       <div class="text-gray-400 font-body text-sm mb-6" data-field="cantidad">Cantidad</div>
       
-      <div class="font-display font-extrabold text-4xl text-brand mb-8" data-field="precio">$0.00 MXN</div>
-      
+      <div class="font-display font-extrabold text-4xl text-brand mb-6" data-field="precio">$0.00 MXN</div>
+
+      <div class="hidden mb-6" id="flavor-section">
+        <div class="text-sm font-bold uppercase tracking-wide text-gray-500 mb-2">Elige un sabor</div>
+        <div class="flex flex-wrap gap-2" id="flavor-chips"></div>
+      </div>
+
       <p class="text-gray-600 font-body mb-8 leading-relaxed" data-field="descripcion">
         Descripción del producto cargando...
       </p>
