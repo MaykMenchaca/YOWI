@@ -244,7 +244,17 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
       cuando los precios difieren; `sabor` expuesto en los pedidos del cliente y del panel
       (commit `4233523`)
 - [x] **Tanda 7 completa**: F3.1-F3.5 y F4.1-F4.3 listos — falta la UI (F3.6/F3.7/F4.4/F4.5)
-- [ ] Resto de subfases (F3.6, F3.7, F4.4, F4.5, F6) pendientes
+- [x] **F3.6 + F4.5** — tienda: chips de sabor con precio dinámico, "desde $X" y
+      "Elegir sabor" en las tarjetas, galería con miniaturas navegables por teclado,
+      carrito con líneas producto+sabor distintas (commit `725122c`)
+- [x] **F3.7 + F4.4** — panel: editor de sabores (nombre+stock+precio) y galería
+      (subir/borrar/reordenar/marcar principal) en el modal de producto, bloqueados
+      hasta guardar un producto nuevo. Nota: por un descuido del orquestador terminó
+      en el mismo commit `725122c` que F3.6+F4.5 en vez de uno aparte (ambos ya
+      estaban en el índice de git al hacer `git add`); verificado y funciona
+      correctamente, solo quedó agrupado con el otro en el historial.
+- [x] **F3 y F4 completas** de punta a punta (BD → API → panel → tienda)
+- [ ] Resto de subfases (F6 — cierre) pendientes
 
 ### Nota de verificación (Tanda 7)
 F3.2+F4.2 los hizo el orquestador directamente (archivo compartido con F2, alto riesgo).
