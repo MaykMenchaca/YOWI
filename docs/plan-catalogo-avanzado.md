@@ -221,10 +221,28 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
 - [x] **F1.5** — panel: SKU en modal (precarga siempre), tabla, búsqueda, "Exportar CSV" (commit `f04aabe`)
 - [x] **F5.2** — restaurar respaldo con vista previa obligatoria, pedidos nunca se duplican (commit `44975ef`)
 - [x] **F1 completa** (F1.1-F1.5): SKU como identidad estable, de punta a punta
-- [~] **Tanda 4 en curso**: F2.1+F2.2+F2.3 (motor de diff del importador, incluye fix de un bug
-      real: el UPDATE no aplicaba cambios de nombre/marca al reimportar) ∥ F5.3 (botones
-      Respaldar/Restaurar en las 7 páginas admin) — 2 agentes en paralelo
-- [ ] Resto de subfases (F2.4, F3-F6) pendientes
+- [x] **F2.1+F2.2+F2.3** — motor de diff del importador: creado/actualizado(campos)/sin
+      cambios/omitido; preview=1 no escribe; "reemplazar todo" desactiva en vez de borrar,
+      con guardia de CSV vacío (commit `a75ee99`)
+- [x] **F5.3** — botones Respaldar/Restaurar en las 7 páginas admin + tarjeta "Respaldo
+      completo" en el Dashboard (commit `595554f`)
+- [x] **F2 (sin F2.4) + F5 completas**: importación por diferencias con vista previa fiel, y
+      respaldos descargables/restaurables en todo el panel
+- [ ] Resto de subfases (F2.4, F3, F4, F6) pendientes
+
+### Nota de recuperación (Tanda 4)
+Los 2 agentes de la Tanda 4 murieron a mitad de tarea por el límite de gasto mensual de la
+cuenta, dejando cambios sin commitear. El diff de `import.php` tenía un `continue 2;` inválido
+dentro de un `try/catch` (en PHP el try/catch no cuenta como nivel de anidamiento para
+`continue`/`break`) que rompía la sintaxis del archivo en producción; se corrigió a `continue;`
+y se relanzó MariaDB + PHP local para verificar todo el flujo antes de commitear: preview no
+escribe, el diff no marca falsos cambios (tipos nativos vía `PDO::ATTR_EMULATE_PREPARES=false`
++ mysqlnd), el renombrado vía SKU ya aplica, la descripción vacía ya no borra, colisiones de
+SKU se omiten sin duplicar, y "reemplazar todo" desactiva sin borrar (con guardia de CSV
+vacío). El trabajo parcial de F5.3 (`backup.js` + 2 de 7 páginas) se revisó, se probó en
+navegador (restaurar categorías y respaldo completo, ambos con vista previa fiel y sin
+duplicar/perder datos) y se completaron las 5 páginas restantes directamente en la sesión
+orquestadora, sin relanzar agentes.
 
 ### Nota de verificación (Tanda 3)
 Ambos agentes (F1.5, F5.2) sin alertas de seguridad; F5.2 incluso rechazó correctamente
