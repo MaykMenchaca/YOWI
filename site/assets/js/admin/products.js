@@ -299,7 +299,15 @@
     });
   }
 
-  // ── importar CSV ──────────────────────────────────────────────────────────────
+  // ── importar CSV (F2.4: Analizar → tabla con colores → Aplicar cambios) ────────
+  // Tras "Analizar" (preview=1, no escribe nada) queda habilitado "Aplicar cambios",
+  // que reenvía el mismo archivo con preview=0. Cambiar el archivo o el checkbox de
+  // "reemplazar todo" invalida el análisis: hay que analizar de nuevo antes de aplicar.
+  function setApplyEnabled(enabled) {
+    var btn = document.getElementById("import-submit");
+    btn.disabled = !enabled;
+  }
+
   function openImportModal() {
     var m = document.getElementById("import-modal");
     document.getElementById("import-file").value = "";
@@ -308,6 +316,7 @@
     var res = document.getElementById("import-results");
     res.classList.add("hidden");
     res.innerHTML = "";
+    setApplyEnabled(false);
     m.classList.remove("hidden");
   }
 
@@ -348,7 +357,59 @@
     URL.revokeObjectURL(url);
   }
 
-  function submitImport() {
+  var ACCION_INFO = {
+    creado:      { label: "Nuevo",        row: "bg-green-900/20",  badge: "bg-green-800 text-green-200" },
+    actualizado: { label: "Cambia",       row: "bg-blue-900/20",   badge: "bg-blue-800 text-blue-200" },
+    sin_cambios: { label: "Sin cambios",  row: "bg-transparent",   badge: "bg-slate-700 text-slate-400" },
+    omitido:     { label: "Omitido",      row: "bg-red-900/20",    badge: "bg-red-800 text-red-200" },
+  };
+
+  // Arma la tabla fila-por-fila (creado/actualizado/sin_cambios/omitido) que devuelve
+  // import.php en `filas`. Mismo render para la vista previa y para el resultado aplicado.
+  function renderImportFilas(filas) {
+    if (!filas || !filas.length) return "";
+    var rows = filas.map(function (f) {
+      var info = ACCION_INFO[f.accion] || ACCION_INFO.sin_cambios;
+      var detalle = f.accion === "actualizado" && f.campos && f.campos.length
+        ? f.campos.join(", ")
+        : (f.accion === "omitido" ? esc(f.motivo || "") : "—");
+      return (
+        '<tr class="' + info.row + ' border-b border-slate-700/60">' +
+        '<td class="px-2 py-1.5 text-slate-500">' + f.fila + "</td>" +
+        '<td class="px-2 py-1.5"><span class="inline-block px-1.5 py-0.5 rounded text-xs font-bold uppercase ' + info.badge + '">' + info.label + "</span></td>" +
+        '<td class="px-2 py-1.5 text-slate-300">' + esc(f.sku || "—") + "</td>" +
+        '<td class="px-2 py-1.5 text-slate-200">' + esc(f.nombre || "—") + "</td>" +
+        '<td class="px-2 py-1.5 text-slate-400">' + detalle + "</td>" +
+        "</tr>"
+      );
+    }).join("");
+    return (
+      '<div class="max-h-80 overflow-auto border border-slate-700 rounded mt-3">' +
+      '<table class="w-full text-xs">' +
+      '<thead class="sticky top-0 bg-slate-800"><tr class="text-left text-slate-500 uppercase tracking-wide">' +
+      '<th class="px-2 py-1.5">Fila</th><th class="px-2 py-1.5">Estado</th><th class="px-2 py-1.5">SKU</th>' +
+      '<th class="px-2 py-1.5">Nombre</th><th class="px-2 py-1.5">Campos / motivo</th>' +
+      "</tr></thead><tbody>" + rows + "</tbody></table></div>"
+    );
+  }
+
+  function renderImportContadores(data) {
+    var chips = [
+      { n: data.creados, label: "nuevos", cls: "bg-green-900/40 text-green-300 border-green-700" },
+      { n: data.actualizados, label: "con cambios", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
+      { n: data.sin_cambios, label: "sin cambios", cls: "bg-slate-700/60 text-slate-400 border-slate-600" },
+      { n: (data.omitidos || []).length, label: "omitidos", cls: "bg-red-900/40 text-red-300 border-red-700" },
+    ];
+    if (data.desactivados) {
+      chips.push({ n: data.desactivados, label: "desactivados", cls: "bg-amber-900/40 text-amber-300 border-amber-700" });
+    }
+    return '<div class="flex flex-wrap gap-2">' + chips.map(function (c) {
+      return '<span class="border rounded px-2 py-1 text-xs font-bold ' + c.cls + '">' + c.n + " " + c.label + "</span>";
+    }).join("") + "</div>";
+  }
+
+  // Ejecuta import.php con preview=1 (analizar, no escribe) o preview=0 (aplicar).
+  function runImport(preview) {
     var input = document.getElementById("import-file");
     if (!input.files || !input.files[0]) {
       showAlert("Elige un archivo CSV primero", "error");
@@ -356,46 +417,68 @@
     }
     var replaceEl = document.getElementById("import-replace");
     var replaceAll = replaceEl && replaceEl.checked;
-    if (replaceAll && !confirm("Vas a BORRAR todos los productos actuales y reemplazarlos por los del archivo. Esta acción no se puede deshacer. ¿Continuar?")) {
-      return;
-    }
-    var btn = document.getElementById("import-submit");
-    btn.disabled = true;
-    btn.textContent = "Importando…";
 
     var fd = new FormData();
     fd.append("csv", input.files[0]);
+    fd.append("preview", preview ? "1" : "0");
     if (replaceAll) fd.append("replace_all", "1");
 
-    DSAdminApi.apiFetch("../api/admin/products/import.php", { method: "POST", body: fd })
+    var analyzeBtn = document.getElementById("import-analyze");
+    var applyBtn = document.getElementById("import-submit");
+    analyzeBtn.disabled = true;
+    applyBtn.disabled = true;
+    (preview ? analyzeBtn : applyBtn).textContent = preview ? "Analizando…" : "Aplicando…";
+
+    return DSAdminApi.apiFetch("../api/admin/products/import.php", { method: "POST", body: fd })
       .then(function (data) {
         var res = document.getElementById("import-results");
-        var borrados = data.borrados
-          ? '<p class="text-red-300 font-medium">🗑️ ' + data.borrados + ' producto(s) anterior(es) borrado(s)</p>'
-          : '';
-        var html =
-          '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' + borrados +
-          '<p class="text-green-300 font-semibold">✓ ' + data.creados + ' creados · ' +
-          data.actualizados + ' actualizados · ' + data.categorias_creadas + ' categorías nuevas · ' +
-          (data.marcas_creadas || 0) + ' marcas nuevas</p>';
-        if (data.omitidos && data.omitidos.length) {
-          html += '<p class="text-amber-300 mt-2 font-medium">' + data.omitidos.length + ' fila(s) omitida(s):</p>' +
-            '<ul class="text-slate-400 text-xs mt-1 list-disc pl-5 space-y-0.5 max-h-40 overflow-auto">' +
-            data.omitidos.map(function (o) {
-              return "<li>Fila " + o.fila + ": " + esc(o.motivo) + "</li>";
-            }).join("") + "</ul>";
-        }
-        html += "</div>";
-        res.innerHTML = html;
+        var titulo = preview
+          ? '<p class="text-slate-300 font-semibold mb-2">Vista previa — no se guardó nada todavía:</p>'
+          : '<p class="text-green-300 font-semibold mb-2">✓ Cambios aplicados.</p>';
+        res.innerHTML =
+          '<div class="bg-slate-900/60 border border-slate-600 rounded p-3">' + titulo +
+          renderImportContadores(data) + renderImportFilas(data.filas) + "</div>";
         res.classList.remove("hidden");
-        // Refrescar categorías (pudieron crearse nuevas) y la tabla (recarga forzada).
-        loadCategories().then(function () { reloadProducts(1); });
+
+        if (preview) {
+          setApplyEnabled(true);
+        } else {
+          setApplyEnabled(false);
+          // Refrescar categorías (pudieron crearse nuevas) y la tabla (recarga forzada).
+          loadCategories().then(function () { reloadProducts(1); });
+        }
+        return data;
       })
-      .catch(function (err) { showAlert("Error al importar: " + err.message, "error"); })
+      .catch(function (err) {
+        showAlert("Error al " + (preview ? "analizar" : "aplicar") + ": " + err.message, "error");
+        setApplyEnabled(false);
+      })
       .finally(function () {
-        btn.disabled = false;
-        btn.textContent = "Importar";
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analizar";
+        applyBtn.textContent = "Aplicar cambios";
       });
+  }
+
+  function analyzeImport() {
+    runImport(true);
+  }
+
+  function applyImport() {
+    var replaceEl = document.getElementById("import-replace");
+    var replaceAll = replaceEl && replaceEl.checked;
+    if (replaceAll && !confirm('Vas a desactivar todos los productos que NO estén en este archivo (no se borran, solo dejan de verse en la tienda). ¿Continuar?')) {
+      return;
+    }
+    runImport(false);
+  }
+
+  // Cambiar el archivo o el checkbox invalida el análisis previo: hay que analizar de nuevo.
+  function invalidateImportAnalysis() {
+    setApplyEnabled(false);
+    var res = document.getElementById("import-results");
+    res.classList.add("hidden");
+    res.innerHTML = "";
   }
 
   // ── init ──────────────────────────────────────────────────────────────────────
@@ -411,13 +494,16 @@
     if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
     form.addEventListener("submit", submitForm);
 
-    // Importación CSV.
+    // Importación CSV (F2.4: Analizar → tabla con colores → Aplicar cambios).
     document.getElementById("wipe-btn").addEventListener("click", wipeCatalog);
     document.getElementById("import-btn").addEventListener("click", openImportModal);
     document.getElementById("import-close").addEventListener("click", closeImportModal);
     document.getElementById("import-cancel").addEventListener("click", closeImportModal);
     document.getElementById("download-template").addEventListener("click", downloadTemplate);
-    document.getElementById("import-submit").addEventListener("click", submitImport);
+    document.getElementById("import-analyze").addEventListener("click", analyzeImport);
+    document.getElementById("import-submit").addEventListener("click", applyImport);
+    document.getElementById("import-file").addEventListener("change", invalidateImportAnalysis);
+    document.getElementById("import-replace").addEventListener("change", invalidateImportAnalysis);
 
     // Cerrar con Escape cuando el modal está abierto.
     document.addEventListener("keydown", function (e) {

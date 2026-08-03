@@ -226,7 +226,7 @@
 
   <!-- Modal de importación CSV -->
   <div id="import-modal" class="hidden fixed inset-0 bg-black/70 flex items-start justify-center z-50 p-4 overflow-y-auto">
-    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-xl shadow-2xl my-8">
+    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-3xl shadow-2xl my-8">
       <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
         <h2 class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Importar productos (CSV)</h2>
         <button id="import-close" class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
@@ -235,8 +235,10 @@
       <div class="px-6 py-5">
         <p class="text-slate-400 text-sm mb-3">
           Sube un archivo <b>.csv</b> (exportado desde Excel o Google Sheets). Las categorías que no
-          existan se crean solas. Si un producto ya existe (mismo <b>nombre</b> y <b>marca</b>), se
-          <b>actualiza</b>; si no, se crea.
+          existan se crean solas. Un producto se empareja primero por <b>SKU</b>; si no trae uno
+          reconocido, por <b>nombre + marca + cantidad + unidad</b>. <b>Celda vacía = no se toca</b>
+          ese dato (no borra descripción, imagen ni badge). Primero <b>Analiza</b> para ver qué
+          cambiaría, sin escribir nada; luego <b>Aplica</b> si todo se ve bien.
         </p>
         <button id="download-template" type="button" class="text-brand hover:text-cobalt-500 text-sm font-semibold underline mb-4 inline-flex items-center gap-1">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 19h16"/></svg>
@@ -247,19 +249,20 @@
         <input id="import-file" type="file" accept=".csv,text/csv,text/plain"
           class="block w-full text-sm text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-none file:border-0 file:text-sm file:font-bold file:uppercase file:bg-lime file:text-ink hover:file:opacity-90 file:cursor-pointer" />
         <p class="text-slate-500 text-xs mt-1">
-          Columnas: <code>nombre, marca, categoria, cantidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo</code>.
+          Columnas: <code>sku, nombre, marca, categoria, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, badge, destacado, activo</code>.
           Obligatorias: nombre, marca, categoria, precio.
         </p>
 
-        <label class="flex items-start gap-2 mt-4 p-3 rounded border border-red-800 bg-red-900/20 cursor-pointer">
-          <input id="import-replace" type="checkbox" class="w-4 h-4 mt-0.5 accent-red-500" />
-          <span class="text-sm text-red-200"><b>Reemplazar todo el catálogo:</b> borra los productos actuales antes de subir los del archivo. Úsalo solo si vas a cargar tu catálogo completo de cero.</span>
+        <label class="flex items-start gap-2 mt-4 p-3 rounded border border-amber-800 bg-amber-900/20 cursor-pointer">
+          <input id="import-replace" type="checkbox" class="w-4 h-4 mt-0.5 accent-amber-500" />
+          <span class="text-sm text-amber-200"><b>Reemplazar todo el catálogo:</b> los productos que <b>no</b> vengan en este archivo se <b>desactivan</b> (dejan de verse en la tienda, pero no se borran ni pierden sus imágenes). Puedes revertirlo reactivándolos. Úsalo solo si vas a cargar tu catálogo completo.</span>
         </label>
 
         <div id="import-results" class="hidden mt-4 text-sm"></div>
 
         <div class="flex gap-3 pt-4 mt-4 border-t border-slate-700">
-          <button id="import-submit" type="button" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity disabled:opacity-50">Importar</button>
+          <button id="import-analyze" type="button" class="flex-1 border border-brand text-brand font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:bg-brand/10 transition-colors disabled:opacity-50">Analizar</button>
+          <button id="import-submit" type="button" disabled class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">Aplicar cambios</button>
           <button id="import-cancel" type="button" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cerrar</button>
         </div>
       </div>
