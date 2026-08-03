@@ -226,9 +226,11 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
       con guardia de CSV vacío (commit `a75ee99`)
 - [x] **F5.3** — botones Respaldar/Restaurar en las 7 páginas admin + tarjeta "Respaldo
       completo" en el Dashboard (commit `595554f`)
-- [x] **F2 (sin F2.4) + F5 completas**: importación por diferencias con vista previa fiel, y
-      respaldos descargables/restaurables en todo el panel
-- [ ] Resto de subfases (F2.4, F3, F4, F6) pendientes
+- [x] **F2.4** — panel: Analizar → tabla con colores (verde nuevo · azul cambia · gris sin
+      cambios · rojo omitido) + contadores → Aplicar cambios (commit `2ca1f6f`)
+- [x] **F2 completa + F5 completa**: importación por diferencias con vista previa fiel de
+      punta a punta (endpoint + panel), y respaldos descargables/restaurables en todo el panel
+- [ ] Resto de subfases (F3, F4, F6) pendientes
 
 ### Nota de recuperación (Tanda 4)
 Los 2 agentes de la Tanda 4 murieron a mitad de tarea por el límite de gasto mensual de la
