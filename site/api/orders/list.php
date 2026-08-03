@@ -25,7 +25,7 @@ if (empty($orders)) {
 $orderIds = array_column($orders, 'id');
 $placeholders = implode(',', array_fill(0, count($orderIds), '?'));
 $itemsStmt = $pdo->prepare(
-    "SELECT order_id, nombre_producto, precio_unitario, cantidad
+    "SELECT order_id, nombre_producto, sabor, precio_unitario, cantidad
      FROM order_items WHERE order_id IN ($placeholders)"
 );
 $itemsStmt->execute($orderIds);
@@ -33,6 +33,7 @@ $itemsByOrder = [];
 foreach ($itemsStmt->fetchAll() as $item) {
     $itemsByOrder[(int) $item['order_id']][] = [
         'nombre_producto' => $item['nombre_producto'],
+        'sabor' => $item['sabor'],
         'precio_unitario' => (float) $item['precio_unitario'],
         'cantidad' => (int) $item['cantidad'],
     ];

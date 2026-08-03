@@ -45,7 +45,7 @@ $orders = $stmt->fetchAll();
 
 // Adjuntar items a cada pedido
 $itemStmt = $pdo->prepare(
-    'SELECT oi.nombre_producto, oi.precio_unitario, oi.cantidad, oi.subtotal
+    'SELECT oi.nombre_producto, oi.sabor, oi.precio_unitario, oi.cantidad, oi.subtotal
      FROM order_items oi WHERE oi.order_id = ?'
 );
 
@@ -65,6 +65,7 @@ foreach ($orders as $o) {
         'user_email'     => $o['user_email'],
         'items'          => array_map(static fn($i) => [
             'nombre'          => $i['nombre_producto'],
+            'sabor'           => $i['sabor'],
             'precio_unitario' => (float) $i['precio_unitario'],
             'cantidad'        => (int) $i['cantidad'],
             'subtotal'        => (float) $i['subtotal'],
