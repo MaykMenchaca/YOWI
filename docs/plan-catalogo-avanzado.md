@@ -254,7 +254,20 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
       estaban en el índice de git al hacer `git add`); verificado y funciona
       correctamente, solo quedó agrupado con el otro en el historial.
 - [x] **F3 y F4 completas** de punta a punta (BD → API → panel → tienda)
-- [ ] Resto de subfases (F6 — cierre) pendientes
+- [x] **F6.1** — regresión completa: 14 páginas (tienda + panel) sin errores de
+      consola ni violaciones de CSP; compra normal (sin sabor) sin cambios de
+      comportamiento; alta de producto nuevo con sabores/galería correctamente
+      bloqueados hasta guardar; favoritos funcionando como antes (pide login)
+- [x] **F6.2** — `docs/FUNCIONES.md` actualizado: SKU, importación con vista previa,
+      sabores, galería, respaldos, referencia completa de columnas del CSV, y huecos
+      de documentación de fases previas (favoritos, direcciones, marcas admin, 2FA)
+      (commit `c0f295e`)
+- [x] **F6.3** — verificación final: `php -l` y `node --check` en todo lo tocado,
+      `npm run build:css` y `build:css:admin` recompilados (admin.css tenía clases
+      nuevas sin incluir), rama y `main` sincronizados
+- [x] **PLAN COMPLETO** — F1 (SKU) → F2 (importación por diferencias) → F3 (sabores)
+      → F4 (galería) → F5 (respaldos) → F6 (cierre), verificado de punta a punta
+      contra MariaDB real en cada fase
 
 ### Nota de verificación (Tanda 7)
 F3.2+F4.2 los hizo el orquestador directamente (archivo compartido con F2, alto riesgo).
