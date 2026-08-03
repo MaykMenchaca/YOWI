@@ -27,4 +27,18 @@ CREATE TABLE IF NOT EXISTS product_flavors (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Deja constancia de qué sabor se pidió (el precio cobrado ya vive en precio_unitario).
-ALTER TABLE order_items ADD COLUMN IF NOT EXISTS sabor VARCHAR(80) NULL AFTER nombre_producto;
+--
+-- Idempotente y portable: "ADD COLUMN IF NOT EXISTS" es sintaxis exclusiva de MariaDB
+-- (MySQL 8 la rechaza con error de sintaxis 1064). Se usa el patrón estándar, válido en
+-- ambos motores: consultar information_schema y construir el ALTER solo si hace falta.
+SET @existe_col := (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'order_items' AND COLUMN_NAME = 'sabor'
+);
+SET @sql_col := IF(@existe_col = 0,
+    'ALTER TABLE order_items ADD COLUMN sabor VARCHAR(80) NULL AFTER nombre_producto',
+    'DO 0'
+);
+PREPARE st_col FROM @sql_col;
+EXECUTE st_col;
+DEALLOCATE PREPARE st_col;

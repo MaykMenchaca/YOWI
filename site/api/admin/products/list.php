@@ -10,7 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') ds_json_error('Método no permitido', 
 ds_require_admin();
 
 $page  = max(1, (int)($_GET['page']  ?? 1));
-$limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+// El panel pide explícitamente limit=9999 para traer el catálogo completo y paginar/
+// filtrar en cliente (products.js). Con el techo anterior (100) el catálogo real
+// (335 productos) quedaba truncado: búsqueda, filtro por categoría y "Editar" en
+// productos fuera de los primeros 100 fallaban en silencio.
+$limit = min(5000, max(1, (int)($_GET['limit'] ?? 20)));
 $offset = ($page - 1) * $limit;
 $q      = isset($_GET['q'])   ? trim((string)$_GET['q'])   : '';
 $cat    = isset($_GET['cat']) ? (int)$_GET['cat']          : 0;

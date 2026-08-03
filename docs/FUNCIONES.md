@@ -223,8 +223,10 @@ Cosas que el cliente no ve directamente pero que hacen que la tienda funcione bi
 - **Un solo archivo `ABRIR-TIENDA.bat`** que: baja los últimos cambios, enciende
   MySQL, descarga PHP si hace falta, prepara la base de datos y abre la tienda.
 - Base de datos **MySQL** con datos de ejemplo y usuario admin listos.
-- **Migraciones automáticas**: al abrir la tienda, se aplican solas los cambios nuevos
-  de base de datos (como la tabla de promociones), sin correr SQL a mano.
+- **Migraciones automáticas solo en local**: al abrir la tienda con `ABRIR-TIENDA.bat`,
+  se aplican solas los cambios nuevos de base de datos (como la tabla de promociones),
+  sin correr SQL a mano. **Esto NO aplica en producción** (Hostinger): ahí las
+  migraciones se aplican a mano con el usuario `ds_migrator` — ver `docs/seguridad-bd.md`.
 
 ---
 

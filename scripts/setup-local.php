@@ -109,6 +109,11 @@ if ($tablasExisten) {
 paso('Migraciones');
 $migDir = $ROOT . '/sql/migrations';
 $revisadas = 0;
+$omitidas = 0;
+// Códigos MySQL/MariaDB que significan "ya existe / ya aplicada" — se omiten en silencio.
+// Cualquier otro código es un fallo real y detiene el script (antes se tragaba TODO error,
+// incluido un error de sintaxis genuino, sin que el usuario se enterara).
+$YA_APLICADA = [1050, 1060, 1061, 1062, 1091];
 if (is_dir($migDir)) {
     $migFiles = glob($migDir . '/*.sql');
     sort($migFiles);
@@ -116,13 +121,62 @@ if (is_dir($migDir)) {
         $msql = preg_replace('/^\s*--.*$/m', '', (string) file_get_contents($mf));
         $mstmts = array_filter(array_map('trim', explode(';', $msql)), fn($s) => $s !== '');
         foreach ($mstmts as $mstmt) {
-            // Idempotente: si ya está aplicada (o no aplica en este motor) se omite.
-            try { $pdo->exec($mstmt); } catch (Throwable $e) { /* ya aplicada */ }
+            try {
+                $pdo->exec($mstmt);
+            } catch (Throwable $e) {
+                $codigo = ($e instanceof PDOException) ? (int) ($e->errorInfo[1] ?? 0) : 0;
+                if (in_array($codigo, $YA_APLICADA, true)) {
+                    $omitidas++;
+                    continue;
+                }
+                echo "\n\033[31m✗ Falló una migración: " . basename($mf) . "\033[0m\n";
+                info("SQL:   " . $mstmt);
+                info("Error: " . $e->getMessage());
+                exit(1);
+            }
         }
         $revisadas++;
     }
 }
-ok("Migraciones revisadas: {$revisadas}.");
+ok("Migraciones revisadas: {$revisadas}" . ($omitidas > 0 ? " (omitidas {$omitidas} sentencia(s) ya aplicadas)." : "."));
+
+// ── 3.6 Autodiagnóstico: confirmar que lo crítico realmente quedó en la BD ────
+paso('Autodiagnóstico de estructura');
+$criticos = [
+    ['products', 'sku', 'columna'],
+    ['order_items', 'sabor', 'columna'],
+    ['users', 'password_changed_at', 'columna'],
+    ['orders', 'direccion_envio', 'columna'],
+    ['product_flavors', null, 'tabla'],
+    ['product_images', null, 'tabla'],
+];
+$fallosDiagnostico = 0;
+foreach ($criticos as [$tabla, $columna, $tipo]) {
+    if ($tipo === 'tabla') {
+        $existe = (bool) $pdo->query('SHOW TABLES LIKE ' . $pdo->quote($tabla))->fetch();
+        $etiqueta = "tabla {$tabla}";
+    } else {
+        $stmt = $pdo->prepare(
+            'SELECT COUNT(*) FROM information_schema.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?'
+        );
+        $stmt->execute([$tabla, $columna]);
+        $existe = ((int) $stmt->fetchColumn()) > 0;
+        $etiqueta = "{$tabla}.{$columna}";
+    }
+    if ($existe) {
+        echo "    \033[32m✓\033[0m {$etiqueta}\n";
+    } else {
+        echo "    \033[31m✗\033[0m {$etiqueta} — FALTA\n";
+        $fallosDiagnostico++;
+    }
+}
+if ($fallosDiagnostico > 0) {
+    echo "\n\033[31m✗ Faltan {$fallosDiagnostico} elemento(s) crítico(s) de la base de datos.\033[0m\n";
+    info("Revisa los mensajes de 'Migraciones' arriba para ver qué falló.");
+    exit(1);
+}
+ok("Estructura crítica verificada: todo presente.");
 
 // ── 4. Sembrar productos (solo si el catálogo está vacío) ─────────────────────
 paso('Productos');

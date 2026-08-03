@@ -34,7 +34,15 @@
         try { json = JSON.parse(text); }
         catch (e) { throw new Error("Error del servidor (" + res.status + ")"); }
         if (!res.ok || json.ok === false) {
-          throw new Error((json && json.error) || "Error del servidor");
+          var mensaje = (json && json.error) || "Error del servidor";
+          // El backend exige 2FA activo para cualquier botón que escriba (crear, editar,
+          // borrar, importar...). Antes cada página mostraba ese 403 como un error suelto;
+          // ahora se lleva directo a la pantalla donde ya se puede activar el 2FA.
+          if (res.status === 403 && /activar el 2FA/i.test(mensaje) && !/\/seguridad\.html/.test(location.pathname)) {
+            location.href = "seguridad.html?enrolar=1";
+            return new Promise(function () {}); // corta la cadena mientras navega
+          }
+          throw new Error(mensaje);
         }
         return json.data;
       });

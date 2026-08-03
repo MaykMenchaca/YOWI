@@ -190,7 +190,14 @@
     DSAdminApi.apiFetch("../api/admin/products/list.php?limit=9999")
       .then(function (data) {
         var p = (data.data || []).filter(function (x) { return x.id === editingId; })[0];
-        if (!p) return;
+        if (!p) {
+          // Defensivo: con el catálogo completo cargado (limit=9999) esto ya no debería
+          // pasar, pero si el producto se borró justo antes de este clic, avisar en vez
+          // de dejar el modal abierto y en blanco.
+          closeModal();
+          showAlert("No se encontró el producto (¿se eliminó?). Actualiza la lista.", "error");
+          return;
+        }
         fillForm(p);
       })
       .catch(function (err) { showAlert(err.message, "error"); });
