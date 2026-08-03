@@ -232,7 +232,25 @@ arriba, reparte archivos exclusivos, revisa los entregables, resuelve conflictos
       punta a punta (endpoint + panel), y respaldos descargables/restaurables en todo el panel
 - [x] **F3.1 + F4.1** — migraciones `product_flavors`, `product_images`, `order_items.sabor`
       (commit `9acea93`)
-- [ ] Resto de subfases (F3.2-F3.7, F4.2-F4.5, F6) pendientes
+- [x] **F3.2 + F4.2** — sabores e imágenes en el CSV: sincroniza por diff, `campos`
+      detecta cambios en ambos, celda vacía no toca nada (commit `016dd2a`)
+- [x] **F3.3** — API de sabores del panel: listar y guardar con sincronización completa
+      (commit `f797e15`, corrige un `data.data` anidado del agente antes de aceptarlo)
+- [x] **F4.3** — API de galería del panel: listar/agregar/borrar/reordenar/marcar
+      principal (commit `f797e15`, mismo fix de forma de respuesta)
+- [ ] Resto de subfases (F3.4-F3.7, F4.4-F4.5, F6) pendientes
+
+### Nota de verificación (Tanda 7)
+F3.2+F4.2 los hizo el orquestador directamente (archivo compartido con F2, alto riesgo).
+F3.3 y F4.3 los hicieron 2 agentes en paralelo en worktrees aislados, cada uno un archivo
+nuevo exclusivo — sin alertas de seguridad esta vez. Ambos reusaron correctamente la
+librería compartida `site/api/lib/Flavors.php` (para F3.3) sin reimplementar su lógica,
+tal como se les pidió. Único hallazgo en la revisión independiente: los dos devolvían la
+lista en `{"data": {"data": [...]}}` (doble anidado) en vez del `{"data": [...]}` que usan
+`categories/list.php` y `brands/list.php` — se corrigió antes de aceptar el commit.
+Verificado por HTTP con sesión real de admin contra MariaDB: sabores (guardar con
+stock/precio null, releer) y galería (agregar, reordenar, marcar principal, borrar, y que
+"reorder" no pueda tocar imágenes de otro producto) funcionan correctamente.
 
 ### Nota de recuperación (Tanda 4)
 Los 2 agentes de la Tanda 4 murieron a mitad de tarea por el límite de gasto mensual de la
