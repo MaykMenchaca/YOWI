@@ -36,7 +36,7 @@ if ($method === 'GET') {
     if ($productId === 0) ds_json_error('product_id inválido', 400);
 
     $pdo = ds_get_pdo();
-    ds_json_success(['data' => ds_product_images($pdo, $productId)]);
+    ds_json_success(ds_product_images($pdo, $productId));
 }
 
 if ($method !== 'POST') ds_json_error('Método no permitido', 405);
@@ -108,7 +108,7 @@ if ($action === 'reorder') {
         ds_json_error('No se pudo reordenar la galería', 500);
     }
 
-    ds_json_success(['data' => ds_product_images($pdo, $productId)]);
+    ds_json_success(ds_product_images($pdo, $productId));
 }
 
 if ($action === 'set_principal') {

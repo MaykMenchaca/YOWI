@@ -47,7 +47,7 @@ if ($method === 'GET') {
     if ($productId === 0) ds_json_error('product_id requerido', 400);
 
     $pdo = ds_get_pdo();
-    ds_json_success(['data' => ds_flavors_list($pdo, $productId)]);
+    ds_json_success(ds_flavors_list($pdo, $productId));
 }
 
 if ($method === 'POST') {
@@ -93,7 +93,7 @@ if ($method === 'POST') {
 
     ds_admin_log('sabores_actualizados', 'product_id=' . $productId);
 
-    ds_json_success(['data' => ds_flavors_list($pdo, $productId)]);
+    ds_json_success(ds_flavors_list($pdo, $productId));
 }
 
 ds_json_error('Método no permitido', 405);
