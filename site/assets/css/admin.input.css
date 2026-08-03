@@ -6,3 +6,91 @@
 @tailwind utilities;
 
 body { font-family: 'Barlow', sans-serif; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Sistema de botones unificado (F-Botones).
+   Antes había ~14 combinaciones distintas para el mismo puñado de roles
+   (primario, secundario, cancelar, peligro, advertencia): tamaños de padding
+   diferentes para el mismo botón "primario" según la página, dos rojos de
+   peligro distintos, min-h-[44px] presente en la barra de herramientas pero
+   ausente en TODOS los botones de modal y en los generados por JS, cero
+   :focus-visible en todo el panel. Esta capa reemplaza esos strings largos
+   de utilidades sueltas por clases de componente con un solo lugar de verdad.
+
+   Mismo look de siempre (lima primario, borde azul secundario, gris cancelar,
+   rojo peligro, ámbar advertencia) — lo que cambia es que ahora es UN sistema
+   coherente, no 14 variantes accidentales. No se usan estilos inline: la CSP
+   del panel permite 'unsafe-inline' en style-src, pero usar clases deja la
+   puerta abierta a endurecerla más adelante y es más fácil de mantener.
+   ────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 min-h-[44px] px-4 py-2
+           rounded-none text-sm font-extrabold uppercase tracking-wide
+           transition-[background-color,color,opacity,transform,box-shadow] duration-150
+           active:scale-[0.97]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-ink
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+           disabled:active:scale-100;
+  }
+
+  /* Acción principal de una sección: Guardar, Nuevo producto, Confirmar. */
+  .btn-primary {
+    @apply btn bg-lime text-ink hover:opacity-90;
+  }
+
+  /* Acción principal alternativa sobre fondo lima (ej. confirmar 2FA, login). */
+  .btn-brand {
+    @apply btn bg-brand text-white hover:opacity-90;
+  }
+
+  /* Acción secundaria/informativa: Analizar, Exportar. */
+  .btn-secondary {
+    @apply btn border border-brand text-brand bg-transparent hover:bg-brand/10;
+  }
+
+  /* Cancelar / cerrar sin guardar. */
+  .btn-cancel {
+    @apply btn bg-slate-700 text-slate-300 hover:bg-slate-600;
+  }
+
+  /* Destructivo: vaciar catálogo, eliminar, desactivar 2FA. Un solo rojo — antes
+     convivían dos combinaciones distintas para el mismo rol. */
+  .btn-danger {
+    @apply btn border border-red-500 text-red-400 bg-transparent
+           hover:bg-red-500 hover:text-white;
+  }
+
+  /* Respaldar / restaurar. */
+  .btn-warning {
+    @apply btn border border-amber-600 text-amber-300 bg-transparent
+           hover:bg-amber-900/30;
+  }
+
+  /* Enlace de acción dentro de una tabla (Editar/Ocultar en filas de listado).
+     No lleva min-h-[44px] ni padding de botón grande a propósito: vive dentro
+     de una celda angosta, pero sí conserva foco visible y transición. */
+  .btn-link {
+    @apply font-semibold transition-colors duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500
+           focus-visible:ring-offset-1 focus-visible:ring-offset-ink rounded-none;
+  }
+  .btn-link-brand { @apply btn-link text-cobalt-500 hover:text-brand; }
+  .btn-link-danger { @apply btn-link text-red-400 hover:text-red-300; }
+
+  /* Icono pequeño y redondo (ej. quitar imagen de la galería). Se conserva
+     rounded-full aquí a propósito -- es un badge circular, no un botón de
+     acción; el resto del panel es 100% esquina recta (rounded-none). */
+  .btn-icon-sm {
+    @apply inline-flex items-center justify-center w-6 h-6 rounded-full text-xs
+           transition-colors duration-150 active:scale-[0.97]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500;
+  }
+
+  /* Modificador: botón de ancho completo (formularios de modal). */
+  .btn-block { @apply w-full; }
+
+  /* Modificador: variante compacta (paginación, controles dentro de tarjetas). */
+  .btn-sm { @apply min-h-0 px-3 py-1 text-sm normal-case tracking-normal font-medium; }
+}
