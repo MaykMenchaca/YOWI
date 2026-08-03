@@ -78,6 +78,35 @@ CREATE TABLE IF NOT EXISTS products (
     KEY idx_products_destacado(destacado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Sabores por producto: nombre + stock propio + precio propio ───────────────────
+-- stock NULL = sin control de inventario; precio NULL = usa el precio del producto.
+CREATE TABLE IF NOT EXISTS product_flavors (
+    id         INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
+    product_id INT UNSIGNED      NOT NULL,
+    nombre     VARCHAR(80)       NOT NULL,
+    slug       VARCHAR(90)       NOT NULL,
+    stock      SMALLINT UNSIGNED NULL DEFAULT NULL,
+    precio     DECIMAL(10,2)     NULL,
+    orden      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    activo     TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_flavors_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE KEY uq_flavors_product_slug (product_id, slug),
+    KEY idx_flavors_product (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── Galería de imágenes por producto (products.imagen sigue siendo la principal) ──
+CREATE TABLE IF NOT EXISTS product_images (
+    id         INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
+    product_id INT UNSIGNED      NOT NULL,
+    url        VARCHAR(255)      NOT NULL,
+    orden      SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at DATETIME          NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_images_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    KEY idx_images_product (product_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── Banners / promociones del hero (carrusel de la portada) ───────────────────────
 CREATE TABLE IF NOT EXISTS banners (
     id          INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
@@ -208,6 +237,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     order_id        INT UNSIGNED      NOT NULL,
     producto_id     INT UNSIGNED      NULL,
     nombre_producto VARCHAR(255)      NOT NULL,
+    sabor           VARCHAR(80)       NULL,
     precio_unitario DECIMAL(10,2)     NOT NULL,
     cantidad        SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     subtotal        DECIMAL(10,2)     NOT NULL,
