@@ -40,12 +40,23 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $rows = $stmt->fetchAll();
 
-// Sabores (F3.5): una sola consulta con IN para todos los productos de esta página, en
-// vez de una consulta por producto. Se agrupan por product_id abajo.
+// Sabores (F3.5) y galería (F4.5): una sola consulta con IN por tabla para todos los
+// productos de esta página, en vez de una consulta por producto. Se agrupan por
+// product_id abajo.
 $productIds = array_map(static fn($r) => (int) $r['id'], $rows);
 $flavorsByProduct = [];
+$imagesByProduct = [];
 if (!empty($productIds)) {
     $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+
+    $iStmt = $pdo->prepare(
+        "SELECT product_id, url FROM product_images WHERE product_id IN ($placeholders) ORDER BY orden"
+    );
+    $iStmt->execute($productIds);
+    foreach ($iStmt->fetchAll() as $img) {
+        $imagesByProduct[(int) $img['product_id']][] = $img['url'];
+    }
+
     $fStmt = $pdo->prepare(
         "SELECT id, product_id, nombre, slug, stock, precio
          FROM product_flavors
@@ -64,7 +75,7 @@ if (!empty($productIds)) {
     }
 }
 
-$data = array_map(static function ($r) use ($flavorsByProduct) {
+$data = array_map(static function ($r) use ($flavorsByProduct, $imagesByProduct) {
     $precioBase = (float) $r['precio'];
     $sabores    = $flavorsByProduct[(int) $r['id']] ?? [];
 
@@ -98,6 +109,7 @@ $data = array_map(static function ($r) use ($flavorsByProduct) {
         'sku'            => $r['sku'],
         'destacado'      => (bool) $r['destacado'],
         'sabores'        => $sabores,
+        'imagenes'       => $imagesByProduct[(int) $r['id']] ?? [],
     ];
 }, $rows);
 
