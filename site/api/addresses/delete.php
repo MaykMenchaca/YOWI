@@ -6,6 +6,7 @@ require __DIR__ . '/../lib/Response.php';
 require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/Csrf.php';
 require __DIR__ . '/../lib/Validate.php';
+require __DIR__ . '/../lib/RateLimit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ds_json_error('Método no permitido', 405);
@@ -15,6 +16,9 @@ $userId = ds_require_login();
 
 $body = ds_read_json_body();
 ds_csrf_check($body['csrf_token'] ?? null);
+
+// addresses/save.php ya tenía límite; delete.php no, y es simétrico (misma superficie).
+ds_rate_limit_ip('addrdelete', ds_client_ip(), 40, 60);
 
 $id = ds_to_positive_int($body['id'] ?? 0);
 if ($id <= 0) {

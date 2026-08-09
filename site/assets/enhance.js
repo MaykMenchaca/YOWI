@@ -3,15 +3,23 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     // --- WhatsApp: cualquier botón/enlace con texto "WhatsApp" abre el chat ---
+    // Excepción: si el elemento YA es un <a href="https://wa.me/..."> con su propio
+    // mensaje armado (ej. "Comprar por WhatsApp" en la ficha de producto, que arma un
+    // texto con el nombre/sabor/precio del producto), se respeta tal cual — antes este
+    // listener genérico lo interceptaba SIEMPRE y lo reemplazaba con un mensaje fijo sin
+    // ningún dato del producto, perdiendo justo la información que el cliente ya había
+    // dado (qué quería comprar).
     document.querySelectorAll("button, a").forEach(function (el) {
       var t = (el.textContent || "").toLowerCase();
-      if (t.indexOf("whatsapp") > -1) {
-        el.style.cursor = "pointer";
-        el.addEventListener("click", function (e) {
-          e.preventDefault();
-          window.open(WA, "_blank");
-        });
-      }
+      if (t.indexOf("whatsapp") === -1) return;
+      var href = el.tagName === "A" ? el.getAttribute("href") : null;
+      var yaArmado = href && /^https:\/\/wa\.me\//.test(href) && href.indexOf("text=") > -1;
+      if (yaArmado) return; // dejar que el navegador siga el href real, sin tocar nada
+      el.style.cursor = "pointer";
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        window.open(WA, "_blank");
+      });
     });
 
     // --- Reveal con stagger (nunca oculta contenido si algo falla) ---

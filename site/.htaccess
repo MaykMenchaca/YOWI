@@ -13,6 +13,13 @@ Options -Indexes
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # Bloquear graphify-out/ (mapa completo del código: rutas de archivo, dependencias,
+    # comunidades). Está en .gitignore así que nunca llega por git, pero un despliegue
+    # por FTP/zip sí podría copiarlo dentro del docroot — esta regla lo cierra en
+    # cualquier caso. No puede vivir como .htaccess propio DENTRO de graphify-out/ porque
+    # esa carpeta entera está gitignored y ese archivo nunca se subiría con el repo.
+    RewriteRule ^graphify-out/ - [F,L]
 </IfModule>
 
 # Bloquear archivos que no deben servirse (por si algún .md/.sql se colara aquí).

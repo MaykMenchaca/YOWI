@@ -6,6 +6,7 @@ require __DIR__ . '/../lib/Response.php';
 require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/Csrf.php';
 require __DIR__ . '/../lib/Validate.php';
+require __DIR__ . '/../lib/RateLimit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ds_json_error('Método no permitido', 405);
@@ -15,6 +16,10 @@ $userId = ds_require_login();
 
 $body = ds_read_json_body();
 ds_csrf_check($body['csrf_token'] ?? null);
+
+// Límite generoso (marcar/desmarcar favoritos es una acción normal y frecuente al
+// navegar el catálogo) — solo para que una cuenta no pueda martillar la BD sin freno.
+ds_rate_limit_ip('favtoggle', ds_client_ip(), 120, 10);
 
 $productoId = ds_to_positive_int($body['producto_id'] ?? 0);
 if ($productoId <= 0) {

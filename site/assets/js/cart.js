@@ -42,11 +42,20 @@
     }
   }
 
+  // Devuelve true si de verdad se guardó. Antes, si localStorage fallaba (modo privado,
+  // cuota llena), el catch quedaba vacío pero el badge se actualizaba igual con el array
+  // en memoria — el usuario veía "1" en el carrito y creía que se agregó, pero al navegar
+  // a otra página (recarga real, localStorage vuelve a fallar) el carrito aparecía vacío
+  // sin ninguna explicación. Ahora el llamador puede saber que no persistió y avisar.
   function saveCart(items) {
+    var persistido = true;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch (e) { /* localStorage no disponible (modo privado): el carrito no persiste */ }
+    } catch (e) {
+      persistido = false;
+    }
     updateCartBadge(items);
+    return persistido;
   }
 
   function updateCartBadge(items) {
@@ -81,7 +90,7 @@
         imagen: producto.imagen,
       });
     }
-    saveCart(items);
+    return saveCart(items);
   }
 
   function removeItem(productoId, saborId) {
@@ -203,6 +212,36 @@
     return lines.join("\n");
   }
 
+  // Traduce los ajustes que hizo el servidor (orders/create.php) a texto legible. El
+  // servidor nunca manda nombres bonitos garantizados (ej. producto borrado = null), así
+  // que aquí siempre hay un fallback genérico.
+  function ajusteTexto(a) {
+    var nombre = a.nombre || "un producto de tu carrito";
+    switch (a.motivo) {
+      case "limite_cantidad":
+        return "Se limitó la cantidad de " + nombre + " a " + a.cantidad_final + " por pedido.";
+      case "no_disponible":
+        return nombre + " ya no está disponible y se quitó de tu pedido.";
+      case "sabor_no_disponible":
+        return "El sabor que elegiste de " + nombre + " ya no está disponible.";
+      case "falta_elegir_sabor":
+        return nombre + " necesita que elijas un sabor — no se pudo agregar.";
+      case "agotado":
+        return nombre + " está agotado y se quitó de tu pedido.";
+      case "stock_insuficiente":
+        return "Solo había " + a.cantidad_final + " de " + nombre + " disponible(s); tu pedido se ajustó a esa cantidad.";
+      default:
+        return nombre + ": tu pedido se ajustó.";
+    }
+  }
+
+  function mostrarAjustes(ajustes) {
+    var el = document.getElementById("order-adjustments-notice");
+    if (!el || !ajustes || !ajustes.length) return;
+    el.textContent = "Ajustamos tu pedido: " + ajustes.map(ajusteTexto).join(" ");
+    el.classList.remove("hidden");
+  }
+
   function showFieldError(form, name, msg) {
     var p = form.querySelector('[data-error-for="' + name + '"]');
     if (p) { p.textContent = msg; p.classList.remove("hidden"); }
@@ -271,13 +310,35 @@
       return;
     }
 
-    var mensaje = buildWhatsAppMessage(items, d);
-    var waUrl = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensaje);
+    var notice = document.getElementById("order-adjustments-notice");
+    if (notice) notice.classList.add("hidden");
 
-    // Reservar la pestaña de WhatsApp AHORA, con el gesto del click (los pop-ups se
-    // bloquean si se abren en un callback async). Solo se redirige si el POST tiene éxito;
-    // si el pedido falla, se cierra y NO se abre WhatsApp (evita "pedido fantasma").
+    // Mensaje PRELIMINAR, construido con lo que el cliente cree que compró — se usa solo
+    // para tener algo que mostrar mientras se abre la pestaña (tiene que abrirse ahora,
+    // con el gesto del click, o el navegador bloquea el pop-up). Si el pedido se ajusta
+    // en el servidor (algo se agotó, se topó una cantidad…), este mensaje SE REEMPLAZA
+    // más abajo con uno reconstruido desde la respuesta real del servidor — así lo que
+    // llega por WhatsApp siempre coincide con lo que quedó guardado en la base de datos.
+    var mensajePreliminar = buildWhatsAppMessage(items, d);
+    var waUrl = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensajePreliminar);
     var waWin = window.open("", "_blank");
+
+    // Evita doble clic = pedido duplicado: mientras el POST está en vuelo, el botón se
+    // deshabilita. Se reactiva si algo falla (para poder reintentar); si el pedido se
+    // registra, la página cambia de estado (carrito vacío) y no hace falta reactivarlo.
+    var submitBtn = document.getElementById("submit-order-btn");
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      if (!submitBtn.getAttribute("data-label")) submitBtn.setAttribute("data-label", submitBtn.textContent);
+      submitBtn.textContent = "Enviando…";
+    }
+
+    function reactivarBoton() {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        if (submitBtn.getAttribute("data-label")) submitBtn.textContent = submitBtn.getAttribute("data-label");
+      }
+    }
 
     if (global.DSApi) {
       global.DSApi.apiFetch("api/orders/create.php", {
@@ -297,19 +358,45 @@
               cantidad: i.cantidad,
             };
           }),
-          mensaje_whatsapp: mensaje,
+          mensaje_whatsapp: mensajePreliminar,
         },
       })
-        .then(function () {
+        .then(function (data) {
           saveCart([]);
-          if (waWin) { waWin.location = waUrl; } else { window.open(waUrl, "_blank"); }
+          // Reconstruir el mensaje desde lo que el SERVIDOR de verdad guardó (data.items),
+          // no desde el carrito local — si algo se ajustó, esto lo refleja exacto.
+          // La forma del item del servidor (precio_unitario/nombre_producto) no es la
+          // misma que la del carrito local (precio/nombre); se normaliza antes de pasarla
+          // a buildWhatsAppMessage, que espera la forma del carrito.
+          var itemsConfirmados = ((data && data.items) || items).map(function (i) {
+            return {
+              sabor: i.sabor,
+              nombre: i.nombre_producto || i.nombre,
+              precio: i.precio_unitario != null ? i.precio_unitario : i.precio,
+              cantidad: i.cantidad,
+            };
+          });
+          var mensajeFinal = buildWhatsAppMessage(itemsConfirmados, d);
+          var waUrlFinal = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensajeFinal);
+          if (data && data.ajustes && data.ajustes.length) mostrarAjustes(data.ajustes);
+          if (waWin) { waWin.location = waUrlFinal; } else { window.open(waUrlFinal, "_blank"); }
         })
         .catch(function (err) {
           if (waWin) waWin.close();
-          showFieldError(form, "form", "No se pudo registrar el pedido: " + err.message + ". Intenta de nuevo.");
+          reactivarBoton();
+          // Si el servidor sabe exactamente por qué se vació el carrito (producto agotado,
+          // ya no existe…), mostrar eso en vez del genérico "carrito vacío" que dejaba al
+          // cliente viendo su producto en pantalla mientras el error decía lo contrario.
+          var ajustes = err.data && err.data.ajustes;
+          if (ajustes && ajustes.length) {
+            showFieldError(form, "form", ajustes.map(ajusteTexto).join(" ") + " Actualiza tu carrito e intenta de nuevo.");
+          } else {
+            showFieldError(form, "form", "No se pudo registrar el pedido: " + err.message + ". Intenta de nuevo.");
+          }
         });
     } else {
       // Sin cliente API (degradado): abrir WhatsApp igual, sin regresión.
+      reactivarBoton();
       if (waWin) { waWin.location = waUrl; } else { window.open(waUrl, "_blank"); }
     }
   }
@@ -369,7 +456,12 @@
         global.DSCatalog.fetchProductos().then(function (productos) {
           var wanted = addBtn.getAttribute("data-product-id");
           var p = productos.filter(function (item) { return String(item.id) === String(wanted); })[0];
-          if (p) addItem(p, 1, sabor);
+          if (p) {
+            var persistido = addItem(p, 1, sabor);
+            if (!persistido) {
+              alert("Se agregó \"" + p.nombre + "\" al carrito, pero tu navegador está bloqueando el guardado (¿modo privado?). Puede perderse si cambias de página — te recomendamos completar tu compra ahora.");
+            }
+          }
         }).catch(function () {
           alert("No se pudo agregar el producto. Revisa tu conexión e inténtalo de nuevo.");
         });

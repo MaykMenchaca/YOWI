@@ -32,7 +32,15 @@ function ds_session_start(): void
     } else {
         ini_set('session.cookie_samesite', 'Lax');
         // Solo enviar la cookie por HTTPS cuando esté disponible (Hostinger sirve HTTPS).
-        ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+        // $_SERVER['HTTPS'] solo lo pone el propio servidor web con TLS terminado ahí
+        // mismo; detrás de un proxy/CDN con TLS terminado ANTES (Cloudflare, etc. — los
+        // .htaccess de este proyecto ya asumen esto al mirar X-Forwarded-Proto para el
+        // redirect a HTTPS) puede llegar vacío aunque el usuario sí esté en HTTPS, y la
+        // cookie de sesión se emitía sin Secure por error.
+        $httpsDirecto = !empty($_SERVER['HTTPS']);
+        $httpsPorProxy = isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && strtolower((string) $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https';
+        ini_set('session.cookie_secure', ($httpsDirecto || $httpsPorProxy) ? '1' : '0');
     }
     session_start();
     ds_session_enforce_timeout();
@@ -63,10 +71,17 @@ function ds_session_check_password_change(): void
     if (empty($_SESSION['user_id']) || !function_exists('ds_get_pdo')) return;
     $login = (int) ($_SESSION['user_login_time'] ?? 0);
     try {
-        $stmt = ds_get_pdo()->prepare('SELECT password_changed_at FROM users WHERE id = ?');
+        // UNIX_TIMESTAMP() convierte DENTRO de MySQL, con la zona horaria de sesión de
+        // MySQL — no con strtotime() de PHP. Antes se comparaba un string tipo
+        // "2026-08-09 14:03:21" (interpretado con la zona horaria de PHP) contra
+        // time() (siempre UTC); si PHP y MySQL no comparten zona horaria (típico en
+        // hosting compartido: MySQL en UTC, PHP en la zona local), la comparación podía
+        // desfasarse varias horas — una sesión robada podía sobrevivir horas después de
+        // que la víctima cambiara su contraseña, pensando que ya la había invalidado.
+        $stmt = ds_get_pdo()->prepare('SELECT UNIX_TIMESTAMP(password_changed_at) FROM users WHERE id = ?');
         $stmt->execute([(int) $_SESSION['user_id']]);
-        $changed = $stmt->fetchColumn();
-        if ($changed && strtotime((string) $changed) > $login) {
+        $changedTs = $stmt->fetchColumn();
+        if ($changedTs !== null && $changedTs !== false && (int) $changedTs > $login) {
             unset($_SESSION['user_id'], $_SESSION['csrf_token'],
                   $_SESSION['user_last_activity'], $_SESSION['user_login_time']);
         }

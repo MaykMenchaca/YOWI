@@ -1,0 +1,11 @@
+# Bloquea el acceso HTTP directo a esta carpeta. Estos .php son librerías compartidas
+# (helpers de sesión, CSRF, validación, rate limiting…) pensadas para incluirse desde
+# otros endpoints, nunca para pedirse solas — no había ninguna razón para dejarlas
+# alcanzables por HTTP directo, a diferencia de api/config/ que sí lo tenía.
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Deny from all
+</IfModule>

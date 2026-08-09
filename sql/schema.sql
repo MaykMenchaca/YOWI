@@ -225,6 +225,7 @@ CREATE TABLE IF NOT EXISTS orders (
     total            DECIMAL(10,2) NOT NULL,
     estado           ENUM('pendiente','confirmado','enviado','entregado','cancelado')
                                    NOT NULL DEFAULT 'pendiente',
+    stock_repuesto   TINYINT(1)    NOT NULL DEFAULT 0,
     mensaje_whatsapp TEXT          NULL,
     created_at       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,

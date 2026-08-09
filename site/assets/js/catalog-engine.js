@@ -260,10 +260,23 @@
     el.textContent = money(precio);
   }
 
+  // Arma el mensaje de "Comprar por WhatsApp" con el producto (y sabor, si aplica) real
+  // en vez de dejar el enlace genérico sin datos que traía antes (wa.me/NUMERO a secas,
+  // sin texto — el cliente llegaba al chat y tenía que escribir todo desde cero).
+  function updateWhatsAppBuyLink(container, p, sabor) {
+    var link = container.querySelector("#whatsapp-buy-link");
+    if (!link) return;
+    var nombre = sabor ? p.nombre + " (" + sabor.nombre + ")" : p.nombre;
+    var precio = sabor && sabor.precio != null ? sabor.precio : p.precio;
+    var texto = "Hola DS, me interesa: " + nombre + " — " + money(precio);
+    link.setAttribute("href", "https://wa.me/5218344241599?text=" + encodeURIComponent(texto));
+  }
+
   // Habilita/deshabilita "Agregar al carrito" según el estado: producto agotado (nunca
   // se habilita), producto con sabores sin elegir uno todavía ("Elige un sabor"), o listo
   // para agregar (con o sin sabor elegido, según aplique).
   function updateAddToCartState(container, p, sabor) {
+    updateWhatsAppBuyLink(container, p, sabor);
     var btn = container.querySelector(".add-to-cart-btn");
     if (!btn) return;
     var tieneSabores = !!(p.sabores && p.sabores.length);

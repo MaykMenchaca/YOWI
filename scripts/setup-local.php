@@ -145,6 +145,7 @@ paso('Autodiagnóstico de estructura');
 $criticos = [
     ['products', 'sku', 'columna'],
     ['order_items', 'sabor', 'columna'],
+    ['order_items', 'sabor_id', 'columna'],
     ['users', 'password_changed_at', 'columna'],
     ['orders', 'direccion_envio', 'columna'],
     ['product_flavors', null, 'tabla'],

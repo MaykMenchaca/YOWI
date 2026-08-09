@@ -18,8 +18,12 @@ Options -Indexes
 # de un admin logueado. Añade cada preview por su nombre exacto si lo necesitas.
 # ─────────────────────────────────────────────────────────────────────────────
 <IfModule mod_setenvif.c>
-    # Ej.: dominio de producción en Vercel (reemplaza por el tuyo, exacto)
-    SetEnvIf Origin "^https://tu-tienda\.vercel\.app$"        DS_CORS_ORIGIN=$0
+    # Ej.: dominio de producción en Vercel — DESCOMENTA y reemplaza "tu-tienda" por tu
+    # dominio real antes de activarlo. Tal como estaba antes (sin comentar, con el
+    # placeholder literal "tu-tienda.vercel.app"), cualquiera puede registrar ESE
+    # subdominio exacto en Vercel y quedar autorizado por Access-Control-Allow-Origin +
+    # Allow-Credentials: true — un CORS activo apuntando a un dominio que no es tuyo.
+    # SetEnvIf Origin "^https://tu-tienda\.vercel\.app$"        DS_CORS_ORIGIN=$0
     # Ej.: un preview concreto (añade el hash exacto que te dé Vercel):
     # SetEnvIf Origin "^https://tu-tienda-git-main-tu-usuario\.vercel\.app$" DS_CORS_ORIGIN=$0
     # Ej.: dominio propio:

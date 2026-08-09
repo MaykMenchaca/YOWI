@@ -7,6 +7,7 @@ require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/Csrf.php';
 require __DIR__ . '/../lib/Validate.php';
 require __DIR__ . '/../lib/Mailer.php';
+require __DIR__ . '/../lib/RateLimit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     ds_json_error('Método no permitido', 405);
@@ -14,6 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $body = ds_read_json_body();
 ds_csrf_check($body['csrf_token'] ?? null);
+
+// El token de 256 bits ya hace inviable la fuerza bruta por sí solo, pero es el único
+// endpoint de escritura de auth/ sin ningún límite (login, register y forgot sí lo
+// tienen) — se agrega como defensa en profundidad.
+ds_rate_limit_ip('pwreset', ds_client_ip(), 20, 60);
 
 $token           = (string) ($body['token'] ?? '');
 $password        = (string) ($body['password'] ?? '');
