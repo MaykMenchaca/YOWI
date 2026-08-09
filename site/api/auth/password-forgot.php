@@ -33,6 +33,14 @@ $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
+// Si el usuario existe pero el correo NO está configurado (MAIL_TRANSPORT=none, el
+// valor por defecto), el usuario ve el mismo mensaje genérico de siempre (intencional,
+// anti-enumeración) pero en realidad se queda bloqueado sin ninguna forma de recuperar
+// su cuenta. Dejarlo en el log para que el operador lo note en producción.
+if ($user && !ds_email_enabled()) {
+    error_log('password-forgot.php: MAIL_TRANSPORT=none, no se pudo enviar el correo de reset para user_id=' . (int) $user['id']);
+}
+
 // Solo si el usuario existe y el correo está configurado se genera y envía el token.
 if ($user && ds_email_enabled()) {
     // Invalidar tokens previos del usuario.

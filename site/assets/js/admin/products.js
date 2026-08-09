@@ -21,11 +21,7 @@
   }
 
   // ── helpers ──────────────────────────────────────────────────────────────────
-  function esc(s) {
-    return String(s || "").replace(/[&<>"']/g, function (c) {
-      return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   function money(n) {
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 });

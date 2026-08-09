@@ -8,6 +8,10 @@ function ds_json_success(array $data = [], int $status = 200): void
 {
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
+    // Ninguna respuesta de la API debe cachearse: algunas (p. ej. auth/me.php,
+    // admin/auth/me.php) devuelven el token CSRF de la sesión — sin esto, un proxy
+    // intermedio o el back/forward cache del navegador podría retenerlo.
+    header('Cache-Control: no-store');
     echo json_encode(['ok' => true, 'data' => $data], JSON_UNESCAPED_UNICODE);
     exit;
 }
@@ -16,6 +20,7 @@ function ds_json_error(string $message, int $status = 400): void
 {
     http_response_code($status);
     header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store');
     echo json_encode(['ok' => false, 'error' => $message], JSON_UNESCAPED_UNICODE);
     exit;
 }

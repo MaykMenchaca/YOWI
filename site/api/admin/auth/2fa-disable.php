@@ -5,6 +5,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/RateLimit.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
@@ -12,6 +13,11 @@ $adminId = ds_require_admin();
 
 $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);
+
+// Sin límite, una sesión secuestrada podía probar códigos TOTP indefinidamente (3 de
+// 10^6 posibles válidos en cada ventana de ~90s) hasta desactivar el 2FA por fuerza
+// bruta. 10 intentos / 15 min es holgado para un uso legítimo (un solo código).
+ds_rate_limit_ip('2fa', ds_client_ip(), 10, 15);
 
 // Para desactivar exige un código TOTP válido actual (evita que un atacante con la
 // sesión abierta lo quite sin tener el segundo factor).

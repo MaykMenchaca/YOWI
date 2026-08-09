@@ -30,6 +30,22 @@ $stmt = $pdo->query(
      ORDER BY p.id ASC"
 );
 
+// Mitigación estándar de CSV injection: si una celda empieza con un carácter que Excel/
+// LibreOffice interpretan como inicio de fórmula (= + - @ tab CR), se le antepone un
+// apóstrofo. Excel lo trata como "forzar texto" y no lo muestra; así una celda maliciosa
+// (p. ej. un nombre de producto "=cmd|'/C calc'!A1") no se ejecuta al abrir el CSV. Único
+// costo: si ese mismo CSV se reimporta tal cual, esa celda concreta reimporta con el
+// apóstrofo incluido — trade-off estándar (mismo que usa Google Sheets), y es un caso
+// borde (nombre de producto empezando literalmente con esos símbolos).
+function ds_csv_safe_cell($v): string
+{
+    $s = (string) $v;
+    if ($s !== '' && strpbrk($s[0], "=+-@\t\r") !== false) {
+        return "'" . $s;
+    }
+    return $s;
+}
+
 $filename = 'catalogo-' . date('Y-m-d') . '.csv';
 
 http_response_code(200);
@@ -45,20 +61,20 @@ fputcsv($out, $COLS, ',', '"', '\\');
 
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     fputcsv($out, [
-        $row['sku'] ?? '',
-        $row['nombre'],
-        $row['marca'],
-        $row['categoria'],
-        $row['cantidad'],
-        $row['unidad'] ?? '',
-        $row['descripcion'] ?? '',
+        ds_csv_safe_cell($row['sku'] ?? ''),
+        ds_csv_safe_cell($row['nombre']),
+        ds_csv_safe_cell($row['marca']),
+        ds_csv_safe_cell($row['categoria']),
+        ds_csv_safe_cell($row['cantidad']),
+        ds_csv_safe_cell($row['unidad'] ?? ''),
+        ds_csv_safe_cell($row['descripcion'] ?? ''),
         $row['precio'],
         $row['precio_original'] ?? '',
         $row['stock'] ?? '',
-        $row['imagen'],
-        $row['imagenes'] ?? '',
-        $row['badge'] ?? '',
-        $row['sabores'] ?? '',
+        ds_csv_safe_cell($row['imagen']),
+        ds_csv_safe_cell($row['imagenes'] ?? ''),
+        ds_csv_safe_cell($row['badge'] ?? ''),
+        ds_csv_safe_cell($row['sabores'] ?? ''),
         ((int) $row['destacado']) === 1 ? '1' : '0',
         ((int) $row['activo']) === 1 ? '1' : '0',
     ], ',', '"', '\\');

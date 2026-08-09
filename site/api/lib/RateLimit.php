@@ -61,6 +61,18 @@ function ds_dummy_password_check(): void
 function ds_login_throttle_check(string $tipo, string $email, string $ip): void
 {
     $pdo = ds_get_pdo();
+
+    // Lock de aplicación por (tipo+email): sin esto, N intentos de login concurrentes
+    // contra la MISMA cuenta leen todos el mismo COUNT(*) de fallos por debajo del
+    // umbral y pasan todos — con 50 en paralelo se prueban ~50 contraseñas por ventana
+    // en vez de 5. El registro del intento (ds_login_record) ocurre en otra función,
+    // después de verificar la contraseña (bcrypt, ~100ms); por eso el lock se adquiere
+    // aquí y NO se libera explícitamente — MySQL lo libera solo cuando esta conexión
+    // se cierra al terminar la petición, que es justo cuando ds_login_record ya corrió.
+    // No serializa el login legítimo entre cuentas distintas, solo intentos concurrentes
+    // contra la misma cuenta, que es exactamente el escenario de fuerza bruta.
+    $pdo->prepare('SELECT GET_LOCK(?, 5)')->execute(['ds_login_' . md5($tipo . '|' . $email)]);
+
     $win = 'created_at > (NOW() - INTERVAL ' . DS_LOGIN_WINDOW_MIN . ' MINUTE)';
 
     // 1) Objetivo directo: mismo email + misma IP.
@@ -98,6 +110,17 @@ function ds_rate_limit_ip(string $accion, string $ip, int $max, int $ventanaMin)
     $key  = 'rl:' . $accion;
     $ventanaMin = max(1, $ventanaMin);
 
+    // Lock de aplicación por (acción+IP): sin esto, "contar y luego insertar" es una
+    // condición de carrera — N peticiones concurrentes leen todas el mismo COUNT(*) por
+    // debajo del umbral y pasan todas. GET_LOCK serializa las peticiones que compiten
+    // por la MISMA clave (no bloquea a otros usuarios/acciones). Si no se consigue el
+    // lock en 5s (contención extrema), se deja pasar antes que colgar la petición —
+    // el límite es una mitigación de abuso, no una garantía dura.
+    $lockName = 'ds_rl_' . md5($key . '|' . $ip);
+    $lockStmt = $pdo->prepare('SELECT GET_LOCK(?, 5)');
+    $lockStmt->execute([$lockName]);
+    $gotLock = (int) $lockStmt->fetchColumn() === 1;
+
     $stmt = $pdo->prepare(
         "SELECT COUNT(*) FROM login_attempts
          WHERE tipo = ? AND email = ? AND ip = ?
@@ -105,12 +128,15 @@ function ds_rate_limit_ip(string $accion, string $ip, int $max, int $ventanaMin)
     );
     $stmt->execute([$tipo, $key, $ip]);
     if ((int) $stmt->fetchColumn() >= $max) {
+        if ($gotLock) $pdo->prepare('SELECT RELEASE_LOCK(?)')->execute([$lockName]);
         ds_json_error('Demasiadas solicitudes. Espera unos minutos e inténtalo de nuevo.', 429);
     }
 
-    // Registrar este intento para contar el siguiente.
+    // Registrar este intento para contar el siguiente, TODAVÍA bajo el lock.
     $ins = $pdo->prepare('INSERT INTO login_attempts (tipo, email, ip, exitoso) VALUES (?, ?, ?, 1)');
     $ins->execute([$tipo, $key, $ip]);
+
+    if ($gotLock) $pdo->prepare('SELECT RELEASE_LOCK(?)')->execute([$lockName]);
 }
 
 /**

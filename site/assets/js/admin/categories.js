@@ -104,11 +104,7 @@
     setTimeout(function () { el.classList.add("hidden"); }, 4000);
   }
 
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   document.addEventListener("DOMContentLoaded", function () {
     tableBody  = document.getElementById("categories-tbody");

@@ -116,11 +116,7 @@
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 }) + " MXN";
   }
 
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   function cartLineHTML(item) {
     var subtotal = money(item.precio * item.cantidad);

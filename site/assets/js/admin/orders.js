@@ -15,11 +15,7 @@
     cancelado:   "bg-red-900/50 text-red-300 border-red-700",
   };
 
-  function esc(s) {
-    return String(s || "").replace(/[&<>"']/g, function (c) {
-      return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   function money(n) {
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 });

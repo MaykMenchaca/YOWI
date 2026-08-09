@@ -8,11 +8,7 @@
   var editingId = null;
   var lastFocused = null;
 
-  function esc(s) {
-    return String(s || "").replace(/[&<>"']/g, function (c) {
-      return { "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   function showAlert(msg, type) {
     var el = document.getElementById("alert-banner");

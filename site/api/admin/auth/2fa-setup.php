@@ -8,7 +8,7 @@ require __DIR__ . '/../../lib/Totp.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
-$adminId = ds_require_admin();
+$adminId = ds_require_admin(true); // hay que poder generar el secreto ANTES de estar enrolado
 
 $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);

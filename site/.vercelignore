@@ -1,0 +1,13 @@
+# Vercel no ejecuta PHP: en el modo "split" (frontend en Vercel + API en Hostinger,
+# ver docs/deploy-vercel-split.md), si se despliega a Vercel corriendo desde el disco
+# local en vez de desde git, todo esto se serviría como archivo estático — es decir,
+# el código fuente completo del backend (consultas SQL, diseño de sesión/CSRF,
+# allowlists, lógica de stock, lib/Totp.php, lib/Recovery.php) quedaría descargable
+# en texto plano desde el dominio de Vercel. api/config/env.php nunca llega aquí
+# porque está en .gitignore, pero esta lista es la que corresponde a un despliegue
+# por CLI que no pasa por git.
+api/
+graphify-out/
+*.php
+*.md
+*.sql

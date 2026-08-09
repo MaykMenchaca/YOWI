@@ -7,7 +7,7 @@ require __DIR__ . '/../../lib/AdminSession.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') ds_json_error('Método no permitido', 405);
 
-$adminId = ds_require_admin();
+$adminId = ds_require_admin(true); // consultar el propio estado no requiere ya estar enrolado
 $pdo = ds_get_pdo();
 $stmt = $pdo->prepare('SELECT totp_enabled FROM admins WHERE id = ?');
 $stmt->execute([$adminId]);

@@ -50,6 +50,14 @@ if ($ciudad === '') {
 if (empty($items)) {
     ds_json_error('El carrito está vacío', 400);
 }
+// Techo al número de líneas del pedido. Sin esto, DS_MAX_QTY_PER_LINE es evadible
+// repitiendo el mismo producto en muchas líneas (100 × 5000 líneas = 500 000 unidades
+// en una sola petición), y una petición con miles de líneas retiene el FOR UPDATE de
+// toda la transacción de abajo durante minutos, congelando los checkouts reales.
+// 50 es generoso para un carrito real (el catálogo cabe varias veces).
+if (count($items) > 50) {
+    ds_json_error('El pedido tiene demasiadas líneas (máximo 50)', 400);
+}
 
 // El precio y el nombre SIEMPRE se toman de la BD — nunca se confía en los del cliente.
 // El cliente solo aporta qué producto y cuántos; el importe se calcula con el precio real.
@@ -58,8 +66,12 @@ $pdo = ds_get_pdo();
 // Normalizar los ids/cantidades pedidos ANTES de la transacción (sin tocar BD).
 // sabor_id es opcional: si el producto tiene sabores, el cliente eligió uno en la ficha
 // (F3.6); si no viene o no es válido para ese producto, el item se descarta más abajo.
-$requested = [];
-$ajustes = []; // lo que se descartó o recortó, para devolverlo honesto al cliente
+//
+// IMPORTANTE: se AGREGA por (producto_id, sabor_id) sumando cantidades, en vez de
+// guardar cada línea del cliente tal cual. El tope DS_MAX_QTY_PER_LINE se decidió como
+// tope "por producto" — aplicarlo por cada entrada del array del cliente lo hacía
+// evadible: 5 líneas de 30 del mismo producto sumaban 150 unidades pese al tope de 100.
+$acumulado = []; // clave "producto_id|sabor_id" => cantidad total pedida (antes del tope)
 foreach ($items as $item) {
     $productoId = ds_to_positive_int($item['producto_id'] ?? 0);
     $cantidadPedida = ds_to_positive_int($item['cantidad'] ?? 0);
@@ -69,18 +81,28 @@ foreach ($items as $item) {
     $saborIdRaw = $item['sabor_id'] ?? null;
     $saborId = $saborIdRaw !== null ? ds_to_positive_int($saborIdRaw) : 0;
 
+    $clave = $productoId . '|' . $saborId;
+    if (!isset($acumulado[$clave])) {
+        $acumulado[$clave] = ['producto_id' => $productoId, 'sabor_id' => $saborId, 'cantidad' => 0];
+    }
+    $acumulado[$clave]['cantidad'] += $cantidadPedida;
+}
+
+$requested = [];
+$ajustes = []; // lo que se descartó o recortó, para devolverlo honesto al cliente
+foreach ($acumulado as $linea) {
+    $cantidadPedida = $linea['cantidad'];
     $cantidad = min($cantidadPedida, DS_MAX_QTY_PER_LINE);
     if ($cantidad < $cantidadPedida) {
         $ajustes[] = [
-            'producto_id' => $productoId,
-            'sabor_id' => $saborId > 0 ? $saborId : null,
+            'producto_id' => $linea['producto_id'],
+            'sabor_id' => $linea['sabor_id'] > 0 ? $linea['sabor_id'] : null,
             'motivo' => 'limite_cantidad',
             'cantidad_pedida' => $cantidadPedida,
             'cantidad_final' => $cantidad,
         ];
     }
-
-    $requested[] = ['producto_id' => $productoId, 'cantidad' => $cantidad, 'sabor_id' => $saborId > 0 ? $saborId : null];
+    $requested[] = ['producto_id' => $linea['producto_id'], 'cantidad' => $cantidad, 'sabor_id' => $linea['sabor_id'] > 0 ? $linea['sabor_id'] : null];
 }
 
 if (empty($requested)) {

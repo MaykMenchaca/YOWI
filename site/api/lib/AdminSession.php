@@ -53,10 +53,20 @@ function ds_current_admin_id(): ?int
     return isset($_SESSION['admin_id']) ? (int) $_SESSION['admin_id'] : null;
 }
 
-function ds_require_admin(): int
+// Único guardián de admin del proyecto: exige sesión y, salvo que se pida explícitamente
+// lo contrario, exige 2FA activo. Antes el enforcement de 2FA vivía solo dentro de
+// ds_admin_csrf_check() (solo se llamaba en POST), así que cualquier GET —incluido el
+// volcado completo de la BD en backup/export.php— quedaba sin protección para un admin
+// con totp_enabled=0. $permitirSinEnrolar=true es SOLO para los endpoints que un admin
+// necesita antes de tener 2FA activo (enrolarlo, consultar su estado, o regenerar los
+// códigos de recuperación, que ya exige un TOTP válido por su cuenta).
+function ds_require_admin(bool $permitirSinEnrolar = false): int
 {
     $id = ds_current_admin_id();
     if ($id === null) ds_json_error('No autenticado como administrador', 401);
+    if (!$permitirSinEnrolar) {
+        ds_admin_require_2fa_enrolled($id);
+    }
     return $id;
 }
 
@@ -87,24 +97,16 @@ function ds_admin_csrf_token(): string
     return $_SESSION['admin_csrf'];
 }
 
-// Endpoints exentos del enforcement de 2FA (enrolamiento / auth). Se comparan por
-// basename de SCRIPT_NAME. login/logout no tienen admin_id útil en este punto; setup/
-// activate/recovery deben poder usarse mientras totp_enabled sigue en 0.
-const DS_2FA_EXEMPT = [
-    'login.php', 'logout.php',
-    '2fa-setup.php', '2fa-activate.php', '2fa-recovery.php',
-];
-
-// Enforza en el servidor que el admin tenga 2FA activo antes de operar el panel.
-// El "2FA obligatorio" vivía solo en el front (needs_2fa), esquivable llamando la API.
-function ds_admin_require_2fa_enrolled(): void
+// Enforza en el servidor que el admin tenga 2FA activo. Recibe el id explícitamente
+// (nunca se deriva de SCRIPT_NAME/basename: esa comparación dependía de una variable
+// derivada de la petición, potencialmente contaminable bajo ciertas configuraciones
+// CGI/FPM). Quién queda exento se decide en cada endpoint pasando
+// ds_require_admin(true), no aquí.
+function ds_admin_require_2fa_enrolled(int $adminId): void
 {
-    $base = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
-    if (in_array($base, DS_2FA_EXEMPT, true)) return;
-    $adminId = $_SESSION['admin_id'] ?? null;
-    if (empty($adminId) || !function_exists('ds_get_pdo')) return; // login flow lo maneja aparte
+    if (!function_exists('ds_get_pdo')) return;
     $stmt = ds_get_pdo()->prepare('SELECT totp_enabled FROM admins WHERE id = ?');
-    $stmt->execute([(int) $adminId]);
+    $stmt->execute([$adminId]);
     if ((int) $stmt->fetchColumn() !== 1) {
         ds_json_error('Debes activar el 2FA antes de operar el panel.', 403);
     }
@@ -119,13 +121,12 @@ function ds_admin_csrf_check(?string $submitted): void
     }
     // Auditoría automática: toda acción de escritura admin pasa por aquí. Se registra
     // la ruta como "acción". No audita el login (aún no hay admin_id en sesión).
+    // El enforcement de 2FA ya NO vive aquí (solo corría en POST) — ahora es
+    // ds_require_admin() quien lo exige, en cada endpoint, GET o POST.
     $script = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
     $accion = trim(preg_replace('#^.*/admin/#', '', $script), '/');
     $accion = $accion !== '' ? $accion : basename($script);
     ds_admin_log($accion, null);
-    // 2FA obligatorio en servidor: bloquea escrituras si el admin no ha activado 2FA
-    // (salvo los endpoints de enrolamiento/auth en DS_2FA_EXEMPT).
-    ds_admin_require_2fa_enrolled();
 }
 
 /**

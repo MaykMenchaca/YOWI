@@ -5,20 +5,8 @@
 (function (global) {
   function apiUrl(p) { return global.DS_API_URL ? global.DS_API_URL(p) : p; }
 
-  function escAttr(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-
-  // Solo permite http/https o rutas relativas; bloquea javascript:, data:, etc.
-  function safeHref(s) {
-    var v = String(s == null ? "" : s).trim();
-    if (!v) return "";
-    var m = /^([a-z][a-z0-9+.\-]*)\s*:/i.exec(v);
-    if (m && m[1].toLowerCase() !== "http" && m[1].toLowerCase() !== "https") return "";
-    return v;
-  }
+  var escAttr = window.DSSec.escAttr; // definición única en security-utils.js
+  var safeHref = window.DSSec.safeHref;
 
   function build(hero, banners) {
     var reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -11,11 +11,26 @@ declare(strict_types=1);
  * En ese caso el llamador debe RECHAZAR la subida (no guardar el archivo crudo), para no
  * perder el saneamiento anti-polyglot.
  */
+// Techo de píxeles antes de decodificar. Sin esto, un archivo válido y pequeño en disco
+// (un PNG de 30000×30000 comprime a pocos KB) puede pedirle a GD que reserve ~ancho×alto×4
+// bytes en memoria (varios GB) al decodificarlo — una "bomba de descompresión" que agota
+// memory_limit o tumba el proceso, con solo sesión de admin (quien sube imágenes).
+const DS_MAX_IMAGE_PIXELS = 40_000_000; // p. ej. 6300×6300, de sobra para cualquier foto de producto
+
 function ds_reencode_image(string $src, string $dest, string $mime): bool
 {
     if (!function_exists('imagecreatefromjpeg')) {
         return false; // GD no disponible
     }
+
+    $info = @getimagesize($src);
+    if ($info === false || $info[0] <= 0 || $info[1] <= 0) {
+        return false;
+    }
+    if ($info[0] * $info[1] > DS_MAX_IMAGE_PIXELS) {
+        return false;
+    }
+
     switch ($mime) {
         case 'image/jpeg':
             $img = @imagecreatefromjpeg($src);

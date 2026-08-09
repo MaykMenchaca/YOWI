@@ -3,11 +3,7 @@
 (function (global) {
   function apiUrl(p) { return global.DS_API_URL ? global.DS_API_URL(p) : p; }
 
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   var waNumber = "5218344241599"; // fallback
 

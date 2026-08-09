@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
           '<td class="py-2 font-mono text-slate-400">#' + o.id + '</td>' +
           '<td class="py-2 text-slate-200">' + esc(o.nombre_cliente) + '</td>' +
           '<td class="py-2 text-slate-300">$' + Number(o.total).toLocaleString("es-MX", {minimumFractionDigits:2}) + '</td>' +
-          '<td class="py-2"><span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">' + o.estado + '</span></td>' +
-          '<td class="py-2 text-slate-400 text-xs">' + o.created_at + '</td>' +
+          '<td class="py-2"><span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">' + esc(o.estado) + '</span></td>' +
+          '<td class="py-2 text-slate-400 text-xs">' + esc(o.created_at) + '</td>' +
         '</tr>';
       }).join("") +
       '</tbody></table>';
   }).catch(function (err) {
-    document.getElementById("stats-grid").innerHTML = '<p class="text-red-400 text-sm col-span-4">' + err.message + '</p>';
+    document.getElementById("stats-grid").innerHTML = '<p class="text-red-400 text-sm col-span-4">' + esc(err.message) + '</p>';
   });
 
   function stat(label, value, accent) {
@@ -52,7 +52,5 @@ document.addEventListener("DOMContentLoaded", function () {
       '<p class="font-display font-extrabold text-4xl text-white">' + (value !== undefined ? value : '—') + '</p>' +
     '</div>';
   }
-  function esc(s) {
-    return String(s||"").replace(/[&<>"']/g, function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 });

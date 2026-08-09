@@ -92,8 +92,11 @@
     if (btnActivate) {
       btnActivate.addEventListener("click", function () {
         var code = (document.getElementById("activate-code").value || "").trim();
-        DSAdminApi.apiFetch("../api/admin/auth/2fa-activate.php", { method: "POST", body: { code: code } })
+        var password = document.getElementById("activate-password").value || "";
+        if (!password) { alertMsg("Confirma tu contraseña para activar el 2FA.", false); return; }
+        DSAdminApi.apiFetch("../api/admin/auth/2fa-activate.php", { method: "POST", body: { code: code, password: password } })
           .then(function (d) {
+            document.getElementById("activate-password").value = "";
             alertMsg("2FA activado. Guarda tus códigos de recuperación abajo.", true);
             render(true);
             showRecoveryCodes(d && d.recovery_codes);

@@ -154,7 +154,10 @@ $criticos = [
 $fallosDiagnostico = 0;
 foreach ($criticos as [$tabla, $columna, $tipo]) {
     if ($tipo === 'tabla') {
-        $existe = (bool) $pdo->query('SHOW TABLES LIKE ' . $pdo->quote($tabla))->fetch();
+        // $pdo->quote() escapa correctamente el valor; SHOW TABLES LIKE no admite
+        // placeholders con PDO, así que quote() es la forma correcta aquí (no es
+        // concatenación insegura). Script de desarrollo, no vive en el docroot.
+        $existe = (bool) $pdo->query('SHOW TABLES LIKE ' . $pdo->quote($tabla))->fetch(); // nosemgrep: php-sql-concatenado
         $etiqueta = "tabla {$tabla}";
     } else {
         $stmt = $pdo->prepare(
@@ -206,6 +209,19 @@ if ($nAdmin > 0) {
     );
     if ($code !== 0) { echo "\n\033[31m✗ No se pudo crear el admin.\033[0m\n"; exit(1); }
     ok("Admin creado.");
+}
+
+// ── Aviso de correo (no bloquea, pero es fácil olvidarlo en producción) ───────
+// Con MAIL_TRANSPORT=none (el valor por defecto, correcto en local) "olvidé mi
+// contraseña" no envía nada: el usuario ve el mensaje genérico de siempre y se queda
+// bloqueado sin ninguna forma real de recuperar su cuenta. Es solo un warning: en
+// local está bien no tener correo configurado.
+$envConfig = file_exists($ENV_PATH) ? require $ENV_PATH : [];
+$mailTransport = $envConfig['MAIL_TRANSPORT'] ?? 'none';
+if ($mailTransport === 'none') {
+    echo "\n\033[33m⚠ MAIL_TRANSPORT=none — el correo está desactivado.\033[0m\n";
+    info('  "Olvidé mi contraseña" no envía nada con esta config (normal en local).');
+    info('  Antes de desplegar a producción, configura MAIL_TRANSPORT en env.php.');
 }
 
 // ── Resumen ──────────────────────────────────────────────────────────────────

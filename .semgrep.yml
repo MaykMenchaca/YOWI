@@ -1,0 +1,82 @@
+# Reglas de seguridad propias del proyecto YOWI/DS. NO reemplaza una auditoría manual —
+# es una red de reintento: atrapa clases de bug que ya aparecieron aquí una vez (o que
+# aparecieron en proyectos parecidos) antes de que lleguen a producción. Correr con:
+#   scripts/scan-seguridad.sh
+# o directo: semgrep --config .semgrep.yml site/
+#
+# Convenciones que estas reglas asumen (ver docs/guia-seguridad.md):
+#   - Todo query/exec de PDO usa sentencias preparadas, nunca concatenación.
+#   - Todo innerHTML pasa por esc()/escAttr()/DSSec.esc en algún punto de la expresión.
+#   - Ningún endpoint ejecuta código ni deserializa datos del cliente.
+#   - header('Location: ...') nunca construye el destino con datos del cliente.
+
+rules:
+  - id: php-funcion-peligrosa
+    languages: [php]
+    severity: ERROR
+    message: >
+      Función peligrosa (ejecución de código o deserialización insegura). El proyecto no
+      usa ninguna de estas hoy — si de verdad hace falta, requiere revisión explícita antes
+      de mezclarla con cualquier dato del cliente.
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: exec(...)
+          - pattern: shell_exec(...)
+          - pattern: passthru(...)
+          - pattern: system(...)
+          - pattern: proc_open(...)
+          - pattern: unserialize(...)
+          - pattern: create_function(...)
+          - pattern: assert(...)
+    paths:
+      exclude:
+        - "**/scripts/setup-local.php" # passthru() aquí es hacia otro script del propio repo, con escapeshellarg, fuera del docroot
+
+  - id: php-sql-concatenado
+    languages: [php]
+    severity: ERROR
+    message: >
+      SQL construido con concatenación en vez de una sentencia preparada (placeholders +
+      execute([...])). Todo el proyecto usa PDO preparado — esto reabriría la puerta a
+      inyección SQL que ya se cerró.
+    patterns:
+      - pattern-either:
+          - pattern: $PDO->query($A . $B)
+          - pattern: $PDO->exec($A . $B)
+          - pattern: $PDO->query("...".$X."...")
+          - pattern: $PDO->exec("...".$X."...")
+
+  - id: php-header-location-abierto
+    languages: [php]
+    severity: ERROR
+    message: >
+      Redirección cuyo destino incluye datos del cliente ($_GET/$_POST/$_REQUEST) — abre
+      la puerta a un "open redirect" (usado en phishing: el enlace parece del propio sitio
+      pero termina en un sitio ajeno). El destino siempre debe salir de una constante o de
+      ds_app_url(), nunca de la petición.
+    patterns:
+      - pattern-either:
+          - pattern: 'header("Location: " . $_GET[...])'
+          - pattern: 'header("Location: " . $_POST[...])'
+          - pattern: 'header("Location: " . $_REQUEST[...])'
+
+  # NOTA: se intentó una regla "innerHTML asignado sin esc()" con metavariable-pattern +
+  # pattern-not-regex, pero esa combinación no evalúa de forma fiable expresiones
+  # multilínea en esta versión de semgrep (falsos positivos incluso con esc() presente
+  # en el mismo bloque — probado con un caso mínimo). Se descartó antes de incluirla:
+  # una regla que dispara con esc() presente entrena a ignorar el escáner. La cobertura
+  # de "todo innerHTML pasa por esc()" sigue siendo el checklist manual de
+  # docs/guia-seguridad.md — ya se verificó a mano en las auditorías de agosto 2026.
+
+  - id: js-eval-new-function
+    languages: [javascript]
+    severity: ERROR
+    message: >
+      eval() / new Function() ejecutan una cadena como código — el proyecto no usa
+      ninguna de las dos (y la CSP script-src 'self' las bloquearía igual). Revisar si
+      hace falta de verdad.
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)

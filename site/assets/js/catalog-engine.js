@@ -51,11 +51,7 @@
   }
 
   // Escapa HTML para prevenir XSS: el catálogo viene de MySQL editable desde el admin.
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
+  var esc = window.DSSec.esc; // definición única en security-utils.js
 
   // Presentación: combina cantidad + unidad ("300" + "g" -> "300 g").
   function qtyLabel(p) {

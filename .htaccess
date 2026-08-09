@@ -50,6 +50,6 @@ Options -Indexes
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 
     # CSP ENFORCE (storefront): script-src 'self' sin inline ni CDN. El panel admin
-    # tiene su propia CSP en site/admin/.htaccess (permite el CDN de Tailwind).
+    # tiene su propia CSP en site/admin/.htaccess (idéntica a esta — ya no usa CDN).
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>

@@ -57,8 +57,10 @@
           <p class="text-slate-300 text-sm">1) En tu app autenticadora, agrega una cuenta e ingresa esta clave manualmente:</p>
           <code id="secret-code" class="block bg-slate-900 border border-slate-600 px-4 py-3 text-lime tracking-[0.2em] break-all select-all"></code>
           <p class="text-slate-500 text-xs">También puedes usar el enlace de configuración: <a id="otpauth-link" href="#" class="text-cobalt-500 underline break-all"></a></p>
-          <p class="text-slate-300 text-sm">2) Escribe el código de 6 dígitos que muestra la app para confirmar:</p>
-          <div class="flex gap-3 items-center">
+          <p class="text-slate-300 text-sm">2) Confirma tu contraseña y el código de 6 dígitos que muestra la app:</p>
+          <div class="flex flex-wrap gap-3 items-center">
+            <input id="activate-password" type="password" placeholder="Tu contraseña" autocomplete="current-password"
+              class="w-48 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand"/>
             <input id="activate-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
             <button id="btn-activate" class="btn btn-brand">Confirmar</button>
@@ -97,6 +99,7 @@
     </section>
   </main>
 
+  <script src="../assets/js/security-utils.js"></script>
   <script src="../assets/js/admin/api-client.js"></script>
   <script src="../assets/js/admin/auth.js"></script>
   <script src="../assets/js/admin/seguridad.js"></script>

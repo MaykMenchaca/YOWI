@@ -6,15 +6,18 @@ require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
 require __DIR__ . '/../../lib/Recovery.php';
+require __DIR__ . '/../../lib/RateLimit.php';
 
 // Regenera los códigos de recuperación (invalida los anteriores). Exige un código TOTP
 // válido actual para confirmar que es el dueño del segundo factor.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
-$adminId = ds_require_admin();
+$adminId = ds_require_admin(true); // el endpoint ya exige más abajo un TOTP vigente
 
 $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);
+
+ds_rate_limit_ip('2fa', ds_client_ip(), 10, 15);
 
 $code = preg_replace('/\D+/', '', (string) ($body['code'] ?? ''));
 
