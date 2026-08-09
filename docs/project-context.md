@@ -42,6 +42,26 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   (antes solo nombre + ciudad). El mensaje de WhatsApp se arma con todo y el pago es por transferencia
   (SPEI). Se agregó la columna `orders.direccion_envio` (migración en `sql/migrations/`) y el admin la
   muestra en el listado de pedidos.
+- **2026-08-09:** **Auditoría del lado de usuario** (catálogo con sabores/galería, carrito, checkout,
+  cuenta) — informe completo en `docs/auditoria-usuario-2026-08-09.md`. Halló que un anónimo podía
+  vaciar el inventario completo con **una sola petición** (`orders/create.php` topaba la cantidad al
+  stock disponible en vez de rechazar, y cancelar un pedido no reponía el stock). Se tomaron 4
+  decisiones de producto, ya implementadas:
+  1. **Cancelar un pedido repone el stock**, de forma idempotente (columna `orders.stock_repuesto`,
+     migración `2026-08-09-add-orders-stock-repuesto.sql`). Requirió guardar el sabor exacto de cada
+     línea (`order_items.sabor_id`, migración `2026-08-09-add-order-item-sabor-id.sql`) porque antes
+     solo se guardaba el nombre como texto.
+  2. **Ante stock insuficiente: ajustar e informar**, nunca rechazar todo el pedido en silencio. El
+     servidor devuelve qué se ajustó (`ajustes`) y el front reconstruye el mensaje de WhatsApp desde
+     la respuesta del servidor, no desde el carrito local.
+  3. **Tope duro de 100 unidades por línea** (`DS_MAX_QTY_PER_LINE` en `create.php`), como red de
+     seguridad adicional — no sustituye a la decisión 1, que es la que hace el daño recuperable.
+  4. **Los pedidos de invitado no se vinculan** al registrarse después (YAGNI; el canal real de
+     atención es WhatsApp).
+  También se cerró un CORS placeholder activo en `site/api/.htaccess`, se añadió protección de doble
+  clic en el checkout, reintento de CSRF caducado, `.htaccess` en `site/api/lib/`, CSP/HSTS en
+  `vercel.json`, y rate limiting en 3 endpoints que no lo tenían. Detalle completo, hallazgos Medios/
+  Bajos y lo confirmado como seguro (IDOR, CSRF, SQLi, XSS) en el informe.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de logins, `password_hash` bcrypt, uploads validados (MIME real + `.htaccess` anti-ejecución).
