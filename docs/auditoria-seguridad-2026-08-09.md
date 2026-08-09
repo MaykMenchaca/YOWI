@@ -191,6 +191,26 @@ que le llegó un correo.
 - `docs/project-context.md` — checklist de release: dos ítems nuevos, configurar
   `MAIL_TRANSPORT` y confirmar 2FA en todos los admins antes de exponer el panel.
 
+### A-4 — "Perdí mi teléfono" era un candado sin llave de repuesto (encontrado en la verificación final)
+
+**Verificado en vivo, con un admin de prueba dedicado, tras dar por cerrada la Fase 4:**
+`2fa-disable.php` solo aceptaba un código TOTP vigente (`ds_totp_verify`), nunca un código
+de recuperación — a diferencia de `login.php`, que sí acepta cualquiera de los dos. Un
+admin que pierde su autenticador **puede iniciar sesión** con un código de recuperación
+(`login.php:56-58`), pero no podía **desactivar** el 2FA perdido para enrolar uno nuevo:
+`2fa-setup.php:22-24` rechaza generar un secreto mientras `totp_enabled=1`, y la única
+puerta para apagarlo exigía justo el TOTP que ya no tiene. Resultado: cuenta
+permanentemente inaccesible salvo por CLI (`scripts/create-admin.php` para crear otra, o
+edición directa de la BD). No es una vulnerabilidad de acceso — es lo opuesto, un
+bloqueo de disponibilidad para el dueño legítimo, con el mismo patrón que D11.
+
+**Arreglo:** `2fa-disable.php` ahora acepta también un código de recuperación válido
+(`ds_consume_recovery_code`), igual que `login.php`. Verificado en vivo: código inválido →
+401; código de recuperación real → 2FA desactivado y admin puede re-enrolar; el mismo
+código reutilizado → 401 (un solo uso, ya lo garantizaba `Recovery.php`); TOTP normal
+sigue funcionando exactamente igual que antes; el rate limit de A-1 (10/15min) sigue
+aplicando sobre esta ruta sin cambios.
+
 ---
 
 ## 🟡 Quick wins aplicados (coste marginal, riesgo nulo)
