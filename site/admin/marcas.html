@@ -59,24 +59,24 @@
     <div class="flex items-center justify-between mb-6">
       <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Marcas</h1>
       <div class="flex items-center gap-3">
-        <button id="wipe-brands-btn" class="border border-red-700 text-red-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-red-900/40 transition-colors min-h-[44px]" title="Borra TODAS las marcas">
+        <button id="wipe-brands-btn" class="btn btn-danger" title="Borra TODAS las marcas">
           Vaciar marcas
         </button>
-        <button id="import-btn" class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px]">
+        <button id="import-btn" class="btn btn-neutral">
           Importar CSV
         </button>
         <a id="backup-export-btn" href="../api/admin/backup/export.php?tipo=marcas" download
           title="Descarga un respaldo JSON de marcas"
-          class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px] inline-flex items-center">
+          class="btn btn-neutral">
           Respaldar
         </a>
         <button id="backup-restore-btn" type="button"
           title="Restaura marcas desde un respaldo JSON"
-          class="border border-amber-600 text-amber-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-amber-900/30 transition-colors min-h-[44px]">
+          class="btn btn-warning">
           Restaurar
         </button>
         <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
-        <button id="new-brand-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">
+        <button id="new-brand-btn" class="btn btn-primary">
           + Nueva marca
         </button>
       </div>
@@ -112,7 +112,7 @@
     <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-2xl shadow-2xl my-8">
       <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
         <h2 id="modal-title" class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Nueva marca</h2>
-        <button id="modal-cancel" class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
+        <button id="modal-cancel" class="text-slate-400 hover:text-slate-200 text-2xl leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 rounded-none">&times;</button>
       </div>
 
       <form id="brand-form" class="px-6 py-5">
@@ -152,8 +152,8 @@
         </div>
 
         <div class="flex gap-3 pt-2 border-t border-slate-700">
-          <button type="submit" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity">Guardar</button>
-          <button type="button" id="modal-cancel-btn" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cancelar</button>
+          <button type="submit" class="flex-1 btn btn-primary">Guardar</button>
+          <button type="button" id="modal-cancel-btn" class="flex-1 btn btn-cancel">Cancelar</button>
         </div>
       </form>
     </div>
@@ -164,7 +164,7 @@
     <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-xl shadow-2xl my-8">
       <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800 z-10">
         <h2 class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Importar marcas (CSV)</h2>
-        <button id="import-close" class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
+        <button id="import-close" class="text-slate-400 hover:text-slate-200 text-2xl leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 rounded-none">&times;</button>
       </div>
 
       <div class="px-6 py-5">
@@ -188,8 +188,8 @@
         <div id="import-results" class="hidden mt-4 text-sm"></div>
 
         <div class="flex gap-3 pt-4 mt-4 border-t border-slate-700">
-          <button id="import-submit" type="button" class="flex-1 bg-lime text-ink font-extrabold uppercase tracking-wide py-2.5 rounded-none hover:opacity-90 transition-opacity disabled:opacity-50">Importar</button>
-          <button id="import-cancel" type="button" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2.5 rounded-none transition-colors">Cerrar</button>
+          <button id="import-submit" type="button" class="flex-1 btn btn-primary">Importar</button>
+          <button id="import-cancel" type="button" class="flex-1 btn btn-cancel">Cerrar</button>
         </div>
       </div>
     </div>

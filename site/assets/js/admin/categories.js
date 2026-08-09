@@ -28,8 +28,8 @@
         '<td class="px-4 py-3 text-slate-400 text-center">' + c.orden + '</td>' +
         '<td class="px-4 py-3 text-slate-400 text-center">' + c.productos_count + '</td>' +
         '<td class="px-4 py-3">' +
-          '<button class="text-blue-400 hover:text-blue-300 mr-3 edit-btn" data-id="' + c.id + '" data-nombre="' + esc(c.nombre) + '" data-orden="' + c.orden + '">Editar</button>' +
-          '<button class="text-red-400 hover:text-red-300 delete-btn" data-id="' + c.id + '" data-count="' + c.productos_count + '">Eliminar</button>' +
+          '<button class="btn-link-brand mr-3 edit-btn" data-id="' + c.id + '" data-nombre="' + esc(c.nombre) + '" data-orden="' + c.orden + '">Editar</button>' +
+          '<button class="btn-link-danger delete-btn" data-id="' + c.id + '" data-count="' + c.productos_count + '">Eliminar</button>' +
         '</td>' +
       '</tr>';
     }).join("");

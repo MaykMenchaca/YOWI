@@ -40,16 +40,16 @@
       <div class="flex items-center gap-3">
         <a id="backup-export-btn" href="../api/admin/backup/export.php?tipo=nosotros" download
           title="Descarga un respaldo JSON de esta página"
-          class="border border-slate-500 text-slate-200 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-slate-700 transition-colors min-h-[44px] inline-flex items-center">
+          class="btn btn-neutral">
           Respaldar
         </a>
         <button id="backup-restore-btn" type="button"
           title="Restaura esta página desde un respaldo JSON"
-          class="border border-amber-600 text-amber-300 font-bold uppercase tracking-wide text-sm px-4 py-2 rounded-none hover:bg-amber-900/30 transition-colors min-h-[44px]">
+          class="btn btn-warning">
           Restaurar
         </button>
         <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
-        <button id="save-btn" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-5 py-2 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Guardar cambios</button>
+        <button id="save-btn" class="btn btn-primary">Guardar cambios</button>
       </div>
     </div>
     <p class="text-slate-400 text-sm mb-4 max-w-2xl">Edita el contenido de la página pública <b>Nosotros</b>. Los cambios se ven de inmediato en la tienda.</p>
@@ -91,7 +91,7 @@
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-6 py-2.5 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Guardar cambios</button>
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
       </div>
     </form>
   </main>

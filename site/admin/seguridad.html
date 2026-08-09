@@ -51,7 +51,7 @@
 
       <!-- Estado: DESACTIVADO -> activar -->
       <div id="twofa-disabled" class="hidden mt-5">
-        <button id="btn-setup" class="bg-lime text-ink font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Activar 2FA</button>
+        <button id="btn-setup" class="btn btn-primary">Activar 2FA</button>
 
         <div id="setup-box" class="hidden mt-5 border-t border-slate-700 pt-5 space-y-4">
           <p class="text-slate-300 text-sm">1) En tu app autenticadora, agrega una cuenta e ingresa esta clave manualmente:</p>
@@ -61,7 +61,7 @@
           <div class="flex gap-3 items-center">
             <input id="activate-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-activate" class="bg-brand text-white font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:opacity-90 transition-opacity min-h-[44px]">Confirmar</button>
+            <button id="btn-activate" class="btn btn-brand">Confirmar</button>
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@
           <div class="flex gap-3 items-center">
             <input id="regen-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-regen" class="border border-slate-500 text-slate-200 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-slate-700 transition-colors min-h-[44px]">Regenerar códigos</button>
+            <button id="btn-regen" class="btn btn-neutral">Regenerar códigos</button>
           </div>
         </div>
         <div class="border-t border-slate-700 pt-4">
@@ -82,7 +82,7 @@
           <div class="flex gap-3 items-center">
             <input id="disable-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-disable" class="border border-red-500 text-red-400 font-extrabold uppercase tracking-wide text-sm px-5 py-2.5 rounded-none hover:bg-red-500 hover:text-white transition-colors min-h-[44px]">Desactivar 2FA</button>
+            <button id="btn-disable" class="btn btn-danger">Desactivar 2FA</button>
           </div>
         </div>
       </div>

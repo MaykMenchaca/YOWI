@@ -55,6 +55,12 @@ body { font-family: 'Barlow', sans-serif; }
     @apply btn bg-slate-700 text-slate-300 hover:bg-slate-600;
   }
 
+  /* Acción neutral/informativa de la barra de herramientas: Importar CSV, Exportar CSV,
+     Respaldar (descarga segura, no sobreescribe nada — por eso no es .btn-warning). */
+  .btn-neutral {
+    @apply btn border border-slate-500 text-slate-200 bg-transparent hover:bg-slate-700;
+  }
+
   /* Destructivo: vaciar catálogo, eliminar, desactivar 2FA. Un solo rojo — antes
      convivían dos combinaciones distintas para el mismo rol. */
   .btn-danger {

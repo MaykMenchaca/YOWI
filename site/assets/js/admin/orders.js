@@ -111,7 +111,7 @@
     if (pages <= 1) { el.innerHTML = ""; return; }
     var html = "";
     for (var i = 1; i <= pages; i++) {
-      html += '<button class="px-3 py-1 rounded text-sm ' +
+      html += '<button class="btn btn-sm ' +
         (i === page ? 'bg-brand text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600') +
         '" data-page="' + i + '">' + i + '</button> ';
     }

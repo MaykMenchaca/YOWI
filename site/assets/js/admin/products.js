@@ -134,8 +134,8 @@
           '<span class="px-2 py-0.5 rounded text-xs ' + (p.activo ? 'bg-blue-900/50 text-blue-300' : 'bg-slate-700 text-slate-400') + '">' +
             (p.activo ? 'Activo' : 'Oculto') + '</span></td>' +
         '<td class="px-3 py-3 whitespace-nowrap">' +
-          '<button class="text-blue-400 hover:text-blue-300 mr-2 edit-btn" data-id="' + p.id + '">Editar</button>' +
-          '<button class="text-red-400 hover:text-red-300 delete-btn" data-id="' + p.id + '">Ocultar</button>' +
+          '<button class="btn-link-brand mr-2 edit-btn" data-id="' + p.id + '">Editar</button>' +
+          '<button class="btn-link-danger delete-btn" data-id="' + p.id + '">Ocultar</button>' +
         '</td>' +
       '</tr>';
     }).join("");
@@ -155,7 +155,7 @@
     if (pages <= 1) { el.innerHTML = ""; return; }
     var html = "";
     for (var i = 1; i <= pages; i++) {
-      html += '<button class="px-3 py-1 rounded text-sm ' +
+      html += '<button class="btn btn-sm ' +
         (i === page ? 'bg-brand text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600') +
         '" data-page="' + i + '">' + i + '</button> ';
     }
@@ -255,7 +255,7 @@
         '<input type="text" class="flavor-nombre flex-1 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Nombre del sabor" value="' + esc(nombre) + '" />' +
         '<input type="number" min="0" class="flavor-stock w-28 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Sin control" value="' + stock + '" />' +
         '<input type="number" step="0.01" min="0" class="flavor-precio w-32 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Precio del producto" value="' + precio + '" />' +
-        '<button type="button" class="flavor-remove-btn text-red-400 hover:text-red-300 text-sm px-2 shrink-0">Quitar</button>' +
+        '<button type="button" class="flavor-remove-btn btn-link-danger text-sm px-2 shrink-0">Quitar</button>' +
       '</div>'
     );
   }
@@ -322,7 +322,7 @@
     return (
       '<div class="relative border border-slate-600 rounded bg-slate-900 p-1 gallery-thumb" data-id="' + img.id + '">' +
         '<img src="../' + esc(img.url) + '" alt="" class="w-full h-20 object-contain" />' +
-        '<button type="button" class="gallery-delete-btn absolute -top-1 -right-1 bg-red-900 text-red-200 text-xs w-5 h-5 leading-5 text-center rounded-full" title="Quitar de la galería">&times;</button>' +
+        '<button type="button" class="gallery-delete-btn btn-icon-sm absolute -top-1 -right-1 bg-red-900 text-red-200 hover:bg-red-800" title="Quitar de la galería">&times;</button>' +
         '<div class="flex justify-between items-center mt-1">' +
           '<button type="button" class="gallery-move-left-btn text-slate-300 hover:text-white text-xs px-1" title="Mover a la izquierda">&#9664;</button>' +
           '<button type="button" class="gallery-principal-btn text-slate-400 hover:text-lime text-[10px] px-1" title="Usar como imagen principal">&#9733;</button>' +
