@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     id              INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
     order_id        INT UNSIGNED      NOT NULL,
     producto_id     INT UNSIGNED      NULL,
+    sabor_id        INT UNSIGNED      NULL,
     nombre_producto VARCHAR(255)      NOT NULL,
     sabor           VARCHAR(80)       NULL,
     precio_unitario DECIMAL(10,2)     NOT NULL,
@@ -243,7 +244,9 @@ CREATE TABLE IF NOT EXISTS order_items (
     subtotal        DECIMAL(10,2)     NOT NULL,
     CONSTRAINT fk_items_order   FOREIGN KEY (order_id)    REFERENCES orders(id)   ON DELETE CASCADE,
     CONSTRAINT fk_items_product FOREIGN KEY (producto_id) REFERENCES products(id) ON DELETE SET NULL,
-    KEY idx_items_order (order_id)
+    CONSTRAINT fk_items_flavor  FOREIGN KEY (sabor_id)    REFERENCES product_flavors(id) ON DELETE SET NULL,
+    KEY idx_items_order (order_id),
+    KEY idx_items_sabor (sabor_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Rate limiting de logins (anti-fuerza bruta, cliente y admin) ──────────────────
