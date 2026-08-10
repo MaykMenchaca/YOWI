@@ -95,6 +95,10 @@
     if (!profileBox && !ordersBox && !logoutBtn) return;
 
     var currentUser = null;
+    var sessionGate = document.querySelector("[data-session-gate]");
+    function revealSessionGate() {
+      if (sessionGate) sessionGate.classList.remove("hidden");
+    }
 
     function fillProfile(user) {
       if (!profileBox) return;
@@ -110,6 +114,7 @@
         if (!data.user) { window.location.href = "login.html"; return; }
         currentUser = data.user;
         fillProfile(currentUser);
+        revealSessionGate();
         if (ordersBox) {
           global.DSApi.apiFetch("api/orders/list.php").then(function (orders) {
             renderOrders(orders, ordersBox);
