@@ -23,6 +23,11 @@
           }
           var nameEl = document.getElementById("admin-name");
           if (nameEl) nameEl.textContent = data.admin.nombre;
+
+          // Expone el admin y su rol al resto del panel: antes ningún JS podía preguntar
+          // "¿qué rol tiene el usuario actual?" sin repetir su propio apiFetch(me.php).
+          window.DSAdmin = data.admin;
+          document.body.setAttribute("data-rol", data.admin.rol);
         } else {
           // Sin sesión
           if (!IS_LOGIN_PAGE) {

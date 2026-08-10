@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Categorías — DS Admin</title>
+  <title>Usuarios — DS Admin</title>
   <link rel="icon" type="image/png" href="../assets/img/favicon.png"/>
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>body { font-family: 'Barlow', sans-serif; }</style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen" data-backup-tipo="categorias">
+<body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen">
 
   <!-- Sidebar -->
   <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
@@ -26,7 +26,7 @@
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
         Productos
       </a>
-      <a href="categorias.html" class="flex items-center gap-3 px-5 py-2.5 bg-brand text-white text-sm font-semibold">
+      <a href="categorias.html" class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors">
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
         Categorías
       </a>
@@ -46,7 +46,10 @@
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
         Nosotros
       </a>
-      <a href="usuarios.html" data-rol-min="dueno" class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Usuarios</a>
+      <a href="usuarios.html" data-rol-min="dueno" class="flex items-center gap-3 px-5 py-2.5 bg-brand text-white text-sm font-semibold">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuarios
+      </a>
       <a href="seguridad.html" class="flex items-center gap-3 px-5 py-2.5 text-slate-400 hover:text-lime hover:bg-slate-800 text-sm transition-colors"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg> Seguridad</a>
       </nav>
     <div class="px-5 py-4 border-t border-slate-700">
@@ -58,27 +61,21 @@
   <!-- Main -->
   <main class="flex-1 p-8 overflow-auto">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Categorías</h1>
+      <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Usuarios</h1>
       <div class="flex items-center gap-3">
-        <button id="wipe-cats-btn" data-rol-min="dueno" class="btn btn-danger" title="Elimina las categorías que no tienen productos">
-          Eliminar vacías
-        </button>
-        <a id="backup-export-btn" data-rol-min="dueno" href="../api/admin/backup/export.php?tipo=categorias" download
-          title="Descarga un respaldo JSON de categorías"
-          class="btn btn-neutral">
-          Respaldar
-        </a>
-        <button id="backup-restore-btn" data-rol-min="dueno" type="button"
-          title="Restaura categorías desde un respaldo JSON"
-          class="btn btn-warning">
-          Restaurar
-        </button>
-        <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
-        <button id="new-category-btn" class="btn btn-primary">
-          + Nueva categoría
+        <button id="new-user-btn" class="btn btn-primary">
+          + Nuevo usuario
         </button>
       </div>
     </div>
+
+    <p class="text-slate-400 text-sm mb-6 max-w-2xl">
+      Crea una cuenta para cada empleado y asígnale uno de los 3 modos: <b class="text-slate-200">Dueño</b>
+      (control total, incluida esta pantalla), <b class="text-slate-200">Operador</b> (cambia pedidos y
+      administra el catálogo, sin respaldos ni borrados masivos) o <b class="text-slate-200">Solo lectura</b>
+      (consulta todo, no puede cambiar nada). Todo empleado nuevo debe activar su verificación en dos
+      pasos antes de poder operar el panel.
+    </p>
 
     <div id="alert-banner" class="hidden mb-4"></div>
 
@@ -87,37 +84,60 @@
         <thead>
           <tr class="border-b border-slate-700 text-left text-slate-400 text-xs uppercase tracking-wide">
             <th class="px-4 py-3">Nombre</th>
-            <th class="px-4 py-3">Slug</th>
-            <th class="px-4 py-3 text-center">Orden</th>
-            <th class="px-4 py-3 text-center">Productos</th>
+            <th class="px-4 py-3">Correo</th>
+            <th class="px-4 py-3">Rol</th>
+            <th class="px-4 py-3 text-center">2FA</th>
+            <th class="px-4 py-3 text-center">Estado</th>
             <th class="px-4 py-3">Acciones</th>
           </tr>
         </thead>
-        <tbody id="categories-tbody">
-          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
+        <tbody id="users-tbody">
+          <tr><td colspan="6" class="px-4 py-8 text-center text-slate-500">Cargando…</td></tr>
         </tbody>
       </table>
     </div>
   </main>
 
-  <!-- Modal -->
-  <div id="cat-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+  <!-- Modal: crear / editar -->
+  <div id="user-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
     <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-md shadow-2xl">
       <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
-        <h2 id="modal-title" class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Nueva categoría</h2>
+        <h2 id="modal-title" class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Nuevo usuario</h2>
         <button id="modal-cancel" class="text-slate-400 hover:text-slate-200 text-2xl leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 rounded-none">&times;</button>
       </div>
-      <form id="cat-form" class="px-6 py-5 space-y-4">
+      <form id="user-form" class="px-6 py-5 space-y-4">
         <div>
           <label class="block text-slate-300 text-sm font-medium mb-1">Nombre <span class="text-red-400">*</span></label>
           <input name="nombre" type="text" required
             class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-            placeholder="Ej: Proteínas" />
+            placeholder="Ej: María López" />
         </div>
         <div>
-          <label class="block text-slate-300 text-sm font-medium mb-1">Orden de aparición</label>
-          <input name="orden" type="number" min="0" value="0"
-            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
+          <label class="block text-slate-300 text-sm font-medium mb-1">Correo <span class="text-red-400">*</span></label>
+          <input name="email" type="email" required
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+            placeholder="correo@ejemplo.com" />
+        </div>
+        <div id="password-field">
+          <label class="block text-slate-300 text-sm font-medium mb-1">Contraseña inicial <span class="text-red-400">*</span></label>
+          <input name="password" type="password" minlength="8"
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+            placeholder="Mínimo 8 caracteres" />
+          <p class="text-slate-500 text-xs mt-1">Pásasela al empleado por un canal privado. La puede cambiar después desde Seguridad.</p>
+        </div>
+        <div>
+          <label class="block text-slate-300 text-sm font-medium mb-1">Rol <span class="text-red-400">*</span></label>
+          <select name="rol" required
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
+            <option value="lectura">Solo lectura — consulta, no puede cambiar nada</option>
+            <option value="operador">Operador — pedidos y catálogo del día a día</option>
+            <option value="dueno">Dueño — control total</option>
+          </select>
+        </div>
+        <div id="activo-field" class="hidden flex items-center gap-2">
+          <input id="activo-input" name="activo" type="checkbox" checked
+            class="w-4 h-4 rounded-none border-slate-600 bg-slate-700 text-brand focus:ring-brand" />
+          <label for="activo-input" class="text-slate-300 text-sm">Cuenta activa (destildar para dar de baja sin borrar)</label>
         </div>
         <div class="flex gap-3 pt-2">
           <button type="submit" class="flex-1 btn btn-primary">Guardar</button>
@@ -127,10 +147,33 @@
     </div>
   </div>
 
+  <!-- Modal: cambiar/resetear contraseña de un empleado -->
+  <div id="reset-pw-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-slate-800 rounded-none border border-slate-700 w-full max-w-sm shadow-2xl">
+      <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <h2 class="font-display font-extrabold text-lg uppercase tracking-tight text-white border-l-4 border-lime pl-3">Restablecer contraseña</h2>
+        <button id="reset-pw-cancel" class="text-slate-400 hover:text-slate-200 text-2xl leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500 rounded-none">&times;</button>
+      </div>
+      <form id="reset-pw-form" class="px-6 py-5 space-y-4">
+        <p class="text-slate-400 text-sm" id="reset-pw-target"></p>
+        <div>
+          <label class="block text-slate-300 text-sm font-medium mb-1">Nueva contraseña</label>
+          <input name="password" type="password" minlength="8" required
+            class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+            placeholder="Mínimo 8 caracteres" />
+        </div>
+        <p class="text-amber-400 text-xs">Esto cierra cualquier sesión que esa cuenta tuviera abierta.</p>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="flex-1 btn btn-brand">Restablecer</button>
+          <button type="button" id="reset-pw-cancel-btn" class="flex-1 btn btn-cancel">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="../assets/js/security-utils.js"></script>
   <script src="../assets/js/admin/api-client.js"></script>
   <script src="../assets/js/admin/auth.js"></script>
-  <script src="../assets/js/admin/backup.js"></script>
-  <script src="../assets/js/admin/categories.js"></script>
+  <script src="../assets/js/admin/usuarios.js"></script>
 </body>
 </html>

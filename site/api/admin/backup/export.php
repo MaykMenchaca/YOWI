@@ -12,7 +12,7 @@ require __DIR__ . '/../../lib/AdminSession.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') ds_json_error('Método no permitido', 405);
 
-ds_require_admin();
+ds_require_rol(DS_ROL_DUENO);
 
 const DS_BACKUP_TIPOS = ['productos', 'categorias', 'marcas', 'pedidos', 'promociones', 'nosotros', 'todo'];
 const DS_BACKUP_VERSION = 1;

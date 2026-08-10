@@ -6,7 +6,7 @@ require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
-ds_require_admin();
+ds_require_rol(DS_ROL_DUENO);
 
 $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);

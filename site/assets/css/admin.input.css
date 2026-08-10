@@ -99,4 +99,22 @@ body { font-family: 'Barlow', sans-serif; }
 
   /* Modificador: variante compacta (paginación, controles dentro de tarjetas). */
   .btn-sm { @apply min-h-0 px-3 py-1 text-sm normal-case tracking-normal font-medium; }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Visibilidad por rol (sistema de usuarios del panel).
+
+     auth.js pone data-rol="lectura|operador|dueno" en <body> según el rol del admin
+     logueado (viene de me.php). Cualquier elemento con data-rol-min="operador" o
+     data-rol-min="dueno" se oculta si el rol del body no alcanza ese mínimo.
+
+     IMPORTANTE: esto es COSMÉTICO, no seguridad — un usuario puede editar el HTML de su
+     navegador y hacer aparecer cualquier botón. Lo que de verdad impide la acción es el
+     403 de ds_require_rol() en el servidor (site/api/lib/AdminSession.php). Esto solo
+     evita que el panel ofrezca botones que van a fallar.
+     ────────────────────────────────────────────────────────────────────────── */
+  body[data-rol="lectura"] [data-rol-min="operador"],
+  body[data-rol="lectura"] [data-rol-min="dueno"],
+  body[data-rol="operador"] [data-rol-min="dueno"] {
+    display: none !important;
+  }
 }

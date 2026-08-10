@@ -127,5 +127,26 @@
           .catch(function (err) { alertMsg(err.message, false); });
       });
     }
+
+    var changePwForm = document.getElementById("change-pw-form");
+    if (changePwForm) {
+      changePwForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var actual = document.getElementById("pw-actual").value;
+        var nueva  = document.getElementById("pw-nueva").value;
+        var btn = document.getElementById("btn-change-pw");
+        btn.disabled = true;
+        DSAdminApi.apiFetch("../api/admin/auth/change-password.php", {
+          method: "POST",
+          body: { password_actual: actual, password_nueva: nueva },
+        })
+          .then(function () {
+            changePwForm.reset();
+            alertMsg("Contraseña cambiada.", true);
+          })
+          .catch(function (err) { alertMsg(err.message, false); })
+          .then(function () { btn.disabled = false; });
+      });
+    }
   });
 })();

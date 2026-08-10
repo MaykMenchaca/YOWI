@@ -150,6 +150,7 @@ $criticos = [
     ['orders', 'direccion_envio', 'columna'],
     ['product_flavors', null, 'tabla'],
     ['product_images', null, 'tabla'],
+    ['admins', 'rol', 'columna'],
 ];
 $fallosDiagnostico = 0;
 foreach ($criticos as [$tabla, $columna, $tipo]) {

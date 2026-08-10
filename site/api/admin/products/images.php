@@ -30,7 +30,7 @@ function ds_product_images(PDO $pdo, int $productId): array
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    ds_require_admin();
+    ds_require_rol(DS_ROL_LECTURA);
 
     $productId = ds_to_positive_int($_GET['product_id'] ?? 0);
     if ($productId === 0) ds_json_error('product_id inválido', 400);
@@ -41,7 +41,7 @@ if ($method === 'GET') {
 
 if ($method !== 'POST') ds_json_error('Método no permitido', 405);
 
-ds_require_admin();
+ds_require_rol(DS_ROL_OPERADOR);
 
 $body = ds_read_json_body();
 ds_admin_csrf_check($body['csrf_token'] ?? null);

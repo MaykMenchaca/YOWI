@@ -39,9 +39,16 @@ if ($check->fetch()) {
 }
 
 $hash = password_hash($pass, PASSWORD_DEFAULT);
-$stmt = $pdo->prepare('INSERT INTO admins (nombre, email, password_hash) VALUES (?, ?, ?)');
-$stmt->execute([$nombre, $email, $hash]);
+// Siempre 'dueno': este script es el único camino para crear el primer admin de una
+// instalación nueva. El default de la columna es 'lectura' (el rol menos privilegiado,
+// para que un INSERT futuro que olvide el rol no cree accidentalmente un dueño) — pero
+// eso dejaría al propio dueño fuera de su panel al arrancar. Para crear empleados con
+// rol acotado, se usa la pantalla "Usuarios" del panel (site/api/admin/admins/create.php),
+// no este script.
+$stmt = $pdo->prepare('INSERT INTO admins (nombre, email, password_hash, rol) VALUES (?, ?, ?, ?)');
+$stmt->execute([$nombre, $email, $hash, 'dueno']);
 
 echo "Admin creado exitosamente. ID = " . $pdo->lastInsertId() . "\n";
 echo "  Nombre: $nombre\n";
 echo "  Email:  $email\n";
+echo "  Rol:    dueno\n";

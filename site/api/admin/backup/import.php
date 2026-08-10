@@ -15,7 +15,7 @@ require __DIR__ . '/../../lib/Validate.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
-ds_require_admin();
+ds_require_rol(DS_ROL_DUENO);
 $body = ds_read_json_body();
 // ds_admin_csrf_check ya registra auditoría automática (acción = ruta, sin detalle);
 // más abajo, al terminar, registramos una entrada adicional con el detalle (tipo/preview).

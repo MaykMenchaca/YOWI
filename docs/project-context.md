@@ -94,12 +94,34 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   Recomendaciones Medias/Bajas no implementadas (política de contraseñas, `totp_secret` en claro,
   aviso de privacidad ausente — la más urgente del lote, ver LFPDPPP en el informe) documentadas ahí
   mismo para una futura sesión.
+- **2026-08-10:** **Usuarios del panel con 3 roles**, para que el dueño le dé acceso a sus empleados
+  sin compartir su propia cuenta. Guía completa en `docs/roles-y-permisos.md`. Antes, la tabla
+  `admins` no tenía columna de rol — cualquier cuenta que existiera era "dueño" con control total, y
+  la única forma de crear una era por CLI. Decisiones del usuario, ya implementadas:
+  1. **3 modos jerárquicos**: `dueno` > `operador` > `lectura`. Dueño = todo, incluida la gestión de
+     usuarios y el respaldo completo (tiene los datos de todos los clientes). Operador = catálogo y
+     pedidos del día a día, incluida la carga masiva de CSV completa (con reemplazo). Solo lectura =
+     consulta, no puede cambiar nada.
+  2. **Baja de empleado = desactivar** (`admins.activo`), no borrar — conserva su historial de
+     auditoría. Borrar de verdad queda como acción secundaria para cuentas creadas por error.
+  Arquitectura: `ds_require_rol()` en `site/api/lib/AdminSession.php` es el único guardián con rol —
+  reusa la caché de admin de `ds_require_admin()` (una sola consulta por petición), y hereda el 2FA
+  obligatorio de la auditoría de ayer. Invariantes duras verificadas en servidor (no solo en la UI):
+  nadie cambia su propio rol, nadie se desactiva/borra a sí mismo, siempre debe quedar al menos un
+  dueño activo (esta última con `SELECT ... FOR UPDATE` en transacción — un primer intento sin lock
+  tenía la misma condición de carrera que ya se había cerrado un día antes en `RateLimit.php`; se
+  corrigió antes de dar la función por terminada). Se sumó también `auth/change-password.php`, que
+  antes no existía — sin él, la contraseña inicial que el dueño le da a un empleado sería la única
+  que ese empleado podría usar para siempre. `scripts/scan-seguridad.sh` ahora exige que todo
+  endpoint de negocio nuevo (fuera de `admin/auth/`) declare su rol explícitamente con
+  `ds_require_rol()`, no solo `ds_require_admin()` a secas.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de
   logins (con `GET_LOCK` para que no se evada en paralelo), `password_hash` bcrypt, uploads validados
   (MIME real + `.htaccess` anti-ejecución), 2FA obligatorio en todo el panel admin (GET y POST, vía
-  `ds_require_admin()`), `esc()`/`safeHref()` centralizados en `security-utils.js`, escáner propio
+  `ds_require_admin()`), roles de admin (`dueno`/`operador`/`lectura`, vía `ds_require_rol()`),
+  `esc()`/`safeHref()` centralizados en `security-utils.js`, escáner propio
   (`scripts/scan-seguridad.sh`).
 - Accesibilidad: contraste WCAG AA, touch targets ≥44px, foco visible, `prefers-reduced-motion`.
 - Rendimiento: logos optimizados (<50 KB); **Tailwind ya compilado** en las páginas públicas (`app.css`); falta migrar el panel admin (aún en CDN).
