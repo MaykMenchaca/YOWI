@@ -4,8 +4,7 @@
 
 declare(strict_types=1);
 
-// Login: por (tipo+email+IP) — objetivo directo.
-const DS_LOGIN_MAX_FAILS  = 5;
+// Login: ventana de tiempo compartida por los límites de abajo (IP y cuenta).
 const DS_LOGIN_WINDOW_MIN = 15;
 
 // Login: límite global POR IP (frena password-spraying: 1 contraseña contra muchos
@@ -55,7 +54,10 @@ function ds_dummy_password_check(): void
 
 /**
  * Corta la petición con 429 si hay demasiados intentos fallidos recientes.
- * Aplica TRES límites: (email+IP), (solo IP) y (solo cuenta). Llamar ANTES de verificar.
+ * Aplica DOS límites: (solo IP, password-spraying) y (solo cuenta, ataque distribuido).
+ * No hay límite por (email+IP) — un usuario legítimo que se equivoca de contraseña varias
+ * veces seguidas no se bloquea a sí mismo; la protección contra fuerza bruta dirigida sigue
+ * cubierta por el límite de cuenta (DS_LOGIN_ACCOUNT_MAX_FAILS). Llamar ANTES de verificar.
  * Las constantes de ventana/umbral son enteros del código (no input) → interpolación segura.
  */
 function ds_login_throttle_check(string $tipo, string $email, string $ip): void
@@ -74,13 +76,6 @@ function ds_login_throttle_check(string $tipo, string $email, string $ip): void
     $pdo->prepare('SELECT GET_LOCK(?, 5)')->execute(['ds_login_' . md5($tipo . '|' . $email)]);
 
     $win = 'created_at > (NOW() - INTERVAL ' . DS_LOGIN_WINDOW_MIN . ' MINUTE)';
-
-    // 1) Objetivo directo: mismo email + misma IP.
-    $q1 = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE tipo = ? AND email = ? AND ip = ? AND exitoso = 0 AND $win");
-    $q1->execute([$tipo, $email, $ip]);
-    if ((int) $q1->fetchColumn() >= DS_LOGIN_MAX_FAILS) {
-        ds_json_error('Demasiados intentos fallidos. Espera 15 minutos e inténtalo de nuevo.', 429);
-    }
 
     // 2) Password-spraying: muchos fallos desde una misma IP (cualquier email).
     $q2 = $pdo->prepare("SELECT COUNT(*) FROM login_attempts WHERE tipo = ? AND ip = ? AND exitoso = 0 AND $win");
