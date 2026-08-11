@@ -13,7 +13,8 @@
 <body class="bg-slate-900 text-slate-100 font-body antialiased flex min-h-screen" data-backup-tipo="pedidos">
 
   <!-- Sidebar -->
-  <aside class="w-56 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0">
+  <div id="sidebar-overlay" class="hidden md:hidden fixed inset-0 bg-black/60 z-30"></div>
+  <aside id="admin-sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-64 md:w-56 -translate-x-full md:translate-x-0 transition-transform duration-200 bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-y-auto">
     <div class="px-5 py-5 border-b border-slate-700">
       <div class="flex items-center gap-2"><img src="../assets/img/logo-ds-clean.png" alt="DS" class="h-9 w-auto"/><span class="font-display font-extrabold text-white text-sm uppercase tracking-tight leading-[1.05]">Distribuidor de<br/><span class="text-lime">Suplementos</span></span></div>
       <p class="text-slate-500 text-[11px] mt-0.5 uppercase tracking-widest">Panel de administración</p>
@@ -57,9 +58,12 @@
   </aside>
 
   <!-- Main -->
-  <main class="flex-1 p-8 overflow-auto">
+  <main class="flex-1 p-4 md:p-8 overflow-auto">
     <div class="flex items-center justify-between mb-6">
-      <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Pedidos</h1>
+      <div class="flex items-center gap-3">
+        <button id="sidebar-toggle" type="button" class="md:hidden text-slate-300 hover:text-white p-2 -ml-2" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar"><span class="material-symbols-outlined">menu</span></button>
+        <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Pedidos</h1>
+      </div>
       <div class="flex items-center gap-3">
         <select id="filter-estado"
           class="bg-slate-800 border border-slate-600 rounded-none px-3 py-2 text-slate-300 text-sm focus:outline-none focus:border-brand">
@@ -117,6 +121,7 @@
   <script src="../assets/js/security-utils.js"></script>
   <script src="../assets/js/admin/api-client.js"></script>
   <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/mobile-nav.js"></script>
   <script src="../assets/js/admin/backup.js"></script>
   <script src="../assets/js/admin/orders.js"></script>
 </body>
