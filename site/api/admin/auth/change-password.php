@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
+require __DIR__ . '/../../lib/Validate.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 
 // Cambio de la PROPIA contraseña (cualquier rol). Antes de esto no existía ninguna forma
@@ -23,7 +24,7 @@ $actual = (string) ($body['password_actual'] ?? '');
 $nueva  = (string) ($body['password_nueva'] ?? '');
 
 if ($actual === '') ds_json_error('Ingresa tu contraseña actual', 400);
-if (strlen($nueva) < 8) ds_json_error('La nueva contraseña debe tener al menos 8 caracteres', 400);
+if (($errPass = ds_validate_password($nueva)) !== null) ds_json_error($errPass, 400);
 
 $pdo  = ds_get_pdo();
 $stmt = $pdo->prepare('SELECT password_hash FROM admins WHERE id = ?');

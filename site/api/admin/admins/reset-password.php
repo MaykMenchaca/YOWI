@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
+require __DIR__ . '/../../lib/Validate.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 $actorId = ds_require_rol(DS_ROL_DUENO);
@@ -15,7 +16,7 @@ $id   = (int) ($body['id'] ?? 0);
 $pass = (string) ($body['password'] ?? '');
 
 if ($id <= 0) ds_json_error('id es requerido', 400);
-if (strlen($pass) < 8) ds_json_error('La contraseña debe tener al menos 8 caracteres', 400);
+if (($errPass = ds_validate_password($pass)) !== null) ds_json_error($errPass, 400);
 
 $pdo = ds_get_pdo();
 

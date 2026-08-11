@@ -14,6 +14,8 @@ if ($argc < 4) {
     exit(1);
 }
 
+require __DIR__ . '/../site/api/lib/Validate.php';
+
 $nombre = trim($argv[1]);
 $email  = trim($argv[2]);
 $pass   = $argv[3];
@@ -22,8 +24,8 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo "Email inválido: $email\n";
     exit(1);
 }
-if (strlen($pass) < 8) {
-    echo "La contraseña debe tener al menos 8 caracteres.\n";
+if (($errPass = ds_validate_password($pass)) !== null) {
+    echo "$errPass\n";
     exit(1);
 }
 

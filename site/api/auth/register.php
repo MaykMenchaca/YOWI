@@ -28,8 +28,8 @@ $confirmPassword = (string) ($body['confirm_password'] ?? '');
 if ($nombre === '' || $email === null) {
     ds_json_error('Nombre o correo inválido', 400);
 }
-if (strlen($password) < 8) {
-    ds_json_error('La contraseña debe tener al menos 8 caracteres', 400);
+if (($errPass = ds_validate_password($password)) !== null) {
+    ds_json_error($errPass, 400);
 }
 if ($password !== $confirmPassword) {
     ds_json_error('Las contraseñas no coinciden', 400);
@@ -56,10 +56,10 @@ $userId = (int) $pdo->lastInsertId();
 // activa y logueada; la verificación es informativa hasta que se decida exigirla).
 if (ds_email_enabled()) {
     try {
-        [$plain, $hash] = ds_make_token();
+        [$plain, $tokenHash] = ds_make_token();
         $pdo->prepare(
             'INSERT INTO email_verifications (user_id, token_hash, expires_at) VALUES (?, ?, (NOW() + INTERVAL 24 HOUR))'
-        )->execute([$userId, $hash]);
+        )->execute([$userId, $tokenHash]);
         $base = ds_app_url() ?: '';
         $link = $base . '/api/auth/verify-email.php?token=' . $plain;
         $texto = "¡Bienvenido a Distribuidor de Suplementos!\n\n"

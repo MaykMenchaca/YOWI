@@ -28,8 +28,8 @@ $confirmPassword = (string) ($body['confirm_password'] ?? '');
 if ($token === '' || !ctype_xdigit($token)) {
     ds_json_error('Enlace inválido o expirado', 400);
 }
-if (strlen($password) < 8) {
-    ds_json_error('La contraseña debe tener al menos 8 caracteres', 400);
+if (($errPass = ds_validate_password($password)) !== null) {
+    ds_json_error($errPass, 400);
 }
 if ($password !== $confirmPassword) {
     ds_json_error('Las contraseñas no coinciden', 400);

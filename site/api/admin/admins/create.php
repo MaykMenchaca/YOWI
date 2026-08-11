@@ -27,10 +27,9 @@ $email = strtolower($email);
 if (!in_array($rol, [DS_ROL_LECTURA, DS_ROL_OPERADOR, DS_ROL_DUENO], true)) {
     ds_json_error('Rol inválido', 400);
 }
-// Misma regla mínima que register.php y create-admin.php — sin lista de contraseñas
-// comunes; queda anotado como pendiente en docs/auditoria-seguridad-2026-08-09.md.
-if (strlen($pass) < 8) {
-    ds_json_error('La contraseña debe tener al menos 8 caracteres', 400);
+// Misma política que register.php y create-admin.php (ds_validate_password en Validate.php).
+if (($errPass = ds_validate_password($pass)) !== null) {
+    ds_json_error($errPass, 400);
 }
 
 $pdo   = ds_get_pdo();

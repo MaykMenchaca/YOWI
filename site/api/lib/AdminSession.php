@@ -23,7 +23,15 @@ function ds_admin_session_start(): void
         ini_set('session.cookie_secure', '1');
     } else {
         ini_set('session.cookie_samesite', 'Lax');
-        ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) ? '1' : '0');
+        // Misma detección de HTTPS que ds_session_start() en Session.php (ver el comentario
+        // ahí): $_SERVER['HTTPS'] solo lo pone el servidor web que termina el TLS, así que
+        // detrás de un proxy/CDN que lo termina antes (Cloudflare) llega vacío aunque el
+        // usuario sí venga por HTTPS. Mirar también X-Forwarded-Proto evita emitir la
+        // cookie del panel admin sin Secure justo en ese escenario.
+        $httpsDirecto = !empty($_SERVER['HTTPS']);
+        $httpsPorProxy = isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && strtolower((string) $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https';
+        ini_set('session.cookie_secure', ($httpsDirecto || $httpsPorProxy) ? '1' : '0');
     }
     session_start();
     ds_admin_enforce_timeout();

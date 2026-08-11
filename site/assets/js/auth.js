@@ -66,8 +66,11 @@
       var confirmPass = form.querySelector('[name="confirm_password"]').value;
       var termsEl = form.querySelector('[name="terms"]');
 
-      // Validaciones en el navegador (el backend igual las revalida).
+      // Validaciones en el navegador (el backend igual las revalida). El control real de
+      // la política (largo máximo, contraseñas comunes) vive en ds_validate_password() del
+      // servidor; aquí solo se adelanta el mínimo para no pagar un viaje de red.
       if (password.length < 8) { showFormError(form, "La contraseña debe tener al menos 8 caracteres"); return; }
+      if (password.length > 72) { showFormError(form, "La contraseña es demasiado larga (máximo 72 caracteres)"); return; }
       if (password !== confirmPass) { showFormError(form, "Las contraseñas no coinciden"); return; }
       if (termsEl && !termsEl.checked) { showFormError(form, "Debes aceptar los términos y condiciones"); return; }
 
@@ -308,6 +311,7 @@
       var password = form.querySelector('[name="password"]').value;
       var confirmPass = form.querySelector('[name="confirm_password"]').value;
       if (password.length < 8) { showFormError(form, "La contraseña debe tener al menos 8 caracteres"); return; }
+      if (password.length > 72) { showFormError(form, "La contraseña es demasiado larga (máximo 72 caracteres)"); return; }
       if (password !== confirmPass) { showFormError(form, "Las contraseñas no coinciden"); return; }
       setBusy(form, true);
       ensureCsrf()

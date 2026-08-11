@@ -62,6 +62,21 @@ if ((int) $admin['totp_enabled'] === 1) {
     }
 }
 
+// Mantenimiento del hash, ya superados contraseña y 2FA (simétrico con auth/login.php):
+// si el algoritmo/coste por defecto de PHP subió, re-hashear ahora que la contraseña en
+// claro todavía existe. password_changed_at NO se toca a propósito: ds_admin_actual()
+// (lib/AdminSession.php) cierra toda sesión anterior a esa marca, así que tocarla aquí
+// expulsaría al admin de la sesión que acaba de abrir. El try/catch evita que un fallo
+// de escritura impida un login por lo demás válido.
+if (password_needs_rehash((string) $admin['password_hash'], PASSWORD_DEFAULT)) {
+    try {
+        $pdo->prepare('UPDATE admins SET password_hash = ? WHERE id = ?')
+            ->execute([password_hash($pass, PASSWORD_DEFAULT), (int) $admin['id']]);
+    } catch (Throwable $e) {
+        error_log('admin/login.php rehash: ' . $e->getMessage());
+    }
+}
+
 ds_login_record('admin', $email, $ip, true);
 ds_login_admin((int) $admin['id']);
 
