@@ -7,6 +7,16 @@
 
 body { font-family: 'Barlow', sans-serif; }
 
+/* Material Symbols (Google Fonts) — cada página que use íconos carga el <link> de la
+   fuente en su <head>; esta regla vive en un solo lugar para no repetirla 9 veces. */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    Sistema de botones unificado (F-Botones).
    Antes había ~14 combinaciones distintas para el mismo puñado de roles

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nota de compra — DS Admin</title>
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png"/>
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Barlow', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-900 font-body antialiased min-h-screen">
+
+  <div class="max-w-2xl mx-auto py-8 px-4">
+
+    <div class="no-print flex justify-end mb-4">
+      <button id="print-btn" type="button" class="btn btn-primary">
+        <span class="material-symbols-outlined text-base">print</span>
+        Imprimir / Guardar como PDF
+      </button>
+    </div>
+
+    <div id="status-box" class="bg-white border border-slate-200 px-6 py-8 text-center text-slate-500">
+      Cargando…
+    </div>
+
+    <div id="receipt" class="hidden bg-white border border-slate-200 p-8">
+
+      <div class="flex items-start justify-between border-b border-slate-200 pb-4 mb-4">
+        <div class="flex items-center gap-3">
+          <img src="../assets/img/logo-ds-clean.png" alt="DS" class="h-10 w-auto"/>
+          <div>
+            <div class="font-display font-extrabold text-lg uppercase tracking-tight leading-[1.05]">Distribuidor de Suplementos</div>
+            <div id="business-info" class="text-slate-500 text-xs mt-1 space-y-0.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div id="order-title" class="font-display font-extrabold text-xl uppercase tracking-tight"></div>
+        <div id="order-meta" class="text-slate-500 text-sm mt-1"></div>
+      </div>
+
+      <div class="mb-6">
+        <div class="text-slate-400 text-xs uppercase tracking-wide font-semibold mb-1">Cliente</div>
+        <div id="cliente-info" class="text-sm text-slate-800 space-y-0.5"></div>
+      </div>
+
+      <table class="w-full text-sm mb-6">
+        <thead>
+          <tr class="border-b-2 border-slate-800 text-left text-slate-500 text-xs uppercase tracking-wide">
+            <th class="py-2">Producto</th>
+            <th class="py-2 text-center">Cantidad</th>
+            <th class="py-2 text-right">Precio unitario</th>
+            <th class="py-2 text-right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="items-tbody"></tbody>
+      </table>
+
+      <div class="flex justify-end">
+        <div class="text-right">
+          <div class="text-slate-400 text-xs uppercase tracking-wide font-semibold">Total</div>
+          <div id="order-total" class="font-display font-extrabold text-3xl"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../assets/js/security-utils.js"></script>
+  <script src="../assets/js/admin/api-client.js"></script>
+  <script src="../assets/js/admin/auth.js"></script>
+  <script src="../assets/js/admin/pedido-pdf.js"></script>
+</body>
+</html>

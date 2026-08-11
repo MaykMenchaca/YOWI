@@ -50,7 +50,7 @@
   function renderTable(orders) {
     if (!tableBody) return;
     if (!orders || orders.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Sin pedidos</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Sin pedidos</td></tr>';
       return;
     }
     tableBody.innerHTML = orders.map(function (o) {
@@ -80,6 +80,11 @@
         '</td>' +
         '<td class="px-3 py-3">' +
           '<select class="status-select bg-slate-800 border border-slate-600 text-slate-300 text-xs rounded px-2 py-1" data-id="' + o.id + '">' + statusOptions + '</select>' +
+        '</td>' +
+        '<td class="px-3 py-3">' +
+          '<a href="pedido-pdf.html?id=' + o.id + '" target="_blank" rel="noopener" class="btn-link-brand" title="Generar nota de compra (PDF)">' +
+            '<span class="material-symbols-outlined text-base">receipt_long</span>' +
+          '</a>' +
         '</td>' +
       '</tr>';
     }).join("");
@@ -117,12 +122,20 @@
     });
   }
 
+  function updateExportBtnHref() {
+    var btn = document.getElementById("orders-export-btn");
+    if (!btn) return;
+    var estado = (document.getElementById("filter-estado") || {}).value || "";
+    btn.href = "../api/admin/orders/export.php" + (estado ? "?estado=" + encodeURIComponent(estado) : "");
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     tableBody = document.getElementById("orders-tbody");
 
     var filterEstado = document.getElementById("filter-estado");
-    if (filterEstado) filterEstado.addEventListener("change", function () { loadOrders(1); });
+    if (filterEstado) filterEstado.addEventListener("change", function () { loadOrders(1); updateExportBtnHref(); });
 
+    updateExportBtnHref();
     loadOrders(1);
   });
 })();
