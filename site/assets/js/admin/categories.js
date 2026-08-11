@@ -28,8 +28,8 @@
         '<td class="px-4 py-3 text-slate-400 text-center">' + c.orden + '</td>' +
         '<td class="px-4 py-3 text-slate-400 text-center">' + c.productos_count + '</td>' +
         '<td class="px-4 py-3">' +
-          '<button class="btn-link-brand mr-3 edit-btn" data-id="' + c.id + '" data-nombre="' + esc(c.nombre) + '" data-orden="' + c.orden + '"><span class="material-symbols-outlined text-sm">edit</span>Editar</button>' +
-          '<button class="btn-link-danger delete-btn" data-id="' + c.id + '" data-count="' + c.productos_count + '"><span class="material-symbols-outlined text-sm">delete</span>Eliminar</button>' +
+          '<button class="btn-link-brand mr-3 edit-btn" data-id="' + c.id + '" data-nombre="' + esc(c.nombre) + '" data-orden="' + c.orden + '"><span class="material-symbols-outlined text-sm">edit</span><span class="hidden md:inline">Editar</span></button>' +
+          '<button class="btn-link-danger delete-btn" data-id="' + c.id + '" data-count="' + c.productos_count + '"><span class="material-symbols-outlined text-sm">delete</span><span class="hidden md:inline">Eliminar</span></button>' +
         '</td>' +
       '</tr>';
     }).join("");
