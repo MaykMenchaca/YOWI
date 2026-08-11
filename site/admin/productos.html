@@ -59,51 +59,59 @@
 
   <!-- Main -->
   <main class="flex-1 p-4 md:p-8 overflow-auto">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
       <div class="flex items-center gap-3">
         <button id="sidebar-toggle" type="button" class="md:hidden text-slate-300 hover:text-white p-2 -ml-2" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar"><span class="material-symbols-outlined">menu</span></button>
         <h1 class="font-display font-extrabold text-3xl uppercase tracking-tight text-white border-l-4 border-lime pl-3">Productos</h1>
       </div>
-      <div class="flex items-center gap-3">
-        <button id="wipe-btn" data-rol-min="dueno" class="btn btn-danger" title="Borra TODOS los productos del catálogo">
-          <span class="material-symbols-outlined text-base">delete_sweep</span>
-          Vaciar catálogo
-        </button>
-        <button id="import-btn" class="btn btn-neutral">
-          <span class="material-symbols-outlined text-base">upload_file</span>
-          Importar CSV
-        </button>
-        <a id="export-csv-btn" href="../api/admin/products/export.php" download
-          class="btn btn-neutral">
-          <span class="material-symbols-outlined text-base">download</span>
-          Exportar CSV
-        </a>
-        <a id="backup-export-btn" data-rol-min="dueno" href="../api/admin/backup/export.php?tipo=productos" download
-          title="Descarga un respaldo JSON de productos (incluye SKU)"
-          class="btn btn-neutral">
-          <span class="material-symbols-outlined text-base">cloud_download</span>
-          Respaldar
-        </a>
-        <button id="backup-restore-btn" data-rol-min="dueno" type="button"
-          title="Restaura productos desde un respaldo JSON"
-          class="btn btn-warning">
-          <span class="material-symbols-outlined text-base">upload</span>
-          Restaurar
-        </button>
-        <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
+      <div class="flex items-center gap-3 relative">
         <button id="new-product-btn" class="btn btn-primary">
           <span class="material-symbols-outlined text-base">add</span>
           + Nuevo producto
         </button>
+        <button id="page-actions-toggle" type="button" class="md:hidden btn btn-neutral"
+          aria-haspopup="true" aria-expanded="false" aria-controls="page-actions-menu" aria-label="Más opciones">
+          <span class="material-symbols-outlined">more_vert</span>
+        </button>
+        <div id="page-actions-menu" role="menu"
+          class="hidden flex-col gap-1 absolute right-0 top-full mt-2 z-40 bg-slate-800 border border-slate-700 p-2
+                 md:static md:flex md:flex-row md:gap-3 md:p-0 md:border-0 md:bg-transparent">
+          <button id="wipe-btn" data-rol-min="dueno" class="btn btn-danger w-full justify-start md:w-auto md:justify-center" title="Borra TODOS los productos del catálogo">
+            <span class="material-symbols-outlined text-base">delete_sweep</span>
+            Vaciar catálogo
+          </button>
+          <button id="import-btn" class="btn btn-neutral w-full justify-start md:w-auto md:justify-center">
+            <span class="material-symbols-outlined text-base">upload_file</span>
+            Importar CSV
+          </button>
+          <a id="export-csv-btn" href="../api/admin/products/export.php" download
+            class="btn btn-neutral w-full justify-start md:w-auto md:justify-center">
+            <span class="material-symbols-outlined text-base">download</span>
+            Exportar CSV
+          </a>
+          <a id="backup-export-btn" data-rol-min="dueno" href="../api/admin/backup/export.php?tipo=productos" download
+            title="Descarga un respaldo JSON de productos (incluye SKU)"
+            class="btn btn-neutral w-full justify-start md:w-auto md:justify-center">
+            <span class="material-symbols-outlined text-base">cloud_download</span>
+            Respaldar
+          </a>
+          <button id="backup-restore-btn" data-rol-min="dueno" type="button"
+            title="Restaura productos desde un respaldo JSON"
+            class="btn btn-warning w-full justify-start md:w-auto md:justify-center">
+            <span class="material-symbols-outlined text-base">upload</span>
+            Restaurar
+          </button>
+        </div>
+        <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
       </div>
     </div>
 
     <div id="alert-banner" class="hidden mb-4"></div>
 
     <!-- Filtros -->
-    <div class="flex gap-3 mb-4">
+    <div class="flex flex-wrap gap-3 mb-4">
       <input id="search-q" type="search" placeholder="Buscar nombre, marca o SKU…"
-        class="bg-slate-800 border border-slate-600 rounded-none px-4 py-2 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-brand w-64" />
+        class="bg-slate-800 border border-slate-600 rounded-none px-4 py-2 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-brand w-full md:w-64" />
       <select id="filter-cat"
         class="bg-slate-800 border border-slate-600 rounded-none px-3 py-2 text-slate-300 text-sm focus:outline-none focus:border-brand">
         <option value="">Todas las categorías</option>
