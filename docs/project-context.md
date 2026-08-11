@@ -115,6 +115,23 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   que ese empleado podría usar para siempre. `scripts/scan-seguridad.sh` ahora exige que todo
   endpoint de negocio nuevo (fuera de `admin/auth/`) declare su rol explícitamente con
   `ds_require_rol()`, no solo `ds_require_admin()` a secas.
+- **2026-08-11:** **Nota de compra en PDF, exportar histórico de pedidos a Excel, y panel admin
+  usable en celular.** Decisión clave: **sin dependencias nuevas**, coherente con "sin Composer" —
+  - La nota de compra (`site/admin/pedido-pdf.html`) es una vista imprimible standalone que usa
+    `window.print()` del navegador ("Guardar como PDF"), no ninguna librería PDF. Consume el
+    endpoint nuevo `orders/get.php` (detalle de 1 pedido, rol lectura) y `settings/get.php` ya
+    existente para los datos de contacto del negocio.
+  - El "Excel" es CSV con BOM UTF-8 (`orders/export.php`, rol dueño — mismo criterio que
+    `backup/export.php`: es un volcado masivo de datos personales de clientes), mismo patrón ya
+    usado por `products/export.php`. No hay ninguna librería de spreadsheets instalada ni se instaló.
+  - El sidebar admin (duplicado en las 9 páginas, sin templating) pasó de fijo/sin responsive a
+    off-canvas por debajo de `md:` (768px): oculto por defecto, botón hamburguesa, overlay,
+    `Escape` para cerrar — lógica compartida en `mobile-nav.js`. Las tablas que recortaban
+    contenido con `overflow-hidden` pasan a `overflow-x-auto` (mismo patrón que ya tenía Pedidos).
+    Decisión del usuario: scroll horizontal, no tarjetas apiladas.
+  - Se adoptó Material Symbols (ya usado en el storefront) para íconos en los botones del admin —
+    el CSP ya permitía `fonts.googleapis.com`/`fonts.gstatic.com`, no hubo que tocarlo. La regla
+    `.material-symbols-outlined` vive centralizada en `admin.input.css`, no repetida por página.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de
