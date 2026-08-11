@@ -48,13 +48,13 @@
         ? '<span class="text-xs px-2 py-0.5 rounded bg-green-900/50 text-green-300 border border-green-700">Sí</span>'
         : '<span class="text-xs px-2 py-0.5 rounded bg-amber-900/50 text-amber-300 border border-amber-700">No</span>';
 
-      var acciones = '<button type="button" class="btn-link-brand mr-3 edit-btn" data-id="' + u.id + '">Editar</button>' +
-        '<button type="button" class="btn-link-brand mr-3 reset-btn" data-id="' + u.id + '">Contraseña</button>';
+      var acciones = '<button type="button" class="btn-link-brand mr-3 edit-btn" data-id="' + u.id + '"><span class="material-symbols-outlined text-sm">edit</span>Editar</button>' +
+        '<button type="button" class="btn-link-brand mr-3 reset-btn" data-id="' + u.id + '"><span class="material-symbols-outlined text-sm">key</span>Contraseña</button>';
       if (!esMio) {
         acciones += u.activo
-          ? '<button type="button" class="btn-link-brand mr-3 toggle-btn" data-id="' + u.id + '">Desactivar</button>'
-          : '<button type="button" class="btn-link-brand mr-3 toggle-btn" data-id="' + u.id + '">Reactivar</button>';
-        acciones += '<button type="button" class="btn-link-danger delete-btn" data-id="' + u.id + '">Eliminar</button>';
+          ? '<button type="button" class="btn-link-brand mr-3 toggle-btn" data-id="' + u.id + '"><span class="material-symbols-outlined text-sm">block</span>Desactivar</button>'
+          : '<button type="button" class="btn-link-brand mr-3 toggle-btn" data-id="' + u.id + '"><span class="material-symbols-outlined text-sm">check_circle</span>Reactivar</button>';
+        acciones += '<button type="button" class="btn-link-danger delete-btn" data-id="' + u.id + '"><span class="material-symbols-outlined text-sm">delete</span>Eliminar</button>';
       }
 
       return '<tr class="border-b border-slate-700 hover:bg-slate-700/30">' +

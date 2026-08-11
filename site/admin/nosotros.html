@@ -47,15 +47,17 @@
         <a id="backup-export-btn" href="../api/admin/backup/export.php?tipo=nosotros" download
           title="Descarga un respaldo JSON de esta página"
           class="btn btn-neutral">
+          <span class="material-symbols-outlined text-base">cloud_download</span>
           Respaldar
         </a>
         <button id="backup-restore-btn" type="button"
           title="Restaura esta página desde un respaldo JSON"
           class="btn btn-warning">
+          <span class="material-symbols-outlined text-base">upload</span>
           Restaurar
         </button>
         <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
-        <button id="save-btn" data-rol-min="dueno" class="btn btn-primary">Guardar cambios</button>
+        <button id="save-btn" data-rol-min="dueno" class="btn btn-primary"><span class="material-symbols-outlined text-base">save</span> Guardar cambios</button>
       </div>
     </div>
     <p class="text-slate-400 text-sm mb-4 max-w-2xl">Edita el contenido de la página pública <b>Nosotros</b>. Los cambios se ven de inmediato en la tienda.</p>
@@ -97,7 +99,7 @@
       </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <button type="submit" class="btn btn-primary"><span class="material-symbols-outlined text-base">save</span> Guardar cambios</button>
       </div>
     </form>
   </main>

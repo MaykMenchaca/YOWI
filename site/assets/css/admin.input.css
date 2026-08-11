@@ -88,7 +88,7 @@ body { font-family: 'Barlow', sans-serif; }
      No lleva min-h-[44px] ni padding de botón grande a propósito: vive dentro
      de una celda angosta, pero sí conserva foco visible y transición. */
   .btn-link {
-    @apply font-semibold transition-colors duration-150
+    @apply inline-flex items-center gap-1 font-semibold transition-colors duration-150
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cobalt-500
            focus-visible:ring-offset-1 focus-visible:ring-offset-ink rounded-none;
   }

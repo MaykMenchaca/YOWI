@@ -68,15 +68,18 @@
         <a id="backup-export-btn" data-rol-min="dueno" href="../api/admin/backup/export.php?tipo=promociones" download
           title="Descarga un respaldo JSON de promociones"
           class="btn btn-neutral">
+          <span class="material-symbols-outlined text-base">cloud_download</span>
           Respaldar
         </a>
         <button id="backup-restore-btn" data-rol-min="dueno" type="button"
           title="Restaura promociones desde un respaldo JSON"
           class="btn btn-warning">
+          <span class="material-symbols-outlined text-base">upload</span>
           Restaurar
         </button>
         <input id="backup-restore-file" type="file" accept=".json,application/json" class="hidden" />
         <button id="new-banner-btn" class="btn btn-primary">
+          <span class="material-symbols-outlined text-base">add</span>
           + Nueva promoción
         </button>
       </div>

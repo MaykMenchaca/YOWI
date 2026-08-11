@@ -130,8 +130,8 @@
           '<span class="px-2 py-0.5 rounded text-xs ' + (p.activo ? 'bg-blue-900/50 text-blue-300' : 'bg-slate-700 text-slate-400') + '">' +
             (p.activo ? 'Activo' : 'Oculto') + '</span></td>' +
         '<td class="px-3 py-3 whitespace-nowrap">' +
-          '<button class="btn-link-brand mr-2 edit-btn" data-id="' + p.id + '">Editar</button>' +
-          '<button class="btn-link-danger delete-btn" data-id="' + p.id + '">Ocultar</button>' +
+          '<button class="btn-link-brand mr-2 edit-btn" data-id="' + p.id + '"><span class="material-symbols-outlined text-sm">edit</span>Editar</button>' +
+          '<button class="btn-link-danger delete-btn" data-id="' + p.id + '"><span class="material-symbols-outlined text-sm">visibility_off</span>Ocultar</button>' +
         '</td>' +
       '</tr>';
     }).join("");

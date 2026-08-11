@@ -57,7 +57,7 @@
 
       <!-- Estado: DESACTIVADO -> activar -->
       <div id="twofa-disabled" class="hidden mt-5">
-        <button id="btn-setup" class="btn btn-primary">Activar 2FA</button>
+        <button id="btn-setup" class="btn btn-primary"><span class="material-symbols-outlined text-base">verified_user</span> Activar 2FA</button>
 
         <div id="setup-box" class="hidden mt-5 border-t border-slate-700 pt-5 space-y-4">
           <p class="text-slate-300 text-sm">1) En tu app autenticadora, agrega una cuenta e ingresa esta clave manualmente:</p>
@@ -69,7 +69,7 @@
               class="w-48 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand"/>
             <input id="activate-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-activate" class="btn btn-brand">Confirmar</button>
+            <button id="btn-activate" class="btn btn-brand"><span class="material-symbols-outlined text-base">verified_user</span> Confirmar</button>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@
           <div class="flex gap-3 items-center">
             <input id="regen-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-regen" class="btn btn-neutral">Regenerar códigos</button>
+            <button id="btn-regen" class="btn btn-neutral"><span class="material-symbols-outlined text-base">refresh</span> Regenerar códigos</button>
           </div>
         </div>
         <div class="border-t border-slate-700 pt-4">
@@ -90,7 +90,7 @@
           <div class="flex gap-3 items-center">
             <input id="disable-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000"
               class="w-40 bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 tracking-[0.4em] text-center focus:outline-none focus:border-brand"/>
-            <button id="btn-disable" class="btn btn-danger">Desactivar 2FA</button>
+            <button id="btn-disable" class="btn btn-danger"><span class="material-symbols-outlined text-base">gpp_bad</span> Desactivar 2FA</button>
           </div>
         </div>
       </div>
@@ -121,7 +121,7 @@
             class="w-full bg-slate-900 border border-slate-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:border-brand"/>
           <p class="text-slate-500 text-xs mt-1">Mínimo 8 caracteres.</p>
         </div>
-        <button id="btn-change-pw" type="submit" class="btn btn-brand">Cambiar contraseña</button>
+        <button id="btn-change-pw" type="submit" class="btn btn-brand"><span class="material-symbols-outlined text-base">key</span> Cambiar contraseña</button>
       </form>
     </section>
   </main>
