@@ -31,11 +31,12 @@ Thumbs.db
 # Backend PHP — credenciales reales de base de datos (nunca subir por git)
 site/api/config/env.php
 
-# Imágenes de promociones subidas desde el admin (se crean al subir), pero SIN ignorar
-# el .htaccess de esas carpetas: es el guard que apaga la ejecución de PHP ahí (misma
-# defensa que ya tiene site/assets/img/productos/.htaccess, que sí viaja en git). Sin
-# esta excepción, un clon nuevo del repo reconstruye estas dos carpetas sin el guard.
+# Imágenes subidas desde el admin (se crean al subir), pero SIN ignorar el .htaccess de
+# esas carpetas: es el guard que apaga la ejecución de PHP ahí. Sin esta excepción, un
+# clon nuevo del repo reconstruye estas carpetas sin el guard.
 site/assets/img/banners/*
 !site/assets/img/banners/.htaccess
 site/assets/img/brands/*
 !site/assets/img/brands/.htaccess
+site/assets/img/productos/*
+!site/assets/img/productos/.htaccess

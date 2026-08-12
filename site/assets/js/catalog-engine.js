@@ -26,9 +26,10 @@
         return res.json();
       })
       .then(function (data) {
-        // Soporta respuesta de la API {ok,data:[...]} o array directo (fallback)
+        // Soporta respuesta de la API {ok,data:[...]} o array directo (fallback). Una
+        // lista vacía es una respuesta VÁLIDA (catálogo real, aún sin productos) — no cae
+        // al demo. Solo se usa el demo cuando la API en sí falla (sin backend, red, etc.).
         var list = Array.isArray(data) ? data : (data.data || []);
-        if (!list.length) throw new Error("empty"); // sin backend/productos → demo
         cache = list;
         return list;
       })
@@ -225,6 +226,10 @@
 
   function renderFeatured(productos, container, limit) {
     if (!container) return;
+    if (!productos.length) {
+      container.innerHTML = '<p class="p-6 text-center text-gray-500 col-span-full">Estamos preparando el catálogo. Vuelve pronto.</p>';
+      return;
+    }
     var featured = productos.filter(function (p) { return p.destacado; });
     renderGrid((featured.length ? featured : productos).slice(0, limit || 4), container);
   }
@@ -488,7 +493,9 @@
         result = applySearch(result, searchInput ? searchInput.value : "");
         renderGrid(result, grid);
         if (!result.length) {
-          grid.innerHTML = '<p class="p-6 text-center text-gray-500 col-span-full font-bold">No encontramos productos con esa búsqueda. Prueba con otra palabra.</p>';
+          grid.innerHTML = productos.length
+            ? '<p class="p-6 text-center text-gray-500 col-span-full font-bold">No encontramos productos con esa búsqueda. Prueba con otra palabra.</p>'
+            : '<p class="p-6 text-center text-gray-500 col-span-full font-bold">Estamos preparando el catálogo. Vuelve pronto.</p>';
         }
         if (countEl) countEl.textContent = result.length + " producto" + (result.length === 1 ? "" : "s");
       }).catch(function () {
