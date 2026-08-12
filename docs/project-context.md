@@ -6,7 +6,7 @@ carrito y checkout por **WhatsApp** (el pedido también se registra en la BD), c
 y un **panel de administración** para gestionar productos, categorías y pedidos.
 
 ## Stack Tecnológico
-- **Frontend:** HTML estático + **Tailwind CSS por CDN** (config inline por página) + **JavaScript vanilla** (IIFE, sin framework, sin build). Fuentes Barlow Condensed (display) + Barlow (body); iconos Material Symbols (SVG).
+- **Frontend:** HTML estático + **Tailwind CSS compilado y versionado** (storefront: `app.css` vía `tailwind.config.js`; panel admin: `admin.css` vía `tailwind.admin.config.js` — ninguno de los dos usa el CDN de Tailwind hoy) + **JavaScript vanilla** (IIFE, sin framework, sin build en el servidor). Fuentes Barlow Condensed (display) + Barlow (body); iconos Material Symbols.
 - **Backend:** **PHP plano + PDO** (sin framework, sin Composer). API JSON (`{ok,data}` / `{ok,error}`).
 - **Base de datos:** **MySQL / MariaDB**. Tablas: `users, admins, categories, products, orders, order_items, login_attempts`.
 - **Servicios externos:** WhatsApp (wa.me) para el checkout. No hay pasarela de pago.
@@ -22,8 +22,9 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   la config inline por un CSS estático versionado (`site/assets/css/app.css`), generado con
   `npm run build:css` (config en `tailwind.config.js`, entrada `site/assets/css/tailwind.input.css`).
   Elimina el parpadeo y el runtime JIT en móvil. El build corre en local; el server solo sirve el CSS
-  ya compilado (coherente con "sin build en el server"). **El panel admin sigue en CDN** (config
-  distinta, herramienta interna) — pendiente migrar en un follow-up.
+  ya compilado (coherente con "sin build en el server"). El panel admin se migró después con el mismo
+  patrón (`site/assets/css/admin.css`, `tailwind.admin.config.js`, entrada `admin.input.css`) — hoy
+  ninguna de las dos superficies usa el CDN de Tailwind.
 - **2026-07-14:** **Modo de despliegue "split" opcional (frontend en Vercel + API en Hostinger).**
   Vercel no ejecuta PHP, así que no puede alojar el backend. Se añadió una capa de config
   (`site/assets/js/config.js` → `DS_CONFIG.API_BASE`) para que el frontend apunte al backend PHP en
@@ -132,6 +133,32 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   - Se adoptó Material Symbols (ya usado en el storefront) para íconos en los botones del admin —
     el CSP ya permitía `fonts.googleapis.com`/`fonts.gstatic.com`, no hubo que tocarlo. La regla
     `.material-symbols-outlined` vive centralizada en `admin.input.css`, no repetida por página.
+- **2026-08-11:** **Preparación para el primer despliegue real en Hostinger.** Guía completa en
+  `docs/despliegue-hostinger.md`. Dos auditorías (despliegue y seguridad de datos/contraseñas)
+  encontraron que el hasheo de contraseñas ya era correcto en el 100% de los puntos del código
+  (bcrypt vía `password_hash`/`password_verify`, cero texto plano), pero identificaron 5 cosas
+  que sí había que arreglar antes de exponer el sitio:
+  1. **Un cliente que olvidaba su contraseña la perdía para siempre** (correo desactivado + sin
+     forma de cambiarla estando logueado). Se agregó `site/api/auth/change-password.php` y una
+     sección nueva en `cuenta.html`, espejo exacto del ya existente para admins.
+  2. **La cookie de sesión del panel admin se emitía sin `Secure` detrás de un proxy** (Cloudflare) —
+     la corrección ya existía para la cookie de cliente y no se había replicado a
+     `AdminSession.php`.
+  3. **Política de contraseñas**: nueva `ds_validate_password()` centralizada en `Validate.php`
+     (mínimo por `mb_strlen`, no `strlen` — antes una contraseña corta con acentos pasaba el
+     filtro de 8; máximo 72 bytes explícito por el truncado silencioso de bcrypt; rechazo contra
+     ~200 contraseñas comunes). Reemplaza las 6 validaciones sueltas que había en el proyecto.
+     También se agregó `password_needs_rehash()` en ambos logins (sin tocar `password_changed_at`,
+     para no cerrar la sesión que se acaba de abrir).
+  4. **`schema.sql` quedaba incompleto para una instalación nueva**: le faltaban el índice único
+     de SKU y las 12 filas de contenido inicial de `settings` (la página Nosotros salía en blanco).
+     Ambos ya viven en `schema.sql`, no solo en sus migraciones de origen.
+  5. **Con el catálogo vacío, la tienda mostraba 24 productos demo con precios inventados**
+     (`catalog-engine.js`) — ahora una API que responde vacía muestra un estado honesto
+     ("Estamos preparando el catálogo"); el demo solo aparece si la API falla de verdad.
+  Quedó documentado como pendiente, a propósito, para una sesión futura (no bloquea el
+  lanzamiento): el secreto TOTP de los admins se guarda en claro en la BD, no hay aviso de
+  privacidad ni borrado de cuenta (LFPDPPP), y `admin_audit_log` sigue sin pantalla para leerlo.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de
@@ -141,20 +168,33 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   `esc()`/`safeHref()` centralizados en `security-utils.js`, escáner propio
   (`scripts/scan-seguridad.sh`).
 - Accesibilidad: contraste WCAG AA, touch targets ≥44px, foco visible, `prefers-reduced-motion`.
-- Rendimiento: logos optimizados (<50 KB); **Tailwind ya compilado** en las páginas públicas (`app.css`); falta migrar el panel admin (aún en CDN).
+- Rendimiento: logos optimizados (<50 KB); Tailwind compilado en storefront y panel admin (ver
+  Stack Tecnológico) — ninguna de las dos superficies depende del CDN de Tailwind en producción.
 
 ## Checklist de release (Hostinger)
-1. Crear `site/api/config/env.php` real (gitignored) con las credenciales de la BD de Hostinger (host `localhost`, sin `DB_PORT`).
-2. Importar `sql/schema.sql` vía phpMyAdmin. **En BD ya desplegada**, correr además la migración
-   `sql/migrations/2026-07-14-add-direccion-envio.sql` (agrega `orders.direccion_envio`).
-3. Crear admin con `php scripts/create-admin.php "Nombre" "correo" "password"`.
-4. Cargar los 336 productos reales (`scripts/seed-products.php`) — hoy hay 12 demo.
-5. Reemplazar el número de WhatsApp real (constante `WA_NUMBER` y footers).
-6. Subir `site/` a `public_html/` por FTP; forzar HTTPS; verificar `fileinfo` activo y los `.htaccess`.
-7. Configurar `MAIL_TRANSPORT` en `env.php` (no dejarlo en `none`): con el correo desactivado,
-   "olvidé mi contraseña" no envía nada y el cliente queda bloqueado sin ninguna forma real de
-   recuperar su cuenta (el mensaje que ve es genérico a propósito, así que no se nota solo).
-8. Confirmar que **todos** los admins tengan el 2FA activado antes de exponer el panel — desde
+
+**Guía completa, con pasos exactos: `docs/despliegue-hostinger.md`.** Lo de abajo es un resumen;
+si hay alguna diferencia entre este resumen y esa guía, la guía manda (se actualiza con más
+frecuencia).
+
+1. Crear `site/api/config/env.php` real (gitignored) a partir de `env.example.php`, con las
+   credenciales reales de la BD de Hostinger y `MAIL_TRANSPORT => 'mail'` (no `'none'`).
+2. Importar `sql/schema.sql` y **las 17 migraciones de `sql/migrations/` en orden alfabético**
+   (todas idempotentes) — `schema.sql` por sí solo no basta (ver la guía para el detalle de qué
+   le faltaba y ya se corrigió: índice de SKU y contenido inicial de `settings`).
+3. Crear el admin dueño — la guía cubre los dos caminos (con y sin SSH) sin que la contraseña
+   quede escrita en ningún archivo.
+4. Cargar el catálogo real por **el importador CSV del panel** (Productos → Importar CSV), no
+   con `scripts/seed-products.php` — ese script usa `assets/data/productos-demo.json` (24
+   productos de ejemplo) o, si le pasas `productos.json`, ese archivo solo trae
+   nombre/marca/categoría/cantidad (sin precio, stock ni imagen), así que todo entraría a $0.00
+   y marcado agotado.
+5. El número de WhatsApp real (`5218344241599`) ya está puesto en el código y en `settings`;
+   solo revisa que siga siendo el correcto si cambia en el futuro (está hardcodeado en 8
+   archivos además de la tabla `settings` — no hay un solo lugar para actualizarlo).
+6. Subir **solo el contenido de `site/`** a `public_html/` (no el repositorio completo); forzar
+   HTTPS; verificar los `.htaccess`.
+7. Confirmar que **todos** los admins tengan el 2FA activado antes de exponer el panel — desde
    la auditoría de seguridad de hoy, un admin sin 2FA solo puede ver la pantalla para enrolarlo,
    nada más (antes, con solo la contraseña se podía leer/exportar todo el panel).
 
