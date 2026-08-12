@@ -121,6 +121,22 @@ button:active,a[href]:active{transform:scale(.97);}
 </div>
 </div>
 </section>
+<section class="card-custom rounded-xl p-8 mt-6">
+<div class="mb-6">
+<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-ink mb-2">Cambiar contraseña</h2>
+<p class="font-body text-sm text-gray-500">Esto cierra cualquier otra sesión abierta con tu cuenta (esta, la que usaste para cambiarla, sigue activa).</p>
+</div>
+<form id="change-password-form" class="space-y-4 max-w-sm">
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Contraseña actual</label>
+<input id="cp-actual" name="password_actual" type="password" autocomplete="current-password" required class="w-full border border-gray-300 rounded px-4 py-2 text-ink focus:outline-none focus:border-brand"/></div>
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Contraseña nueva</label>
+<input id="cp-nueva" name="password_nueva" type="password" minlength="8" maxlength="72" autocomplete="new-password" required class="w-full border border-gray-300 rounded px-4 py-2 text-ink focus:outline-none focus:border-brand"/>
+<p class="text-gray-500 text-xs mt-1">Mínimo 8 caracteres.</p></div>
+<p data-form-error class="text-error text-sm hidden"></p>
+<p data-form-ok class="text-sm text-green-600 hidden"></p>
+<button type="submit" class="btn-primary px-4 py-2.5 rounded font-bold uppercase tracking-widest text-xs">Cambiar contraseña</button>
+</form>
+</section>
 </div>
 <!-- Panel: Mis pedidos -->
 <div data-panel="pedidos" class="hidden">

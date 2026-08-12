@@ -213,6 +213,29 @@
           .catch(function (er) { if (errBox) { errBox.textContent = er.message; errBox.classList.remove("hidden"); } });
       });
     }
+
+    // ── Cambiar contraseña ──
+    var pwForm = document.getElementById("change-password-form");
+    if (pwForm) {
+      pwForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var actual = pwForm.querySelector("#cp-actual").value;
+        var nueva = pwForm.querySelector("#cp-nueva").value;
+        var okBox = pwForm.querySelector("[data-form-ok]");
+        if (okBox) okBox.classList.add("hidden");
+        setBusy(pwForm, true);
+        global.DSApi.apiFetch("api/auth/change-password.php", {
+          method: "POST",
+          body: { password_actual: actual, password_nueva: nueva },
+        })
+          .then(function () {
+            pwForm.reset();
+            showFormOk(pwForm, "Tu contraseña se actualizó.");
+            setBusy(pwForm, false);
+          })
+          .catch(function (er) { showFormError(pwForm, er.message); setBusy(pwForm, false); });
+      });
+    }
   }
 
   function money(n) {
