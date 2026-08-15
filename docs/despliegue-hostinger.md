@@ -115,6 +115,7 @@ el servidor, una sola vez.
    Hacerlo invalida en silencio TODOS los secretos TOTP ya guardados — esos admins dejarán
    de poder pasar el segundo factor al iniciar sesión y quedarán bloqueados del panel (el
    2FA es obligatorio para casi toda acción admin). Si llega a pasar:
+
    - Si el admin bloqueado todavía conserva sus **códigos de recuperación** (se muestran
      una sola vez al activar el 2FA — pídele que los busque donde los guardó), puede
      iniciar sesión con uno de ellos: son independientes de esta clave.
@@ -138,6 +139,7 @@ al servidor, en vez de depender de que el `.htaccess` los bloquee.
 
 Ya dentro de `site/`, borra estos dos archivos si los subiste (son de un modo de despliegue
 distinto — frontend en Vercel — que no aplica aquí, y `vercel.json` además queda descargable):
+
 - `vercel.json`
 - `.vercelignore`
 
