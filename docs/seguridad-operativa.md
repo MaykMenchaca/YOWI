@@ -1,12 +1,12 @@
 # Seguridad operativa — panel de administración (Hostinger)
 
-Medidas de blindaje del panel `/admin` que se configuran en Hostinger (no en código),
+Medidas de blindaje del panel `/panel-4x9qz` que se configuran en Hostinger (no en código),
 más las que ya están en el código.
 
 ## 1. 2FA obligatorio (ya en código)
 
 Todo administrador debe activar la verificación en dos pasos. Al entrar sin 2FA, el panel
-**redirige a `admin/seguridad.html`** y no deja operar hasta activarlo. Si se pierde el
+**redirige a `panel-4x9qz/seguridad.html`** y no deja operar hasta activarlo. Si se pierde el
 autenticador, hay **códigos de recuperación** (se muestran al activar; se pueden regenerar).
 
 ## 2. Segundo candado con "Password Protect Directories" (hPanel — recomendado)
@@ -17,14 +17,14 @@ alguien conociera la contraseña de admin, primero choca con este candado.
 Pasos en hPanel:
 1. hPanel → **Sitios web** → *Administrar* del dominio.
 2. Buscar **"Password Protect Directories"** (Directorios protegidos con contraseña).
-3. Seleccionar la carpeta del panel: la que contiene `admin/` (p. ej.
-   `public_html/admin` si el docroot es la raíz, o `admin` si el docroot es `site/`).
+3. Seleccionar la carpeta del panel: la que contiene `panel-4x9qz/` (p. ej.
+   `public_html/panel-4x9qz` si el docroot es la raíz, o `panel-4x9qz` si el docroot es `site/`).
 4. Asignar un **usuario y contraseña** propios (distintos de los del panel) y guardar.
 
-> Nota: protege solo las **páginas** del panel (`admin/`). La API (`api/admin/`) sigue
+> Nota: protege solo las **páginas** del panel (`panel-4x9qz/`). La API (`api/admin/`) sigue
 > protegida por sesión + CSRF + 2FA; si además quieres Basic Auth en la API, protege
 > también la carpeta `api/admin`, pero entonces el navegador pedirá la clave en cada
-> llamada AJAX (peor experiencia). Lo habitual es proteger solo `admin/`.
+> llamada AJAX (peor experiencia). Lo habitual es proteger solo `panel-4x9qz/`.
 
 ## 3. Restringir por IP (opcional — SOLO si tienes IP fija)
 
@@ -32,7 +32,7 @@ Si tu conexión tiene **IP fija** (oficina, VPN con IP estática), puedes limita
 esas IPs. ⚠️ Con IP **dinámica** (internet residencial) te arriesgas a **bloquearte a ti
 mismo** cuando cambie tu IP.
 
-Crea un `.htaccess` **dentro de `site/admin/`** (y otro en `site/api/admin/`) con:
+Crea un `.htaccess` **dentro de `site/panel-4x9qz/`** (y otro en `site/api/admin/`) con:
 
 ```apache
 # Solo estas IPs pueden abrir el panel. Sustituye por las tuyas.
@@ -66,7 +66,7 @@ hPanel → **Dominios** → **Cloudflare** → estado *Enabled* + SSL *Full*.
 
 ## Checklist
 - [ ] Cada admin activó su 2FA y **guardó** sus códigos de recuperación.
-- [ ] "Password Protect Directories" activo sobre `admin/`.
+- [ ] "Password Protect Directories" activo sobre `panel-4x9qz/`.
 - [ ] (Opcional) IP allowlist si tienes IP fija.
 - [ ] Revisar `admin_audit_log` periódicamente.
 - [ ] (Opcional) Cloudflare activado desde hPanel.

@@ -185,7 +185,7 @@ Panel del cliente con 4 pestañas:
 
 # 🔐 Parte 2 — Guía del administrador
 
-Se entra en `admin/login.html` con tu correo y contraseña. Todo el panel exige sesión de administrador — si no la tienes, no se puede ver ni tocar nada.
+Se entra en `panel-4x9qz/login.html` con tu correo y contraseña. Todo el panel exige sesión de administrador — si no la tienes, no se puede ver ni tocar nada.
 
 <img src="manual-img/admin-01-login.png" width="480">
 
@@ -203,7 +203,7 @@ flowchart LR
     Dashboard --> Seguridad
 ```
 
-## Dashboard (`admin/index.html`)
+## Dashboard (`panel-4x9qz/index.html`)
 
 La primera pantalla al entrar: un vistazo rápido de la tienda.
 
@@ -213,7 +213,7 @@ La primera pantalla al entrar: un vistazo rápido de la tienda.
 
 <img src="manual-img/admin-02-dashboard.png" width="720">
 
-## Productos (`admin/productos.html`)
+## Productos (`panel-4x9qz/productos.html`)
 
 La sección más completa del panel.
 
@@ -283,7 +283,7 @@ Obligatorias: `nombre`, `marca`, `categoria`, `precio`.
 
 > ⚠️ **Cuidado — "Vaciar catálogo"** (botón junto a "Importar CSV"): borra **todos** los productos, sin posibilidad de deshacer desde el panel. Solo tiene sentido si vas a empezar el catálogo desde cero. Si tienes duda, primero descarga un respaldo (ver más abajo).
 
-## Categorías (`admin/categorias.html`)
+## Categorías (`panel-4x9qz/categorias.html`)
 
 Crear, editar y eliminar categorías, con su orden de aparición.
 
@@ -291,7 +291,7 @@ Crear, editar y eliminar categorías, con su orden de aparición.
 
 > ⚠️ **Cuidado — "Eliminar vacías"**: borra de un golpe todas las categorías que no tengan ningún producto asignado. No se puede deshacer.
 
-## Marcas (`admin/marcas.html`)
+## Marcas (`panel-4x9qz/marcas.html`)
 
 Crear, editar y eliminar marcas, con su logo. También se pueden **importar por CSV**, igual que los productos.
 
@@ -299,19 +299,19 @@ Crear, editar y eliminar marcas, con su logo. También se pueden **importar por 
 
 > ⚠️ **Cuidado — "Vaciar marcas"**: borra **todas** las marcas del catálogo, sin deshacer.
 
-## Pedidos (`admin/pedidos.html`)
+## Pedidos (`panel-4x9qz/pedidos.html`)
 
 Todos los pedidos de la tienda, con el sabor de cada línea si aplica. Se puede filtrar por estado y cambiar el estado de cada pedido: `pendiente → confirmado → enviado → entregado`, o `cancelado`.
 
 <img src="manual-img/admin-08-pedidos.png" width="720">
 
-## Promociones / Carrusel (`admin/promociones.html`)
+## Promociones / Carrusel (`panel-4x9qz/promociones.html`)
 
 Las imágenes que rotan en el carrusel de la portada. Por cada una: imagen, título (opcional), enlace al hacer clic (opcional), orden y si está visible.
 
 <img src="manual-img/admin-09-promociones.png" width="720">
 
-## Nosotros (`admin/nosotros.html`)
+## Nosotros (`panel-4x9qz/nosotros.html`)
 
 Edita el contenido de la página pública "Nosotros" (misión, valores, dirección, teléfono, horario) sin tocar código.
 
@@ -341,7 +341,7 @@ flowchart LR
 
 # 🔒 Parte 3 — Seguridad
 
-## Verificación en dos pasos (2FA) — `admin/seguridad.html`
+## Verificación en dos pasos (2FA) — `panel-4x9qz/seguridad.html`
 
 Añade una segunda capa además de tu contraseña: un código de 6 dígitos que cambia cada 30 segundos, generado por una app como Google Authenticator o Authy.
 
@@ -424,12 +424,12 @@ Desde la misma pantalla, con 2FA activo, puedes **regenerar los códigos de recu
 | Cliente | `login.html` | Iniciar sesión |
 | Cliente | `recuperar.html` / `restablecer.html` | Recuperar contraseña olvidada |
 | Cliente | `cuenta.html` | Mis datos, pedidos, favoritos y direcciones |
-| Admin | `admin/login.html` | Entrada al panel (con 2FA si está activo) |
-| Admin | `admin/index.html` | Dashboard: métricas + últimos pedidos + respaldo completo |
-| Admin | `admin/productos.html` | Productos: CRUD + SKU + sabores + galería + importar/exportar CSV |
-| Admin | `admin/categorias.html` | Categorías: CRUD |
-| Admin | `admin/marcas.html` | Marcas: CRUD + importar CSV |
-| Admin | `admin/pedidos.html` | Ver pedidos y cambiar su estado |
-| Admin | `admin/promociones.html` | Carrusel de la portada: CRUD |
-| Admin | `admin/nosotros.html` | Editar la página pública "Nosotros" |
-| Admin | `admin/seguridad.html` | Activar/gestionar el 2FA |
+| Admin | `panel-4x9qz/login.html` | Entrada al panel (con 2FA si está activo) |
+| Admin | `panel-4x9qz/index.html` | Dashboard: métricas + últimos pedidos + respaldo completo |
+| Admin | `panel-4x9qz/productos.html` | Productos: CRUD + SKU + sabores + galería + importar/exportar CSV |
+| Admin | `panel-4x9qz/categorias.html` | Categorías: CRUD |
+| Admin | `panel-4x9qz/marcas.html` | Marcas: CRUD + importar CSV |
+| Admin | `panel-4x9qz/pedidos.html` | Ver pedidos y cambiar su estado |
+| Admin | `panel-4x9qz/promociones.html` | Carrusel de la portada: CRUD |
+| Admin | `panel-4x9qz/nosotros.html` | Editar la página pública "Nosotros" |
+| Admin | `panel-4x9qz/seguridad.html` | Activar/gestionar el 2FA |

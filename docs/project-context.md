@@ -229,6 +229,16 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   ejecuta), `register.php`/`orders/create.php` rechazan sin el consentimiento y lo aceptan con
   fecha real guardada, y el borrado (cliente y dueño) deja el pedido anónimo con su total intacto
   confirmado por consulta directa a la base. `scripts/scan-seguridad.sh` en verde en cada fase.
+- **2026-08-15 (post-lanzamiento):** **Ruta del panel de administrador renombrada de `/admin/` a
+  `/panel-4x9qz/`.** Ya con el sitio en operación real en Hostinger, el dueño señaló que `/admin/`
+  es una ruta demasiado obvia (cualquiera puede probarla sin adivinar nada). El login ya estaba
+  protegido con contraseña + 2FA obligatorio, así que esto es una capa extra contra bots/curiosos,
+  no un reemplazo de esa protección. Cambio de bajo riesgo: todos los enlaces internos del panel
+  (`site/assets/js/admin/*.js`, los `.html` del panel) usan rutas relativas, nunca `/admin/`
+  absoluto, así que renombrar la carpeta no rompió nada. `site/api/admin/` (backend) es una carpeta
+  independiente y **no** se tocó. Documentación viva actualizada (`despliegue-hostinger.md`,
+  `setup-local.md`, `manual-usuario.md`, `seguridad-operativa.md`); los documentos de auditoría
+  fechados se dejaron tal cual, como registro histórico de su momento.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de

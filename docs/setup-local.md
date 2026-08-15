@@ -81,7 +81,7 @@ Deja esa ventana abierta (Ctrl+C para detener), o usa `start-local.bat`.
 ## 5. Abrir
 
 - **Tienda:** <http://localhost:8080>
-- **Admin:** <http://localhost:8080/admin/login.html> → `admin@ds.com` / `AdminDS2026`
+- **Admin:** <http://localhost:8080/panel-4x9qz/login.html> → `admin@ds.com` / `AdminDS2026`
 
 ---
 
@@ -91,7 +91,7 @@ Deja esa ventana abierta (Ctrl+C para detener), o usa `start-local.bat`.
 YOWI/
 ├─ site/              ← LA TIENDA (esto es lo que se sirve)
 │  ├─ *.html          ← páginas públicas (index, catalogo, producto, pedido…)
-│  ├─ admin/          ← panel de administración
+│  ├─ panel-4x9qz/    ← panel de administración (nombre no obvio a propósito)
 │  ├─ assets/         ← css, js, imágenes, datos demo
 │  └─ api/            ← backend PHP (auth, products, orders, admin) + config
 ├─ scripts/           ← utilidades: setup-local, seed-products, create-admin,

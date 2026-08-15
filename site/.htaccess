@@ -43,7 +43,7 @@ Options -Indexes
     # CSP ENFORCE para el storefront: script-src 'self' (sin inline ni CDN) → los
     # scripts inline se externalizaron. style-src conserva 'unsafe-inline' por los estilos
     # embebidos del maquetado (bajo riesgo). El panel admin usa su propia CSP en
-    # site/admin/.htaccess (idéntica a esta — ya no usa el CDN de Tailwind).
+    # site/panel-4x9qz/.htaccess (idéntica a esta — ya no usa el CDN de Tailwind).
     # Nota: si algún día sirves la API en otro dominio, añade ese origen a connect-src.
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>

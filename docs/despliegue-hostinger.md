@@ -183,7 +183,9 @@ VALUES ('Mario Menchaca', 'menchacaramirez.ma1821@gmail.com', '<EL_HASH_QUE_COPI
 
 ### Primer inicio de sesión — hazlo en este orden
 
-1. Entra a `https://tudominio.com/admin/login.html` con tu correo y la contraseña que elegiste.
+1. Entra a `https://tudominio.com/panel-4x9qz/login.html` con tu correo y la contraseña que elegiste.
+   (La carpeta del panel ya no se llama `admin` — se renombró a propósito para que la URL no sea
+   adivinable por cualquiera que pruebe rutas comunes. Guarda esta dirección en tus marcadores.)
 2. El panel te va a pedir activar el 2FA de inmediato — no puedes usar el panel sin eso.
    Usa Google Authenticator, Authy, o cualquier app de códigos.
 3. Ve a **Panel → Seguridad** y cambia tu contraseña por una definitiva, aunque acabes de
