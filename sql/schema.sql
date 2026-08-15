@@ -156,43 +156,19 @@ CREATE TABLE IF NOT EXISTS settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Valores por defecto: el contenido REAL del negocio (misión, visión, quiénes somos, políticas
--- de compra/envío y términos que el negocio ya usaba en su documento de mayo 2025). El aviso de
--- privacidad queda vacío a propósito: lo redacta la fase legal y el dueño lo revisa.
--- INSERT IGNORE = no pisa lo que el admin ya haya editado si esta sentencia se re-ejecuta.
--- Las claves val1_*/val2_*/val3_* se retiraron: el contenido real no tiene esa forma.
+-- de compra/envío y términos que el negocio ya usaba en su documento de mayo 2025, más el
+-- aviso de privacidad redactado en la Fase 4 del plan de info-negocio-editable). INSERT IGNORE
+-- = no pisa lo que el admin ya haya editado si esta sentencia se re-ejecuta. Las claves
+-- val1_*/val2_*/val3_* se retiraron: el contenido real no tiene esa forma.
 INSERT IGNORE INTO settings (clave, valor) VALUES
-('nosotros_mision', 'Acercar las mejores marcas de suplementación deportiva a todo México mediante un modelo de distribución eficiente, transparente y accesible, ofreciendo productos 100% originales, precios de distribuidor y un servicio excepcional que impulse el crecimiento de nuestros clientes y socios comerciales.'),
-('nosotros_vision', 'Ser el referente nacional en distribución de suplementos deportivos, distinguiéndonos por nuestra innovación, confianza, liderazgo comercial y compromiso con ofrecer siempre las mejores marcas, la mayor disponibilidad y una experiencia de compra de clase mundial.'),
-('nosotros_quienes', 'En DS Distribuidor de Suplementos conectamos a miles de personas, emprendedores, gimnasios, tiendas y profesionales de la salud con las marcas líderes de suplementación deportiva en México.
-
-Somos una empresa especializada en la distribución de suplementos 100% originales, ofreciendo acceso a un amplio catálogo de productos nacionales e internacionales con precios de distribuidor, compra desde una pieza y envíos a todo México.
-
-Más que vender suplementos, nuestro objetivo es facilitar el acceso a productos auténticos mediante un servicio profesional, atención personalizada y una logística eficiente que permita a nuestros clientes comprar con confianza.'),
-('nosotros_que_hacemos', 'Trabajamos directamente con las principales marcas y fabricantes para ofrecer un catálogo amplio y actualizado de proteínas, creatinas, preentrenamientos, vitaminas, aminoácidos y cientos de suplementos deportivos originales. Atendemos tanto a consumidores finales como a distribuidores, gimnasios, coaches, tiendas de suplementos y emprendedores que buscan crecer con un proveedor confiable.'),
-('nosotros_beneficios', 'Productos 100% originales
-Precio de distribuidor
-Compra desde 1 pieza
-Sin compra mínima
-Envíos rápidos a todo México
-Atención personalizada antes y después de la compra'),
-('nosotros_representa', 'DS representa confianza, transparencia y compromiso.
-
-Creemos que acceder a suplementos originales no debe ser complicado ni costoso. Por eso hemos construido un modelo de distribución enfocado en eliminar intermediarios, optimizar la logística y ofrecer un servicio que genere relaciones de largo plazo con nuestros clientes.
-
-Cada pedido que sale de nuestro almacén refleja nuestro compromiso con la calidad, la autenticidad y la satisfacción de quienes confían en nosotros.'),
 ('contacto_direccion', 'Av. Hidalgo 4320
 Zona Centro, Tampico, Tamaulipas'),
-('contacto_telefono', '833 164 5172'),
 ('contacto_email', 'contacto@dssports.com'),
 ('contacto_horario', 'Lunes a Viernes: 09:00 - 19:00
 Sábados: 10:00 - 14:00'),
-('contacto_whatsapp', '5218331645172'),
 ('contacto_mapa_url', 'https://maps.app.goo.gl/mQ4ZW9D7ZdNMQb2K7'),
-('social_facebook', ''),
-('social_instagram', ''),
-('social_tiktok', ''),
-('negocio_razon_social', 'DS Distribuidor de Suplementos'),
-('negocio_rfc', ''),
+('contacto_telefono', '833 164 5172'),
+('contacto_whatsapp', '5218331645172'),
 ('legal_compra', 'Antes de realizar una compra, favor de leer las siguientes políticas. Al efectuar el pago, el cliente acepta todas las condiciones aquí descritas.
 
 1. COTIZACIONES Y PRECIOS
@@ -314,6 +290,33 @@ NOTAS IMPORTANTES
 Es responsabilidad del cliente proporcionar correctamente sus datos de envío.
 Los tiempos de entrega son estimados y dependen de factores ajenos a DS.
 Recomendamos contratar seguro para proteger tu pedido.'),
+('legal_privacidad', 'Este aviso de privacidad describe qué datos personales recaba DS Distribuidor de Suplementos, para qué los usa y cómo puedes ejercer tus derechos, conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP). El responsable del tratamiento de tus datos es el que se indica al inicio de esta página.
+
+1. DATOS QUE RECABAMOS
+Al crear una cuenta: nombre, correo electrónico y contraseña (esta última se guarda cifrada, nunca en texto plano).
+Al hacer un pedido: nombre, teléfono, calle, colonia, código postal, ciudad, estado y, si los agregas, referencias del domicilio y notas del pedido.
+
+2. PARA QUÉ LOS USAMOS
+Para registrar y entregar tu pedido, contactarte sobre su estado, y darte acceso a tu cuenta: historial de pedidos, direcciones guardadas y favoritos.
+
+3. CON QUIÉN COMPARTIMOS TU INFORMACIÓN
+Tu pedido se envía como mensaje de WhatsApp (servicio operado por Meta) con tu nombre, teléfono y domicilio, para poder confirmarlo y coordinarlo contigo.
+Tu domicilio se comparte con la paquetería que realiza el envío, únicamente para poder entregarte el pedido.
+No vendemos tus datos personales ni los compartimos con nadie más.
+
+4. CONSERVACIÓN DE TUS DATOS
+Conservamos tus datos mientras tu cuenta exista. Si eliminas tu cuenta, tus pedidos anteriores se conservan de forma anónima —sin tu nombre, teléfono ni domicilio— porque los necesitamos para nuestra contabilidad.
+
+5. TUS DERECHOS (ARCO)
+Puedes acceder, rectificar y cancelar tus datos personales, así como oponerte a su tratamiento, en cualquier momento. Para eliminar tu cuenta y tus datos, usa el botón correspondiente en tu perfil ("Mi cuenta"), o contáctanos con el correo indicado en esta página.
+
+6. SEGURIDAD
+Tu contraseña se guarda cifrada y nunca la compartimos. El acceso al panel de administración está protegido con doble factor de autenticación.
+
+7. CAMBIOS A ESTE AVISO
+Este aviso puede actualizarse para reflejar cambios en cómo operamos. Los cambios se publican en esta misma página.
+
+Este es un aviso de privacidad base; se recomienda que sea revisado por un profesional legal antes de tratarlo como definitivo.'),
 ('legal_terminos', 'Al realizar un pago, el cliente acepta todos los términos y condiciones generales aquí descritos, además de nuestras Políticas de Compra y Políticas de Envío.
 
 1. DATOS DEL CLIENTE
@@ -356,7 +359,30 @@ NOTAS IMPORTANTES
 Todos nuestros productos son 100% originales y sellados de fábrica.
 Le recomendamos leer completamente nuestras políticas antes de realizar su compra.
 Los tiempos de entrega son estimados y dependen de factores ajenos a DS y a la empresa de paquetería.'),
-('legal_privacidad', '');
+('negocio_razon_social', 'DS Distribuidor de Suplementos'),
+('negocio_rfc', ''),
+('nosotros_beneficios', 'Productos 100% originales
+Precio de distribuidor
+Compra desde 1 pieza
+Sin compra mínima
+Envíos rápidos a todo México
+Atención personalizada antes y después de la compra'),
+('nosotros_mision', 'Acercar las mejores marcas de suplementación deportiva a todo México mediante un modelo de distribución eficiente, transparente y accesible, ofreciendo productos 100% originales, precios de distribuidor y un servicio excepcional que impulse el crecimiento de nuestros clientes y socios comerciales.'),
+('nosotros_que_hacemos', 'Trabajamos directamente con las principales marcas y fabricantes para ofrecer un catálogo amplio y actualizado de proteínas, creatinas, preentrenamientos, vitaminas, aminoácidos y cientos de suplementos deportivos originales. Atendemos tanto a consumidores finales como a distribuidores, gimnasios, coaches, tiendas de suplementos y emprendedores que buscan crecer con un proveedor confiable.'),
+('nosotros_quienes', 'En DS Distribuidor de Suplementos conectamos a miles de personas, emprendedores, gimnasios, tiendas y profesionales de la salud con las marcas líderes de suplementación deportiva en México.
+
+Somos una empresa especializada en la distribución de suplementos 100% originales, ofreciendo acceso a un amplio catálogo de productos nacionales e internacionales con precios de distribuidor, compra desde una pieza y envíos a todo México.
+
+Más que vender suplementos, nuestro objetivo es facilitar el acceso a productos auténticos mediante un servicio profesional, atención personalizada y una logística eficiente que permita a nuestros clientes comprar con confianza.'),
+('nosotros_representa', 'DS representa confianza, transparencia y compromiso.
+
+Creemos que acceder a suplementos originales no debe ser complicado ni costoso. Por eso hemos construido un modelo de distribución enfocado en eliminar intermediarios, optimizar la logística y ofrecer un servicio que genere relaciones de largo plazo con nuestros clientes.
+
+Cada pedido que sale de nuestro almacén refleja nuestro compromiso con la calidad, la autenticidad y la satisfacción de quienes confían en nosotros.'),
+('nosotros_vision', 'Ser el referente nacional en distribución de suplementos deportivos, distinguiéndonos por nuestra innovación, confianza, liderazgo comercial y compromiso con ofrecer siempre las mejores marcas, la mayor disponibilidad y una experiencia de compra de clase mundial.'),
+('social_facebook', ''),
+('social_instagram', ''),
+('social_tiktok', '');
 
 -- ── Usuarios (sin cambios) ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (

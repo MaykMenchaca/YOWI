@@ -18,6 +18,11 @@
      data-set-ocultar-si-vacio="clave" Oculta el elemento si la clave viene
                                         vacía (ej. un ícono de red social que
                                         el dueño no ha configurado).
+     data-set-longtext="clave"         Para textos largos (legales): separa en
+                                        párrafos por línea en blanco (todo
+                                        escapado). Si un párrafo empieza con
+                                        "1. ", "2. "... esa primera línea se
+                                        resalta como subtítulo del punto.
 
    Expone:
      window.DSSettings      objeto {clave: valor} en cuanto la petición resuelve
@@ -97,6 +102,25 @@
     });
   }
 
+  // Textos legales: párrafos separados por línea en blanco, todo escapado (editar el
+  // texto desde el panel nunca puede inyectar HTML). Si un párrafo arranca con un
+  // encabezado numerado ("1. COTIZACIONES Y PRECIOS"), esa primera línea se resalta.
+  function aplicarLongtext(d) {
+    document.querySelectorAll("[data-set-longtext]").forEach(function (el) {
+      var k = el.getAttribute("data-set-longtext");
+      if (d[k] === undefined) return;
+      var bloques = String(d[k]).split(/\n\s*\n/).map(function (b) { return b.trim(); }).filter(Boolean);
+      el.innerHTML = bloques.map(function (bloque) {
+        var lineas = bloque.split("\n");
+        var primera = esc(lineas[0]);
+        var esEncabezado = /^\d+\.\s/.test(lineas[0]);
+        var resto = lineas.slice(1).map(esc).join("<br>");
+        var primeraHtml = esEncabezado ? "<strong>" + primera + "</strong>" : primera;
+        return "<p>" + primeraHtml + (resto ? "<br>" + resto : "") + "</p>";
+      }).join("");
+    });
+  }
+
   function aplicarWaLink() {
     var numero = global.DSWaNumber();
     document.querySelectorAll("[data-wa-link]").forEach(function (el) {
@@ -117,6 +141,7 @@
     aplicarSet(d);
     aplicarHref(d);
     aplicarLista(d);
+    aplicarLongtext(d);
     aplicarWaLink();
     aplicarOcultarSiVacio(d);
     document.dispatchEvent(new CustomEvent("ds-settings-ready", { detail: d }));
