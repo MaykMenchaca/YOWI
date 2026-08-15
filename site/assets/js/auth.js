@@ -162,9 +162,9 @@
     if (logoutBtn) {
       logoutBtn.addEventListener("click", function (e) {
         e.preventDefault();
-        global.DSApi.apiFetch("api/auth/logout.php", { method: "POST" }).then(function () {
-          window.location.href = "login.html";
-        });
+        global.DSApi.apiFetch("api/auth/logout.php", { method: "POST", body: {} })
+          .then(function () { window.location.href = "login.html"; })
+          .catch(function () { alert("No se pudo cerrar sesión. Revisa tu conexión e inténtalo de nuevo."); });
       });
     }
 
