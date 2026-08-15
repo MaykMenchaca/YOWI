@@ -87,12 +87,40 @@ el servidor, una sola vez.
    'APP_URL'        => 'https://tudominio.com',    // tu dominio real, SIN barra final
 
    'TRUSTED_IP_HEADER' => '',              // déjalo vacío salvo que uses Cloudflare (ver paso 9)
+
+   'TOTP_ENCRYPTION_KEY' => '...',         // ver punto 5 abajo — obligatoria antes del primer 2FA
    ```
 4. **`MAIL_TRANSPORT => 'mail'` es obligatorio**, no opcional: con `'none'`, "olvidé mi
    contraseña" no envía nada (aunque el sitio le diga al cliente que sí). Usa un buzón que
    exista de verdad en tu dominio (créalo en hPanel → Correo si no tienes uno). Si los correos
    de recuperación te llegan a spam, es casi siempre por SPF/DKIM mal configurados en el
    dominio — revísalo en hPanel → Correo → Autenticación.
+5. **Clave de cifrado del 2FA — `TOTP_ENCRYPTION_KEY`** (obligatoria antes de que cualquier
+   admin active el 2FA; el secreto de cada admin se guarda cifrado en la base, no en texto
+   plano). Genera la clave **en tu propia computadora**, no en el servidor:
+   ```bash
+   php -r "echo base64_encode(random_bytes(32));"
+   ```
+   Copia el resultado (una cadena en base64) a `env.php` tal cual, en el campo
+   `TOTP_ENCRYPTION_KEY` de arriba.
+
+   **Antes de depender de esto, verifica que tu plan de Hostinger tenga la extensión
+   `sodium` habilitada** para la versión de PHP de tu dominio (hPanel → Configuración de
+   PHP → lista de extensiones, o `php -m | grep sodium` si tienes SSH). Sin ella el 2FA no
+   podrá guardarse ni verificarse — es una extensión incluida en PHP desde la versión 7.2,
+   así que en un hosting con PHP moderno debería estar disponible, pero conviene
+   confirmarlo antes de que un admin dependa de ella.
+
+   ⚠️ **Nunca pierdas ni cambies esta clave una vez que algún admin tenga el 2FA activo.**
+   Hacerlo invalida en silencio TODOS los secretos TOTP ya guardados — esos admins dejarán
+   de poder pasar el segundo factor al iniciar sesión y quedarán bloqueados del panel (el
+   2FA es obligatorio para casi toda acción admin). Si llega a pasar:
+   - Si el admin bloqueado todavía conserva sus **códigos de recuperación** (se muestran
+     una sola vez al activar el 2FA — pídele que los busque donde los guardó), puede
+     iniciar sesión con uno de ellos: son independientes de esta clave.
+   - Si también los perdió, hace falta entrar directo a la base (phpMyAdmin o SSH) y
+     correr `UPDATE admins SET totp_secret = NULL, totp_enabled = 0 WHERE id = <su id>;`,
+     y que esa persona reenrole su 2FA desde **Panel → Seguridad**.
 
 ---
 
@@ -241,11 +269,6 @@ correctamente detrás de un proxy así (se verificó y corrigió específicament
 Documentado aquí para que lo sepas y no te lo encuentres por sorpresa — ninguno impide abrir la
 tienda, pero conviene revisarlos en una sesión futura:
 
-- **El secreto del 2FA se guarda en texto plano** en la base de datos (no el código de 6
-  dígitos, sino la "llave" que lo genera). Un volcado de base de datos filtrado entregaría el
-  segundo factor completo de cada admin.
-- El registro de acciones de administradores (`admin_audit_log`) se llena solo, pero hoy no hay
-  ninguna pantalla en el panel para leerlo — solo se puede consultar directo en la base de datos.
 - El código de un admin de 2FA es válido unos 90 segundos más de lo estrictamente necesario, y
   no se sube el "costo" del cifrado de contraseñas más allá del valor por defecto de PHP —
   ambos son ajustes finos, no urgencias.
@@ -259,6 +282,9 @@ quién se comparten (WhatsApp/Meta y la paquetería), el registro y el checkout 
 el consentimiento con fecha real, y tanto el cliente como el dueño pueden eliminar una cuenta
 (anonimizando sus pedidos, no borrándolos, porque hacen falta para tu contabilidad). Aun así es
 un texto base — conviene que lo revise un profesional legal antes de tratarlo como definitivo.
+El secreto del 2FA ya se guarda cifrado en la base (ver punto 5 del paso 3, arriba), y el panel
+tiene una pantalla nueva (**Panel → Auditoría**, solo dueño) para leer el historial de acciones
+de administradores sin tener que consultar la base directamente.
 
 ⚠️ **Un punto para ti, no del sitio**: el documento de políticas que nos diste (mayo 2025)
 incluye la frase "SU INFORMACIÓN ESTÁ SEGURA. NO COMPARTIMOS DATOS CON TERCEROS". Esa frase

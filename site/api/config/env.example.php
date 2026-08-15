@@ -27,6 +27,14 @@ return [
     // el proxy SIEMPRE sobreescribe esa cabecera; si no, es falsificable.
     'TRUSTED_IP_HEADER' => '', // p.ej. 'CF-Connecting-IP' si el sitio está tras Cloudflare
 
+    // ── Cifrado en reposo del secreto TOTP (2FA de admin) ─────────────────────
+    // 32 bytes aleatorios en base64. Generar UNA sola vez con:
+    //   php -r "echo base64_encode(random_bytes(32));"
+    // NUNCA la pierdas ni la cambies una vez que algún admin tenga el 2FA activo: hacerlo
+    // invalida en silencio TODOS los secretos TOTP ya guardados y bloquea a esos admins del
+    // panel (ver docs/despliegue-hostinger.md, sección de 2FA).
+    'TOTP_ENCRYPTION_KEY' => 'cambiar_por_una_clave_generada_de_32_bytes_en_base64',
+
     // ── Debug (solo local) ────────────────────────────────────────────────────
     // 'DS_DEBUG' => '1',   // muestra errores en pantalla SOLO en desarrollo
 ];

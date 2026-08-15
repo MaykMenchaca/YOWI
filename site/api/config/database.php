@@ -8,6 +8,23 @@ declare(strict_types=1);
 // que corre en cada endpoint porque database.php se incluye al inicio de todos ellos.
 require_once __DIR__ . '/../lib/Bootstrap.php';
 
+// Carga env.php una sola vez (cacheada). Extraído de ds_get_pdo() para que otros
+// consumidores de secretos (p. ej. lib/Crypto.php, la clave de cifrado del 2FA) tengan una
+// forma soportada de leerlo sin volver a parsear el archivo por su cuenta.
+function ds_get_env(): array
+{
+    static $env = null;
+    if ($env !== null) {
+        return $env;
+    }
+    $envPath = __DIR__ . '/env.php';
+    if (!file_exists($envPath)) {
+        throw new RuntimeException('Falta site/api/config/env.php — copiar desde env.example.php y completar credenciales.');
+    }
+    $env = require $envPath;
+    return $env;
+}
+
 function ds_get_pdo(): PDO
 {
     static $pdo = null;
@@ -15,11 +32,7 @@ function ds_get_pdo(): PDO
         return $pdo;
     }
 
-    $envPath = __DIR__ . '/env.php';
-    if (!file_exists($envPath)) {
-        throw new RuntimeException('Falta site/api/config/env.php — copiar desde env.example.php y completar credenciales.');
-    }
-    $env = require $envPath;
+    $env = ds_get_env();
 
     $dsn = sprintf(
         'mysql:host=%s%s;dbname=%s;charset=%s',

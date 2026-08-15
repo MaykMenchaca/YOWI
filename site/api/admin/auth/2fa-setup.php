@@ -5,6 +5,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Crypto.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
@@ -27,7 +28,7 @@ if ((int) $admin['totp_enabled'] === 1) {
 // que el admin confirme con un código válido en 2fa-activate.php).
 $secret = ds_totp_secret();
 $upd = $pdo->prepare('UPDATE admins SET totp_secret = ?, totp_enabled = 0 WHERE id = ?');
-$upd->execute([$secret, $adminId]);
+$upd->execute([ds_encrypt($secret), $adminId]);
 
 $uri = ds_totp_uri($secret, (string) $admin['email'], 'DS Suplementos');
 

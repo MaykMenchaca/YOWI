@@ -5,6 +5,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Crypto.php';
 require __DIR__ . '/../../lib/Recovery.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 
@@ -28,7 +29,8 @@ $admin = $stmt->fetch();
 if (!$admin || (int) $admin['totp_enabled'] !== 1) {
     ds_json_error('Primero activa el 2FA', 400);
 }
-if ($code === '' || !ds_totp_verify((string) $admin['totp_secret'], $code)) {
+$secretPlain = $admin['totp_secret'] !== null ? ds_decrypt((string) $admin['totp_secret']) : null;
+if ($code === '' || $secretPlain === null || !ds_totp_verify($secretPlain, $code)) {
     ds_json_error('Código de verificación inválido', 401);
 }
 

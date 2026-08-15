@@ -5,6 +5,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Crypto.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 require __DIR__ . '/../../lib/Recovery.php';
 
@@ -37,7 +38,8 @@ if (!$admin || (int) $admin['totp_enabled'] !== 1) {
     ds_json_error('El 2FA no está activo', 400);
 }
 
-$totpOk = $digits !== '' && ds_totp_verify((string) $admin['totp_secret'], $digits);
+$secretPlain = $admin['totp_secret'] !== null ? ds_decrypt((string) $admin['totp_secret']) : null;
+$totpOk = $digits !== '' && $secretPlain !== null && ds_totp_verify($secretPlain, $digits);
 $recoveryOk = !$totpOk && ds_consume_recovery_code($pdo, $adminId, $factor);
 if (!$totpOk && !$recoveryOk) {
     ds_json_error('Código de verificación inválido', 401);

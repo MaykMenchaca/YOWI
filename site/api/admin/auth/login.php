@@ -7,6 +7,7 @@ require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Crypto.php';
 require __DIR__ . '/../../lib/Recovery.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
@@ -53,7 +54,8 @@ if ((int) $admin['totp_enabled'] === 1) {
         ds_json_success(['twofa_required' => true]);
     }
     $digits = preg_replace('/\D+/', '', $factor);
-    $totpOk = $digits !== '' && ds_totp_verify((string) $admin['totp_secret'], $digits);
+    $secretPlain = $admin['totp_secret'] !== null ? ds_decrypt((string) $admin['totp_secret']) : null;
+    $totpOk = $digits !== '' && $secretPlain !== null && ds_totp_verify($secretPlain, $digits);
     // Si no es un TOTP válido, probar como código de recuperación (formato con guion/letras).
     $recoveryOk = !$totpOk && ds_consume_recovery_code($pdo, (int) $admin['id'], $factor);
     if (!$totpOk && !$recoveryOk) {

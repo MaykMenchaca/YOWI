@@ -5,6 +5,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Totp.php';
+require __DIR__ . '/../../lib/Crypto.php';
 require __DIR__ . '/../../lib/Recovery.php';
 require __DIR__ . '/../../lib/RateLimit.php';
 
@@ -30,7 +31,8 @@ $pdo = ds_get_pdo();
 $stmt = $pdo->prepare('SELECT password_hash, totp_secret, totp_enabled FROM admins WHERE id = ?');
 $stmt->execute([$adminId]);
 $admin = $stmt->fetch();
-if (!$admin || $admin['totp_secret'] === null) {
+$secretPlain = $admin && $admin['totp_secret'] !== null ? ds_decrypt((string) $admin['totp_secret']) : null;
+if (!$admin || $secretPlain === null) {
     ds_json_error('Primero genera el 2FA', 400);
 }
 
@@ -38,7 +40,7 @@ if (!password_verify($password, (string) $admin['password_hash'])) {
     ds_json_error('Contraseña incorrecta', 401);
 }
 
-if (!ds_totp_verify((string) $admin['totp_secret'], $code)) {
+if (!ds_totp_verify($secretPlain, $code)) {
     ds_json_error('Código incorrecto. Revisa la hora de tu dispositivo e inténtalo de nuevo.', 400);
 }
 

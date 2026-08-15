@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS admins (
     activo               TINYINT(1)     NOT NULL DEFAULT 1,
     password_hash        VARCHAR(255)   NOT NULL,
     password_changed_at  DATETIME       NULL,
-    totp_secret          VARCHAR(64)    NULL,
+    totp_secret          VARCHAR(255)   NULL, -- cifrado en reposo (sodium_crypto_secretbox), ver lib/Crypto.php
     totp_enabled         TINYINT(1)     NOT NULL DEFAULT 0,
     created_at           DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_admins_email (email)
