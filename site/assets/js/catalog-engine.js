@@ -270,7 +270,8 @@
     var nombre = sabor ? p.nombre + " (" + sabor.nombre + ")" : p.nombre;
     var precio = sabor && sabor.precio != null ? sabor.precio : p.precio;
     var texto = "Hola DS, me interesa: " + nombre + " — " + money(precio);
-    link.setAttribute("href", "https://wa.me/5218344241599?text=" + encodeURIComponent(texto));
+    var numero = global.DSWaNumber ? global.DSWaNumber() : "5218331645172";
+    link.setAttribute("href", "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto));
   }
 
   // Habilita/deshabilita "Agregar al carrito" según el estado: producto agotado (nunca

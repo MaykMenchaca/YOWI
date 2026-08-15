@@ -1,26 +1,11 @@
 (function () {
-  var WA = "https://wa.me/5218344241599?text=Hola%20DS%2C%20me%20interesa%20un%20producto%20de%20su%20cat%C3%A1logo.";
-
   document.addEventListener("DOMContentLoaded", function () {
-    // --- WhatsApp: cualquier botón/enlace con texto "WhatsApp" abre el chat ---
-    // Excepción: si el elemento YA es un <a href="https://wa.me/..."> con su propio
-    // mensaje armado (ej. "Comprar por WhatsApp" en la ficha de producto, que arma un
-    // texto con el nombre/sabor/precio del producto), se respeta tal cual — antes este
-    // listener genérico lo interceptaba SIEMPRE y lo reemplazaba con un mensaje fijo sin
-    // ningún dato del producto, perdiendo justo la información que el cliente ya había
-    // dado (qué quería comprar).
-    document.querySelectorAll("button, a").forEach(function (el) {
-      var t = (el.textContent || "").toLowerCase();
-      if (t.indexOf("whatsapp") === -1) return;
-      var href = el.tagName === "A" ? el.getAttribute("href") : null;
-      var yaArmado = href && /^https:\/\/wa\.me\//.test(href) && href.indexOf("text=") > -1;
-      if (yaArmado) return; // dejar que el navegador siga el href real, sin tocar nada
-      el.style.cursor = "pointer";
-      el.addEventListener("click", function (e) {
-        e.preventDefault();
-        window.open(WA, "_blank");
-      });
-    });
+    // El enlace/botón de WhatsApp ya no se detecta por texto ("cualquier cosa que diga
+    // WhatsApp"): eso competía con el href real del elemento y, en la ficha de producto,
+    // secuestraba el botón "Comprar por WhatsApp" ANTES de que catalog-engine.js le
+    // pusiera el mensaje con el nombre/sabor/precio reales. Ahora cada botón de WhatsApp
+    // se marca explícitamente con data-wa-link y settings-inject.js le arma el href con
+    // el número vigente — este archivo ya no necesita tocarlo.
 
     // --- Reveal con stagger (nunca oculta contenido si algo falla) ---
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -5,7 +5,13 @@
    producto_id + sabor_id (sabor_id null = sin sabor), no solo producto_id. */
 (function (global) {
   var STORAGE_KEY = "ds_cart";
-  var WA_NUMBER = "5218344241599";
+  // Número de WhatsApp: viene de settings-inject.js (window.DSWaNumber()), que a su vez
+  // lo lee del panel del dueño. Esto arma la URL DENTRO del gesto del clic —no puede
+  // esperar una petición nueva— así que depende de que DSSettings ya haya cargado, cosa
+  // que a esta altura (cliente ya interactuando con el carrito) normalmente ya ocurrió.
+  function waNumber() {
+    return global.DSWaNumber ? global.DSWaNumber() : "5218331645172";
+  }
   // El token CSRF se obtiene de forma asíncrona (me.php). Hasta que esté listo, el botón
   // "Enviar" permanece deshabilitado para evitar un POST sin token (403 silencioso).
   var csrfReady = false;
@@ -316,7 +322,7 @@
     // más abajo con uno reconstruido desde la respuesta real del servidor — así lo que
     // llega por WhatsApp siempre coincide con lo que quedó guardado en la base de datos.
     var mensajePreliminar = buildWhatsAppMessage(items, d);
-    var waUrl = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensajePreliminar);
+    var waUrl = "https://wa.me/" + waNumber() + "?text=" + encodeURIComponent(mensajePreliminar);
     var waWin = window.open("", "_blank");
 
     // Evita doble clic = pedido duplicado: mientras el POST está en vuelo, el botón se
@@ -373,7 +379,7 @@
             };
           });
           var mensajeFinal = buildWhatsAppMessage(itemsConfirmados, d);
-          var waUrlFinal = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(mensajeFinal);
+          var waUrlFinal = "https://wa.me/" + waNumber() + "?text=" + encodeURIComponent(mensajeFinal);
           if (data && data.ajustes && data.ajustes.length) mostrarAjustes(data.ajustes);
           if (waWin) { waWin.location = waUrlFinal; } else { window.open(waUrlFinal, "_blank"); }
         })
