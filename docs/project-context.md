@@ -249,7 +249,7 @@ frecuencia).
 
 1. Crear `site/api/config/env.php` real (gitignored) a partir de `env.example.php`, con las
    credenciales reales de la BD de Hostinger y `MAIL_TRANSPORT => 'mail'` (no `'none'`).
-2. Importar `sql/schema.sql` y **las 20 migraciones de `sql/migrations/` en orden alfabético**
+2. Importar `sql/schema.sql` y **las 21 migraciones de `sql/migrations/` en orden alfabético**
    (todas idempotentes) — `schema.sql` por sí solo no basta (ver la guía para el detalle de qué
    le faltaba y ya se corrigió: índice de SKU y contenido inicial de `settings`).
 3. Crear el admin dueño — la guía cubre los dos caminos (con y sin SSH) sin que la contraseña

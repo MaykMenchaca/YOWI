@@ -37,7 +37,7 @@ En hPanel, abre **phpMyAdmin** sobre la base que acabas de crear.
 1. Pestaña **Importar** → selecciona `sql/schema.sql` de este repositorio → Continuar.
    Este archivo ya incluye las 12 tablas completas, con sus índices y el contenido inicial de
    la sección "Nosotros" — no necesitas rellenar nada a mano después.
-2. Después, importa **cada archivo de `sql/migrations/` en orden alfabético** (son 20):
+2. Después, importa **cada archivo de `sql/migrations/` en orden alfabético** (son 21):
    ```
    2026-07-14-add-direccion-envio.sql
    2026-07-26-add-banners.sql
@@ -59,6 +59,7 @@ En hPanel, abre **phpMyAdmin** sobre la base que acabas de crear.
    2026-08-12-add-settings-negocio-legal.sql
    2026-08-13-legal-privacidad.sql
    2026-08-14-add-consent-timestamps.sql
+   2026-08-15-encrypt-totp-secret.sql
    ```
    Todas están escritas para no fallar si algo ya existe (verifican antes de crear), así que
    aunque `schema.sql` ya traiga la mayoría de estos cambios, correrlas encima no hace daño —
