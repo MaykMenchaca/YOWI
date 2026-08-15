@@ -24,6 +24,7 @@ $email = ds_validate_email((string) ($body['email'] ?? ''));
 $telefono = ds_clean_string((string) ($body['telefono'] ?? ''), 30);
 $password = (string) ($body['password'] ?? '');
 $confirmPassword = (string) ($body['confirm_password'] ?? '');
+$terms = (bool) ($body['terms'] ?? false);
 
 if ($nombre === '' || $email === null) {
     ds_json_error('Nombre o correo inválido', 400);
@@ -33,6 +34,12 @@ if (($errPass = ds_validate_password($password)) !== null) {
 }
 if ($password !== $confirmPassword) {
     ds_json_error('Las contraseñas no coinciden', 400);
+}
+// El checkbox del formulario ya bloquea el envío en el navegador (assets/js/auth.js),
+// pero eso no evita un POST directo sin marcarlo — el control real es este, del lado
+// del servidor. Sin esto, el consentimiento nunca quedaba registrado de verdad.
+if (!$terms) {
+    ds_json_error('Debes aceptar los términos y condiciones y el aviso de privacidad', 400);
 }
 
 $pdo = ds_get_pdo();
@@ -46,7 +53,7 @@ if ($check->fetch()) {
 $hash = password_hash($password, PASSWORD_DEFAULT);
 
 $insert = $pdo->prepare(
-    'INSERT INTO users (nombre, email, telefono, password_hash) VALUES (?, ?, ?, ?)'
+    'INSERT INTO users (nombre, email, telefono, password_hash, terms_accepted_at) VALUES (?, ?, ?, ?, NOW())'
 );
 $insert->execute([$nombre, $email, $telefono !== '' ? $telefono : null, $hash]);
 

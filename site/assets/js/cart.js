@@ -312,6 +312,16 @@
       return;
     }
 
+    // El control real vive en el servidor (orders/create.php lo vuelve a exigir); esto
+    // solo evita el viaje de red cuando ya se sabe que va a fallar.
+    var privacidadEl = form.querySelector('[name="privacidad_aceptada"]');
+    var privacidadAceptada = !!(privacidadEl && privacidadEl.checked);
+    if (!privacidadAceptada) {
+      showFieldError(form, "form", "Debes aceptar el aviso de privacidad para enviar tu pedido.");
+      if (privacidadEl && privacidadEl.focus) privacidadEl.focus();
+      return;
+    }
+
     var notice = document.getElementById("order-adjustments-notice");
     if (notice) notice.classList.add("hidden");
 
@@ -361,6 +371,7 @@
             };
           }),
           mensaje_whatsapp: mensajePreliminar,
+          privacidad_aceptada: privacidadAceptada,
         },
       })
         .then(function (data) {

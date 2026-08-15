@@ -384,7 +384,7 @@ Cada pedido que sale de nuestro almacén refleja nuestro compromiso con la calid
 ('social_instagram', ''),
 ('social_tiktok', '');
 
--- ── Usuarios (sin cambios) ────────────────────────────────────────────────────────
+-- ── Usuarios ──────────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
     id             INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre         VARCHAR(150) NOT NULL,
@@ -393,6 +393,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash  VARCHAR(255) NOT NULL,
     password_changed_at DATETIME NULL,
     email_verified TINYINT(1)   NOT NULL DEFAULT 0,
+    terms_accepted_at DATETIME  NULL, -- fecha real en que aceptó términos/privacidad al registrarse
     created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -467,6 +468,7 @@ CREATE TABLE IF NOT EXISTS orders (
                                    NOT NULL DEFAULT 'pendiente',
     stock_repuesto   TINYINT(1)    NOT NULL DEFAULT 0,
     mensaje_whatsapp TEXT          NULL,
+    privacidad_aceptada_at DATETIME NULL, -- fecha real en que el cliente aceptó el aviso al hacer el pedido
     created_at       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
     KEY idx_orders_user (user_id)

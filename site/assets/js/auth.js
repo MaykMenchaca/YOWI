@@ -80,6 +80,7 @@
         telefono: (form.querySelector('[name="telefono"]') || {}).value || "",
         password: password,
         confirm_password: confirmPass,
+        terms: !!(termsEl && termsEl.checked),
       };
       setBusy(form, true);
       ensureCsrf()

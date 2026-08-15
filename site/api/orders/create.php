@@ -30,10 +30,18 @@ $ciudad = ds_clean_string((string) ($body['ciudad'] ?? ''), 120);
 $telefono = ds_clean_string((string) ($body['telefono'] ?? ''), 30);
 $direccionEnvio = ds_clean_string((string) ($body['direccion_envio'] ?? ''), 500);
 $mensajeWhatsapp = ds_clean_string((string) ($body['mensaje_whatsapp'] ?? ''), 4000);
+$privacidadAceptada = (bool) ($body['privacidad_aceptada'] ?? false);
 $items = is_array($body['items'] ?? null) ? $body['items'] : [];
 
 if ($nombreCliente === '') {
     ds_json_error('Falta el nombre del cliente', 400);
+}
+// La casilla de pedido.html ya bloquea el envío en el navegador (assets/js/cart.js), pero
+// eso no evita un POST directo sin marcarla. El control real es este: sin el aviso
+// aceptado, el pedido transfiere nombre/teléfono/domicilio a WhatsApp sin que quede
+// registro de que el cliente lo consintió.
+if (!$privacidadAceptada) {
+    ds_json_error('Debes aceptar el aviso de privacidad para enviar tu pedido', 400);
 }
 // El cliente ya exige estos campos antes de enviar (cart.js:validateForm), pero el
 // servidor no los pedía — un POST directo podía crear pedidos sin teléfono ni dirección,
@@ -244,8 +252,8 @@ try {
     }
 
     $insertOrder = $pdo->prepare(
-        'INSERT INTO orders (user_id, nombre_cliente, ciudad, telefono, direccion_envio, total, mensaje_whatsapp)
-         VALUES (?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO orders (user_id, nombre_cliente, ciudad, telefono, direccion_envio, total, mensaje_whatsapp, privacidad_aceptada_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, NOW())'
     );
     $insertOrder->execute([
         $userId,
