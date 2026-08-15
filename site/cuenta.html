@@ -137,6 +137,22 @@ button:active,a[href]:active{transform:scale(.97);}
 <button type="submit" class="btn-primary px-4 py-2.5 rounded font-bold uppercase tracking-widest text-xs">Cambiar contraseña</button>
 </form>
 </section>
+<section class="card-custom rounded-xl p-8 mt-6 border border-error/30">
+<div class="mb-6">
+<h2 class="font-display font-extrabold text-2xl uppercase tracking-wide text-error mb-2">Eliminar mi cuenta</h2>
+<p class="font-body text-sm text-gray-500">Se borran tu perfil, direcciones guardadas y favoritos. Tus pedidos anteriores se conservan, pero sin tu nombre, teléfono ni domicilio — los necesitamos para la contabilidad del negocio. Esta acción no se puede deshacer. Consulta el <a class="text-brand hover:underline" href="privacidad.html" target="_blank" rel="noopener">aviso de privacidad</a> para más detalle.</p>
+</div>
+<form id="delete-account-form" class="space-y-4 max-w-sm">
+<div><label class="block font-bold uppercase tracking-widest text-xs text-gray-500 mb-1">Confirma tu contraseña</label>
+<input id="da-password" name="password" type="password" autocomplete="current-password" required class="w-full border border-gray-300 rounded px-4 py-2 text-ink focus:outline-none focus:border-error"/></div>
+<label class="flex items-start gap-3 text-sm text-gray-600">
+<input id="da-confirm" type="checkbox" required class="mt-1 border-gray-300 rounded cursor-pointer"/>
+Entiendo que esta acción no se puede deshacer.
+</label>
+<p data-form-error class="text-error text-sm hidden"></p>
+<button type="submit" class="bg-error text-white px-4 py-2.5 rounded font-bold uppercase tracking-widest text-xs hover:opacity-90 transition-opacity">Eliminar mi cuenta</button>
+</form>
+</section>
 </div>
 <!-- Panel: Mis pedidos -->
 <div data-panel="pedidos" class="hidden">

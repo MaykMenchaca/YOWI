@@ -67,6 +67,12 @@ if (ds_email_enabled()) {
         $pdo->prepare(
             'INSERT INTO email_verifications (user_id, token_hash, expires_at) VALUES (?, ?, (NOW() + INTERVAL 24 HOUR))'
         )->execute([$userId, $tokenHash]);
+        // Limpieza oportunista de tokens vencidos (~5% de las veces, mismo patrón que
+        // ds_login_record() en lib/RateLimit.php): estos tokens se acumulaban para
+        // siempre, incluso ya usados o caducados. No toca la tabla orders.
+        if (random_int(1, 20) === 1) {
+            $pdo->exec('DELETE FROM email_verifications WHERE expires_at < NOW()');
+        }
         $base = ds_app_url() ?: '';
         $link = $base . '/api/auth/verify-email.php?token=' . $plain;
         $texto = "¡Bienvenido a Distribuidor de Suplementos!\n\n"

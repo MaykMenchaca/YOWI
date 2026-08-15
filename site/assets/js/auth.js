@@ -237,6 +237,25 @@
           .catch(function (er) { showFormError(pwForm, er.message); setBusy(pwForm, false); });
       });
     }
+
+    // ── Eliminar cuenta ──
+    var delForm = document.getElementById("delete-account-form");
+    if (delForm) {
+      delForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var password = delForm.querySelector("#da-password").value;
+        var confirmado = delForm.querySelector("#da-confirm").checked;
+        if (!confirmado) { showFormError(delForm, "Marca la casilla para confirmar."); return; }
+        if (!window.confirm("¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")) return;
+        setBusy(delForm, true);
+        global.DSApi.apiFetch("api/auth/delete-account.php", {
+          method: "POST",
+          body: { password: password },
+        })
+          .then(function () { window.location.href = "index.html"; })
+          .catch(function (er) { showFormError(delForm, er.message); setBusy(delForm, false); });
+      });
+    }
   }
 
   function money(n) {

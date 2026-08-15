@@ -52,6 +52,12 @@ if ($user && ds_email_enabled()) {
     );
     $ins->execute([(int) $user['id'], $hash]);
 
+    // Limpieza oportunista de tokens vencidos (~5% de las veces, mismo patrón que
+    // ds_login_record() en lib/RateLimit.php).
+    if (random_int(1, 20) === 1) {
+        $pdo->exec('DELETE FROM password_resets WHERE expires_at < NOW()');
+    }
+
     $base = ds_app_url() ?: '';
     $link = $base . '/restablecer.html?token=' . $plain;
     $texto = "Recibimos una solicitud para restablecer tu contraseña.\n\n"
