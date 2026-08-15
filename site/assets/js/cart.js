@@ -134,13 +134,19 @@
         '<div class="flex-grow w-full text-center sm:text-left">' +
           '<h3 class="font-headline-sm text-headline-sm text-[#042C53]">' + nombreLinea + '</h3>' +
         '</div>' +
-        '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + money(item.precio) + '</div>' +
+        '<div class="text-center sm:text-right">' +
+          '<div class="text-xs text-gray-400">Precio unitario</div>' +
+          '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + money(item.precio) + '</div>' +
+        '</div>' +
         '<div class="flex items-center gap-2 border custom-border rounded bg-surface">' +
           '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="-1" data-id="' + item.producto_id + '"' + saborAttr + '><span class="material-symbols-outlined text-sm">remove</span></button>' +
           '<span class="w-8 text-center font-body-md font-semibold">' + item.cantidad + '</span>' +
           '<button type="button" class="p-2 text-on-surface-variant hover:text-primary transition-colors cart-qty-btn" data-delta="1" data-id="' + item.producto_id + '"' + saborAttr + '><span class="material-symbols-outlined text-sm">add</span></button>' +
         '</div>' +
-        '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + subtotal + '</div>' +
+        '<div class="text-center sm:text-right">' +
+          '<div class="text-xs text-gray-400">Subtotal</div>' +
+          '<div class="font-price-display text-price-display text-primary whitespace-nowrap">' + subtotal + '</div>' +
+        '</div>' +
         '<button type="button" aria-label="Eliminar producto" class="text-error hover:text-error-container transition-colors p-2 cart-remove-btn" data-id="' + item.producto_id + '"' + saborAttr + '>' +
           '<span class="material-symbols-outlined">delete</span>' +
         '</button>' +
