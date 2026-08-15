@@ -1,13 +1,14 @@
-/* Admin — editor del contenido de la página "Nosotros" (tabla settings) */
+/* Admin — editor del contenido editable de la tienda (tabla settings): Nosotros,
+   Contacto, Redes, Datos del negocio y Textos legales.
+
+   Los campos a leer/guardar NO están en una lista aparte aquí: son simplemente todos
+   los [name] del formulario. Antes esta lista vivía hardcodeada en este archivo —una
+   quinta copia de las claves de settings, además de las de save.php/get.php/import.php—
+   así que agregar un campo significaba tocar dos archivos. Con esto basta con agregar
+   el campo al HTML (con el mismo nombre que su clave en site/api/lib/Settings.php). */
 (function () {
   "use strict";
   var form = null;
-
-  var FIELDS = [
-    "nosotros_mision",
-    "val1_titulo", "val1_texto", "val2_titulo", "val2_texto", "val3_titulo", "val3_texto",
-    "contacto_direccion", "contacto_telefono", "contacto_email", "contacto_horario", "contacto_whatsapp",
-  ];
 
   function showAlert(msg, type) {
     var el = document.getElementById("alert-banner");
@@ -24,9 +25,8 @@
     DSAdminApi.apiFetch("../api/admin/settings/get.php")
       .then(function (data) {
         data = data || {};
-        FIELDS.forEach(function (k) {
-          var el = form.querySelector('[name="' + k + '"]');
-          if (el && data[k] != null) el.value = data[k];
+        form.querySelectorAll("[name]").forEach(function (el) {
+          if (data[el.name] != null) el.value = data[el.name];
         });
       })
       .catch(function (err) { showAlert("Error al cargar: " + err.message, "error"); });
@@ -35,9 +35,8 @@
   function save(e) {
     if (e) e.preventDefault();
     var settings = {};
-    FIELDS.forEach(function (k) {
-      var el = form.querySelector('[name="' + k + '"]');
-      if (el) settings[k] = el.value;
+    form.querySelectorAll("[name]").forEach(function (el) {
+      settings[el.name] = el.value;
     });
     DSAdminApi.apiFetch("../api/admin/settings/save.php", { method: "POST", body: { settings: settings } })
       .then(function () { showAlert("Cambios guardados. Ya se ven en la página pública.", "success"); })

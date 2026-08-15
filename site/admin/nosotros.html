@@ -73,21 +73,21 @@
     <div id="alert-banner" class="hidden mb-4"></div>
 
     <form id="nosotros-form" class="max-w-3xl space-y-6">
-      <div class="bg-slate-800 border border-slate-700 p-5 space-y-3">
-        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Misión</h2>
-        <textarea name="nosotros_mision" rows="4" class="w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea>
-      </div>
-
       <div class="bg-slate-800 border border-slate-700 p-5 space-y-4">
-        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Bloques de valores (3)</h2>
-        <div class="grid sm:grid-cols-2 gap-3">
-          <input name="val1_titulo" placeholder="Título 1" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/>
-          <textarea name="val1_texto" rows="2" placeholder="Texto 1" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea>
-          <input name="val2_titulo" placeholder="Título 2" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/>
-          <textarea name="val2_texto" rows="2" placeholder="Texto 2" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea>
-          <input name="val3_titulo" placeholder="Título 3" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/>
-          <textarea name="val3_texto" rows="2" placeholder="Texto 3" class="bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea>
-        </div>
+        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Nosotros</h2>
+        <p class="text-slate-500 text-xs -mt-2">Este texto se ve en la página pública "Nosotros", reestructurada en 5 secciones.</p>
+        <label class="block text-slate-300 text-sm">Misión
+          <textarea name="nosotros_mision" rows="3" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
+        <label class="block text-slate-300 text-sm">Visión
+          <textarea name="nosotros_vision" rows="3" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
+        <label class="block text-slate-300 text-sm">¿Quiénes somos?
+          <textarea name="nosotros_quienes" rows="6" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
+        <label class="block text-slate-300 text-sm">¿Qué hacemos? <span class="text-slate-500">(el párrafo de introducción)</span>
+          <textarea name="nosotros_que_hacemos" rows="3" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
+        <label class="block text-slate-300 text-sm">Beneficios <span class="text-slate-500">(una línea = una tarjeta; agrega o quita líneas y la página se ajusta sola)</span>
+          <textarea name="nosotros_beneficios" rows="6" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
+        <label class="block text-slate-300 text-sm">¿Qué representa DS?
+          <textarea name="nosotros_representa" rows="6" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
       </div>
 
       <div class="bg-slate-800 border border-slate-700 p-5 space-y-3">
@@ -95,15 +95,49 @@
         <label class="block text-slate-300 text-sm">Dirección <span class="text-slate-500">(usa Enter para 2 líneas)</span>
           <textarea name="contacto_direccion" rows="2" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
         <div class="grid sm:grid-cols-2 gap-3">
-          <label class="block text-slate-300 text-sm">Teléfono
+          <label class="block text-slate-300 text-sm">Teléfono <span class="text-slate-500">(el que se muestra en la tienda)</span>
             <input name="contacto_telefono" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
           <label class="block text-slate-300 text-sm">Email
             <input name="contacto_email" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
         </div>
         <label class="block text-slate-300 text-sm">Horario de atención <span class="text-slate-500">(usa Enter para 2 líneas)</span>
           <textarea name="contacto_horario" rows="2" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"></textarea></label>
-        <label class="block text-slate-300 text-sm">WhatsApp <span class="text-slate-500">(solo números, con lada: 5218344241599)</span>
+        <label class="block text-slate-300 text-sm">WhatsApp <span class="text-slate-500">(este es el número al que te llegan los pedidos — solo dígitos, con lada: 5218331645172)</span>
           <input name="contacto_whatsapp" inputmode="numeric" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+        <label class="block text-slate-300 text-sm">Enlace de Google Maps <span class="text-slate-500">(el botón "Cómo llegar" abre esto en una pestaña nueva)</span>
+          <input name="contacto_mapa_url" type="url" placeholder="https://maps.app.goo.gl/..." class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 p-5 space-y-3">
+        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Redes sociales</h2>
+        <p class="text-slate-500 text-xs -mt-2">Deja vacío el que no uses: el ícono no aparece en la tienda si no tiene enlace.</p>
+        <label class="block text-slate-300 text-sm">Facebook
+          <input name="social_facebook" type="url" placeholder="https://facebook.com/..." class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+        <label class="block text-slate-300 text-sm">Instagram
+          <input name="social_instagram" type="url" placeholder="https://instagram.com/..." class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+        <label class="block text-slate-300 text-sm">TikTok
+          <input name="social_tiktok" type="url" placeholder="https://tiktok.com/@..." class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 p-5 space-y-3">
+        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Datos del negocio</h2>
+        <label class="block text-slate-300 text-sm">Razón social o nombre con el que operas
+          <input name="negocio_razon_social" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+        <label class="block text-slate-300 text-sm">RFC <span class="text-slate-500">(déjalo vacío si no facturas)</span>
+          <input name="negocio_rfc" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand"/></label>
+      </div>
+
+      <div class="bg-slate-800 border border-slate-700 p-5 space-y-3">
+        <h2 class="font-display font-extrabold uppercase text-lime text-sm">Textos legales</h2>
+        <p class="text-slate-500 text-xs -mt-2">Se muestran en las páginas públicas de <b>Términos y condiciones</b> y <b>Aviso de privacidad</b>. Editar aquí se refleja de inmediato ahí — no hace falta tocar código.</p>
+        <label class="block text-slate-300 text-sm">Políticas de compra
+          <textarea name="legal_compra" rows="10" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand font-mono text-xs"></textarea></label>
+        <label class="block text-slate-300 text-sm">Políticas de envío
+          <textarea name="legal_envio" rows="10" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand font-mono text-xs"></textarea></label>
+        <label class="block text-slate-300 text-sm">Términos y condiciones generales
+          <textarea name="legal_terminos" rows="10" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand font-mono text-xs"></textarea></label>
+        <label class="block text-slate-300 text-sm">Aviso de privacidad
+          <textarea name="legal_privacidad" rows="10" class="mt-1 w-full bg-slate-700 border border-slate-600 px-4 py-2 text-slate-100 focus:outline-none focus:border-brand font-mono text-xs"></textarea></label>
       </div>
 
       <div class="flex justify-end">
