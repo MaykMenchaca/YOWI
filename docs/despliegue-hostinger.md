@@ -37,7 +37,7 @@ En hPanel, abre **phpMyAdmin** sobre la base que acabas de crear.
 1. Pestaña **Importar** → selecciona `sql/schema.sql` de este repositorio → Continuar.
    Este archivo ya incluye las 12 tablas completas, con sus índices y el contenido inicial de
    la sección "Nosotros" — no necesitas rellenar nada a mano después.
-2. Después, importa **cada archivo de `sql/migrations/` en orden alfabético** (son 17):
+2. Después, importa **cada archivo de `sql/migrations/` en orden alfabético** (son 20):
    ```
    2026-07-14-add-direccion-envio.sql
    2026-07-26-add-banners.sql
@@ -56,6 +56,9 @@ En hPanel, abre **phpMyAdmin** sobre la base que acabas de crear.
    2026-08-09-add-order-item-sabor-id.sql
    2026-08-09-add-orders-stock-repuesto.sql
    2026-08-10-add-admin-roles.sql
+   2026-08-12-add-settings-negocio-legal.sql
+   2026-08-13-legal-privacidad.sql
+   2026-08-14-add-consent-timestamps.sql
    ```
    Todas están escritas para no fallar si algo ya existe (verifican antes de crear), así que
    aunque `schema.sql` ya traiga la mayoría de estos cambios, correrlas encima no hace daño —
@@ -155,6 +158,12 @@ VALUES ('Mario Menchaca', 'menchacaramirez.ma1821@gmail.com', '<EL_HASH_QUE_COPI
 3. Ve a **Panel → Seguridad** y cambia tu contraseña por una definitiva, aunque acabes de
    ponerla — así queda una que nunca estuvo en ningún chat ni documento, solo en tu cabeza (o
    tu gestor de contraseñas).
+4. Ve a **Panel → Nosotros** y revisa las 5 secciones (Nosotros, Contacto, Redes, Datos del
+   negocio, Textos legales). `schema.sql` ya trae cargado el contenido real que diste durante
+   el desarrollo — teléfono, dirección, misión/visión, y las Políticas de compra/envío y
+   Términos transcritos de tu documento de mayo 2025 — pero conviene confirmarlo ahí mismo antes
+   de anunciar el sitio, y llenar lo que faltó (redes sociales, razón social/RFC si facturas).
+   Todo lo que cambies ahí se refleja de inmediato en la tienda pública, sin tocar código.
 
 ---
 
@@ -235,12 +244,26 @@ tienda, pero conviene revisarlos en una sesión futura:
 - **El secreto del 2FA se guarda en texto plano** en la base de datos (no el código de 6
   dígitos, sino la "llave" que lo genera). Un volcado de base de datos filtrado entregaría el
   segundo factor completo de cada admin.
-- **Aviso de privacidad**: el sitio guarda nombre, teléfono y domicilio completo de tus
-  clientes (incluidos los que compran sin cuenta) sin fecha de borrado ni forma de que pidan
-  que se elimine su información — importante si vas a operar como negocio formal en México
-  (LFPDPPP).
 - El registro de acciones de administradores (`admin_audit_log`) se llena solo, pero hoy no hay
   ninguna pantalla en el panel para leerlo — solo se puede consultar directo en la base de datos.
 - El código de un admin de 2FA es válido unos 90 segundos más de lo estrictamente necesario, y
   no se sube el "costo" del cifrado de contraseñas más allá del valor por defecto de PHP —
   ambos son ajustes finos, no urgencias.
+- No hay retención/purga automática de pedidos viejos (queda como decisión contable tuya, no
+  técnica) ni backend de mensajes de contacto (el formulario de Nosotros abre WhatsApp
+  directamente, a propósito — ver `docs/project-context.md`).
+
+**Ya resuelto** (documentado aquí porque estaba en esta misma lista antes): el aviso de
+privacidad ahora existe (`privacidad.html`), declara con precisión qué datos se recaban y con
+quién se comparten (WhatsApp/Meta y la paquetería), el registro y el checkout exigen y guardan
+el consentimiento con fecha real, y tanto el cliente como el dueño pueden eliminar una cuenta
+(anonimizando sus pedidos, no borrándolos, porque hacen falta para tu contabilidad). Aun así es
+un texto base — conviene que lo revise un profesional legal antes de tratarlo como definitivo.
+
+⚠️ **Un punto para ti, no del sitio**: el documento de políticas que nos diste (mayo 2025)
+incluye la frase "SU INFORMACIÓN ESTÁ SEGURA. NO COMPARTIMOS DATOS CON TERCEROS". Esa frase
+**no se transcribió al sitio** (`terminos.html` no la incluye) precisamente porque no es exacta
+tal como opera la tienda hoy: el pedido se transfiere a WhatsApp/Meta y el domicilio se comparte
+con la paquetería, y el nuevo `privacidad.html` lo declara con precisión. Si sigues usando esa
+frase en el PDF original, en redes o en tu perfil de WhatsApp Business, conviene que la ajustes
+para que no contradiga lo que el aviso de privacidad del sitio ya dice.

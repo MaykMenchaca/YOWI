@@ -8,7 +8,7 @@ y un **panel de administración** para gestionar productos, categorías y pedido
 ## Stack Tecnológico
 - **Frontend:** HTML estático + **Tailwind CSS compilado y versionado** (storefront: `app.css` vía `tailwind.config.js`; panel admin: `admin.css` vía `tailwind.admin.config.js` — ninguno de los dos usa el CDN de Tailwind hoy) + **JavaScript vanilla** (IIFE, sin framework, sin build en el servidor). Fuentes Barlow Condensed (display) + Barlow (body); iconos Material Symbols.
 - **Backend:** **PHP plano + PDO** (sin framework, sin Composer). API JSON (`{ok,data}` / `{ok,error}`).
-- **Base de datos:** **MySQL / MariaDB**. Tablas: `users, admins, categories, products, orders, order_items, login_attempts`.
+- **Base de datos:** **MySQL / MariaDB**. Tablas: `users, admins, categories, products, orders, order_items, login_attempts, settings`.
 - **Servicios externos:** WhatsApp (wa.me) para el checkout. No hay pasarela de pago.
 
 ## Decisiones Arquitectónicas
@@ -159,6 +159,76 @@ y un **panel de administración** para gestionar productos, categorías y pedido
   Quedó documentado como pendiente, a propósito, para una sesión futura (no bloquea el
   lanzamiento): el secreto TOTP de los admins se guarda en claro en la BD, no hay aviso de
   privacidad ni borrado de cuenta (LFPDPPP), y `admin_audit_log` sigue sin pantalla para leerlo.
+- **2026-08-15:** **Información del negocio editable desde el panel, contenido real y páginas
+  legales — cierra el pendiente de LFPDPPP de la sesión anterior.** Plan de 8 fases en 3 bloques
+  (info editable / legal / cierre). El dueño entregó datos reales durante la planeación: teléfono
+  nuevo (`833 164 5172`, reemplaza al anterior en todo el sitio), pin de Google Maps, el texto
+  completo de Misión/Visión/¿Quiénes somos?/¿Qué hacemos?/¿Qué representa DS?, y sus Políticas de
+  Compra/Envío y Términos Generales ya redactadas (PDF, mayo 2025) — transcritas tal cual, sin
+  reescribirlas. No factura, así que el RFC queda opcional/vacío.
+  1. **Una sola fuente de verdad para las claves de `settings`** (`site/api/lib/Settings.php`):
+     antes estaban duplicadas en 4 listas + una quinta copia en el JS del admin. Declara tipo y
+     longitud por clave (el tope fijo de 5000 no servía para los textos legales) y valida antes
+     de escribir nada (`save.php`), nunca deja un formulario a medias. Se agregan 15 claves
+     (contacto_mapa_url, redes, identidad legal, 4 textos legales) y se retiran `val1_*/val2_*/
+     val3_*` (contenido de ejemplo que no correspondía a lo real del negocio).
+  2. **`site/assets/js/settings-inject.js`** (nuevo, global en las 13 páginas del storefront):
+     generaliza la convención `data-set` que antes solo usaba `nosotros.html`, y agrega
+     `data-set-href` (con soporte `tel:`/`mailto:`), `data-set-lista` (listas que se generan
+     solas desde una línea de texto = un elemento), `data-set-longtext` (párrafos separados por
+     línea en blanco, todo escapado — para los textos legales) y `data-wa-link`. Expone
+     `window.DSSettings` y `window.DSWaNumber()`.
+  3. **El WhatsApp dejó de estar hardcodeado.** Estaba en 8 HTML + 4 JS, con dos fuentes de
+     verdad compitiendo: el `href` del botón y `enhance.js`, que interceptaba por texto
+     ("cualquier cosa que diga whatsapp") — eso rompía el botón "Comprar por WhatsApp" de la
+     ficha de producto, que perdía el mensaje con nombre/sabor/precio real armado por
+     `catalog-engine.js`. `enhance.js` ya no intercepta por texto: cada botón se marca con
+     `data-wa-link` explícitamente. Se arreglaron también 3 botones flotantes de WhatsApp que
+     tenían `href="#"` y no llevaban a ningún lado.
+  4. **`site/nosotros.html` reestructurada** en 5 secciones con el contenido real (antes era
+     "Misión" + 3 tarjetas de "valores" genéricos que no correspondían a nada del negocio). El
+     mapa estático se reemplazó por un botón "Cómo llegar" a Google Maps — se descartó el mapa
+     incrustado a propósito: exigiría relajar la CSP (`site/.htaccess` no tiene `frame-src`) y
+     sumaría rastreo de terceros que habría que declarar en el aviso de privacidad.
+     `site/admin/nosotros.html` pasa a 5 secciones claras (Nosotros/Contacto/Redes/Datos del
+     negocio/Textos legales) y su JS lee los campos del propio formulario en vez de una lista
+     hardcodeada — el mismo patrón de "una sola fuente de verdad" del punto 1.
+  5. **Páginas legales nuevas**: `site/terminos.html` (Políticas de compra/envío + Términos,
+     transcritas del PDF real) y `site/privacidad.html` (Aviso de Privacidad — el único texto
+     legal que sí redactó el equipo, porque el PDF del dueño no lo cubre). Declara con precisión
+     los 7 campos que pide el checkout, la transferencia a WhatsApp/Meta y a la paquetería, y
+     los derechos ARCO — a diferencia de una frase del PDF original ("no compartimos datos con
+     terceros") que no se transcribió al sitio por no ser exacta. Es un texto base: la propia
+     página recomienda revisión legal.
+  6. **Consentimiento que sí queda registrado**, no solo un checkbox que bloqueaba el envío en
+     el navegador. Migración `users.terms_accepted_at` + `orders.privacidad_aceptada_at`:
+     `register.php` y `orders/create.php` ahora EXIGEN el campo del lado del servidor (antes un
+     POST directo con `curl` creaba la cuenta/pedido sin marcar nada) y guardan la fecha real.
+     Checkbox obligatorio nuevo en `pedido.html` junto al botón de enviar, con aviso explícito de
+     la transferencia a WhatsApp.
+  7. **Borrado de cuenta y datos** — no existía ninguna forma de que un cliente eliminara su
+     cuenta, ni ningún endpoint del panel que tocara la tabla de clientes.
+     `site/api/lib/AccountDeletion.php` centraliza la anonimización (la usan tanto el cliente
+     como el dueño): un `DELETE FROM users` ingenuo no bastaba porque `orders.user_id` es
+     `ON DELETE SET NULL`, no CASCADE, y `orders.mensaje_whatsapp` es una copia textual de
+     nombre/teléfono/domicilio. Los pedidos se conservan (hacen falta para la contabilidad) pero
+     anonimizados; `login_attempts` (sin FK a `users`) se limpia por correo. Nuevo
+     `site/api/auth/delete-account.php` (cliente, exige contraseña) + UI en `cuenta.html`, y
+     `site/api/admin/clientes/{list,delete}.php` + `site/admin/clientes.html` (solo dueño — vista
+     cargada de datos personales, mismo criterio que los respaldos; pantalla que antes no
+     existía en absoluto).
+  8. Enlaces rotos menores: breadcrumbs "Inicio" con `href="#"` en `marcas.html`/`cuenta.html`,
+     "Ver todos" en el panel de pedidos (se quitó: el panel ya muestra todos los pedidos sin
+     límite), footer "Contacto" apuntaba a la misma URL que "Nosotros" en vez de al ancla
+     `#contacto`, y la etiqueta de Material Symbols duplicada en 8 páginas (no solo las 2
+     señaladas originalmente).
+  Verificado extensamente con curl + Playwright en cada fase: instalación limpia desde
+  `schema.sql` (21 claves de `settings`, columnas nuevas), propagación de un cambio de
+  teléfono/dirección/WhatsApp/mapa/redes a footers/FAB/Nosotros/ficha de producto/mensaje de
+  checkout, HTML/`<script>` inyectado en un texto legal se renderiza como texto inerte (nunca se
+  ejecuta), `register.php`/`orders/create.php` rechazan sin el consentimiento y lo aceptan con
+  fecha real guardada, y el borrado (cliente y dueño) deja el pedido anónimo con su total intacto
+  confirmado por consulta directa a la base. `scripts/scan-seguridad.sh` en verde en cada fase.
 
 ## Requerimientos No Funcionales
 - Seguridad: prepared statements (PDO), CSRF con tokens separados cliente/admin, rate limiting de
@@ -179,7 +249,7 @@ frecuencia).
 
 1. Crear `site/api/config/env.php` real (gitignored) a partir de `env.example.php`, con las
    credenciales reales de la BD de Hostinger y `MAIL_TRANSPORT => 'mail'` (no `'none'`).
-2. Importar `sql/schema.sql` y **las 17 migraciones de `sql/migrations/` en orden alfabético**
+2. Importar `sql/schema.sql` y **las 20 migraciones de `sql/migrations/` en orden alfabético**
    (todas idempotentes) — `schema.sql` por sí solo no basta (ver la guía para el detalle de qué
    le faltaba y ya se corrigió: índice de SKU y contenido inicial de `settings`).
 3. Crear el admin dueño — la guía cubre los dos caminos (con y sin SSH) sin que la contraseña
@@ -189,9 +259,9 @@ frecuencia).
    productos de ejemplo) o, si le pasas `productos.json`, ese archivo solo trae
    nombre/marca/categoría/cantidad (sin precio, stock ni imagen), así que todo entraría a $0.00
    y marcado agotado.
-5. El número de WhatsApp real (`5218344241599`) ya está puesto en el código y en `settings`;
-   solo revisa que siga siendo el correcto si cambia en el futuro (está hardcodeado en 8
-   archivos además de la tabla `settings` — no hay un solo lugar para actualizarlo).
+5. El número de WhatsApp real (`5218331645172`) ya está puesto en `settings` y se lee desde ahí
+   en toda la tienda (`site/assets/js/settings-inject.js`) — cambiarlo desde **Panel → Nosotros →
+   Contacto** basta, ya no hay que tocar código en 8 archivos como antes.
 6. Subir **solo el contenido de `site/`** a `public_html/` (no el repositorio completo); forzar
    HTTPS; verificar los `.htaccess`.
 7. Confirmar que **todos** los admins tengan el 2FA activado antes de exponer el panel — desde
