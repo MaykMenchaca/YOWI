@@ -12,6 +12,7 @@ require __DIR__ . '/../../config/database.php';
 require __DIR__ . '/../../lib/Response.php';
 require __DIR__ . '/../../lib/AdminSession.php';
 require __DIR__ . '/../../lib/Validate.php';
+require __DIR__ . '/../../lib/Settings.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') ds_json_error('Método no permitido', 405);
 
@@ -27,16 +28,10 @@ const DS_BACKUP_ORDEN_TODO = ['categorias', 'marcas', 'productos', 'promociones'
 // Orden de dependencias para tipo=todo: categorías antes que productos (FK category_id);
 // pedidos al final (referencian productos, aunque la FK es ON DELETE SET NULL).
 
-// Mismo whitelist que site/api/admin/settings/save.php: evita que el restore inyecte
-// claves arbitrarias en la tabla settings.
-const DS_BACKUP_SETTINGS_PERMITIDAS = [
-    'nosotros_mision',
-    'val1_titulo', 'val1_texto',
-    'val2_titulo', 'val2_texto',
-    'val3_titulo', 'val3_texto',
-    'contacto_direccion', 'contacto_telefono', 'contacto_email',
-    'contacto_horario', 'contacto_whatsapp',
-];
+// Misma lista blanca que el resto del sistema (lib/Settings.php): evita que el restore inyecte
+// claves arbitrarias en la tabla settings. Un respaldo viejo con claves ya retiradas se restaura
+// sin error: las claves desconocidas simplemente se omiten.
+define('DS_BACKUP_SETTINGS_PERMITIDAS', ds_settings_claves());
 
 $tipo = isset($body['tipo']) ? trim((string) $body['tipo']) : '';
 if (!in_array($tipo, DS_BACKUP_TIPOS, true)) {

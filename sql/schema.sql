@@ -155,21 +155,208 @@ CREATE TABLE IF NOT EXISTS settings (
     updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Valores por defecto (los textos actuales de nosotros.html). INSERT IGNORE = no pisa
--- lo que el admin ya haya editado si esta sentencia se re-ejecuta.
+-- Valores por defecto: el contenido REAL del negocio (misión, visión, quiénes somos, políticas
+-- de compra/envío y términos que el negocio ya usaba en su documento de mayo 2025). El aviso de
+-- privacidad queda vacío a propósito: lo redacta la fase legal y el dueño lo revisa.
+-- INSERT IGNORE = no pisa lo que el admin ya haya editado si esta sentencia se re-ejecuta.
+-- Las claves val1_*/val2_*/val3_* se retiraron: el contenido real no tiene esa forma.
 INSERT IGNORE INTO settings (clave, valor) VALUES
-('nosotros_mision', 'En DS vendemos suplementos deportivos originales de marcas importadas y nacionales. Cada producto viene de distribuidores autorizados, así que entrenas con la seguridad de que tomas exactamente lo que dice la etiqueta. Y si no sabes qué elegir, te asesoramos por WhatsApp antes de que compres.'),
-('val1_titulo', 'Autenticidad garantizada'),
-('val1_texto', 'Todos nuestros suplementos provienen directamente de los fabricantes oficiales, asegurando fórmulas 100% originales sin adulteraciones.'),
-('val2_titulo', 'Mejores precios'),
-('val2_texto', 'Optimizamos nuestra cadena de suministro para ofrecerte tarifas competitivas en marcas premium sin comprometer el servicio.'),
-('val3_titulo', 'Asesoría personalizada'),
-('val3_texto', 'Nuestro equipo de expertos en nutrición deportiva está disponible para guiarte hacia el suplemento ideal para tus objetivos.'),
-('contacto_direccion', 'Av. Hidalgo 4320\nZona Centro, Tampico, Tamaulipas'),
-('contacto_telefono', '+52 833 424 1599'),
+('nosotros_mision', 'Acercar las mejores marcas de suplementación deportiva a todo México mediante un modelo de distribución eficiente, transparente y accesible, ofreciendo productos 100% originales, precios de distribuidor y un servicio excepcional que impulse el crecimiento de nuestros clientes y socios comerciales.'),
+('nosotros_vision', 'Ser el referente nacional en distribución de suplementos deportivos, distinguiéndonos por nuestra innovación, confianza, liderazgo comercial y compromiso con ofrecer siempre las mejores marcas, la mayor disponibilidad y una experiencia de compra de clase mundial.'),
+('nosotros_quienes', 'En DS Distribuidor de Suplementos conectamos a miles de personas, emprendedores, gimnasios, tiendas y profesionales de la salud con las marcas líderes de suplementación deportiva en México.
+
+Somos una empresa especializada en la distribución de suplementos 100% originales, ofreciendo acceso a un amplio catálogo de productos nacionales e internacionales con precios de distribuidor, compra desde una pieza y envíos a todo México.
+
+Más que vender suplementos, nuestro objetivo es facilitar el acceso a productos auténticos mediante un servicio profesional, atención personalizada y una logística eficiente que permita a nuestros clientes comprar con confianza.'),
+('nosotros_que_hacemos', 'Trabajamos directamente con las principales marcas y fabricantes para ofrecer un catálogo amplio y actualizado de proteínas, creatinas, preentrenamientos, vitaminas, aminoácidos y cientos de suplementos deportivos originales. Atendemos tanto a consumidores finales como a distribuidores, gimnasios, coaches, tiendas de suplementos y emprendedores que buscan crecer con un proveedor confiable.'),
+('nosotros_beneficios', 'Productos 100% originales
+Precio de distribuidor
+Compra desde 1 pieza
+Sin compra mínima
+Envíos rápidos a todo México
+Atención personalizada antes y después de la compra'),
+('nosotros_representa', 'DS representa confianza, transparencia y compromiso.
+
+Creemos que acceder a suplementos originales no debe ser complicado ni costoso. Por eso hemos construido un modelo de distribución enfocado en eliminar intermediarios, optimizar la logística y ofrecer un servicio que genere relaciones de largo plazo con nuestros clientes.
+
+Cada pedido que sale de nuestro almacén refleja nuestro compromiso con la calidad, la autenticidad y la satisfacción de quienes confían en nosotros.'),
+('contacto_direccion', 'Av. Hidalgo 4320
+Zona Centro, Tampico, Tamaulipas'),
+('contacto_telefono', '833 164 5172'),
 ('contacto_email', 'contacto@dssports.com'),
-('contacto_horario', 'Lunes a Viernes: 09:00 - 19:00\nSábados: 10:00 - 14:00'),
-('contacto_whatsapp', '5218344241599');
+('contacto_horario', 'Lunes a Viernes: 09:00 - 19:00
+Sábados: 10:00 - 14:00'),
+('contacto_whatsapp', '5218331645172'),
+('contacto_mapa_url', 'https://maps.app.goo.gl/mQ4ZW9D7ZdNMQb2K7'),
+('social_facebook', ''),
+('social_instagram', ''),
+('social_tiktok', ''),
+('negocio_razon_social', 'DS Distribuidor de Suplementos'),
+('negocio_rfc', ''),
+('legal_compra', 'Antes de realizar una compra, favor de leer las siguientes políticas. Al efectuar el pago, el cliente acepta todas las condiciones aquí descritas.
+
+1. COTIZACIONES Y PRECIOS
+Todas las cotizaciones se realizan en tiempo real.
+Los precios pueden cambiar sin previo aviso por disponibilidad y cualquier otro factor.
+Una cotización tiene validez solo al momento en que es enviada.
+Si el pago no se realiza de inmediato, será necesario volver a confirmar el precio.
+Los precios pueden variar de un día a otro.
+Los precios publicados en cualquier medio o red social (anuncios, publicaciones, historias, catálogos, etc.) son dinámicos y pueden cambiar o quedar desactualizados.
+Las promociones publicadas también son dinámicas y están sujetas a disponibilidad. Pueden finalizar sin previo aviso.
+
+2. FORMAS DE PAGO
+Todos los precios aplican únicamente pagando por transferencia bancaria.
+Es indispensable que, antes de realizar el pago, el cliente solicite la cuenta a la cual se hará la transferencia.
+El cliente es responsable de enviar el pago a la cuenta correcta proporcionada por DS Distribuidor de Suplementos.
+Si el cliente se equivoca al realizar la transferencia, DS Distribuidor de Suplementos no se hace responsable.
+La confirmación del pago solo acredita la recepción del importe y el registro del pedido.
+
+3. EXISTENCIAS
+Toda la mercancía está sujeta a disponibilidad.
+Puede agotarse en cualquier momento, incluso después de haber sido cotizada.
+La disponibilidad se confirma al momento de registrar el pedido.
+En caso de falta de existencia, se ofrecerá: esperar reabastecimiento, sustituir por otro producto de valor similar, o reembolso del producto no disponible.
+
+4. CONFIRMACIÓN DEL PEDIDO
+Antes de registrar el pedido, el cliente debe verificar: productos solicitados, cantidades, presentaciones, sabores, tamaños y promociones aplicables.
+Una vez registrado el pedido, cualquier modificación estará sujeta a revisión y disponibilidad.
+
+5. PROMOCIONES
+Todas las promociones están sujetas a disponibilidad.
+Pueden finalizar sin previo aviso.
+No son acumulables, salvo que se indique expresamente.
+Aplican únicamente durante la vigencia anunciada.
+
+6. PRESENTACIONES DEL FABRICANTE
+Las marcas pueden modificar sin previo aviso: diseño del envase, etiqueta, colores, tapa, imagen comercial y presentación.
+Estos cambios no afectan la autenticidad del producto.
+
+7. FOTOGRAFÍAS
+Las imágenes usadas en cotizaciones, catálogos y publicaciones son ilustrativas.
+El producto recibido puede presentar ligeras diferencias en diseño o presentación.
+
+8. ERRORES INVOLUNTARIOS
+En caso de error tipográfico o humano en precios publicados o cotizados, DS Distribuidor de Suplementos se reserva el derecho de corregirlo antes de confirmar la venta.
+Si el precio correcto es mayor, se informará al cliente antes de continuar.
+
+9. RESERVA DEL DERECHO DE VENTA
+DS Distribuidor de Suplementos se reserva el derecho de cancelar o rechazar cualquier pedido por errores de sistema, precio, falta de disponibilidad, datos incompletos o cualquier situación que impida operar correctamente.
+
+10. USO RESPONSABLE DE LOS PRODUCTOS
+Es responsabilidad del cliente informarse sobre el uso adecuado de cada suplemento.
+Recomendamos seguir las indicaciones del fabricante y, en caso de duda, consultar a un profesional de la salud.
+DS Distribuidor de Suplementos no se hace responsable por el uso inadecuado de los productos adquiridos.
+
+11. ACEPTACIÓN
+Al realizar el pago, el cliente declara haber leído, entendido y aceptado todas las políticas de compra de DS Distribuidor de Suplementos.
+
+NOTAS IMPORTANTES
+No apartamos mercancía sin pago.
+No respetamos precios de cotizaciones anteriores.
+Todos los productos son originales y sellados de fábrica.
+Estas políticas pueden ser modificadas sin previo aviso.'),
+('legal_envio', 'Una vez realizado el pago, el cliente acepta las siguientes políticas de envío.
+
+1. CONFIRMACIÓN DEL PEDIDO
+La confirmación del pago acredita la recepción del importe y el registro del pedido.
+La confirmación NO significa que el pedido será preparado, empacado o enviado el mismo día.
+
+2. ORDEN DE PREPARACIÓN
+Los pedidos se preparan conforme al orden cronológico en que fueron confirmados.
+Manejamos alto volumen de pedidos, por lo que existe fila de preparación.
+No es posible adelantar pedidos, salvo autorización expresa de DS.
+
+3. TIEMPO PARA GENERAR LA GUÍA
+El tiempo habitual para generar la guía es de 3 días hábiles.
+Puede aumentar según: volumen de pedidos, temporadas de alta demanda, días festivos, fines de semana, incidencias operativas y cargas extraordinarias de trabajo.
+El tiempo de generación es estimado y no constituye fecha garantizada.
+
+4. TIEMPO DE ENTREGA
+Una vez entregado el paquete a la paquetería, los tiempos dependen exclusivamente de ésta.
+DS no tiene control sobre: retrasos, reprogramaciones, saturación logística, clima, accidentes, bloqueos carreteros ni fallas operativas.
+
+5. PAQUETERÍAS
+Trabajamos con distintas empresas de mensajería.
+Usamos la que ofrece mejor relación costo y servicio.
+Si el cliente desea una paquetería específica, debe indicarlo antes del pago.
+Diferencias en el costo del envío serán cubiertas por el cliente.
+
+6. COSTO DEL ENVÍO
+El costo del envío no es fijo.
+Puede variar por: peso del paquete, dimensiones de la caja, cantidad de productos, destino, código postal, zona de cobertura y tarifas vigentes.
+Cambios en productos o cantidades pueden modificar el costo.
+
+7. ZONAS DE REEXPEDICIÓN
+Algunas zonas tienen cargos adicionales por reexpedición.
+En estos casos, la paquetería lo informa después del envío.
+Si genera cargo adicional, el cliente deberá cubrirlo, ya que DS no controla estas tarifas ni puede absorber dichos costos.
+
+8. SEGURO DE ENVÍO
+Todos los clientes pueden contratar seguro de envío con costo adicional.
+Es ofrecido por la plataforma logística utilizada, NO por DS.
+Recomendamos contratarlo para proteger el pedido durante su transporte.
+
+9. DAÑOS OCASIONADOS POR LA PAQUETERÍA
+Los productos salen en perfecto estado físico.
+Si el paquete sufre daño durante el traslado, será responsabilidad de la paquetería.
+DS no se hace responsable por: cajas golpeadas, cajas abiertas, productos aplastados, envases abollados, tapas quebradas, etiquetas dañadas, maltrato durante transporte, ni cambios de presión, temperatura o manipulación.
+
+10. RECEPCIÓN DEL PAQUETE
+El cliente debe inspeccionar el paquete antes de aceptarlo.
+Si presenta daños visibles, perforaciones, humedad, ruptura o cualquier alteración, debe rechazar la entrega y reportarlo inmediatamente.
+Solicita grabar evidencia en video desde antes de abrir el paquete hasta revisar el contenido.
+La falta de evidencia audiovisual puede limitar reclamaciones.
+
+11. ACEPTACIÓN
+Al realizar el pago, el cliente acepta todas las políticas de envío aquí descritas.
+
+NOTAS IMPORTANTES
+Es responsabilidad del cliente proporcionar correctamente sus datos de envío.
+Los tiempos de entrega son estimados y dependen de factores ajenos a DS.
+Recomendamos contratar seguro para proteger tu pedido.'),
+('legal_terminos', 'Al realizar un pago, el cliente acepta todos los términos y condiciones generales aquí descritos, además de nuestras Políticas de Compra y Políticas de Envío.
+
+1. DATOS DEL CLIENTE
+Es responsabilidad del cliente proporcionar correctamente su nombre, dirección, código postal, teléfono y demás datos necesarios para el envío.
+Cualquier gasto generado por información incorrecta será cubierto por el cliente.
+
+2. PRODUCTOS NO RECLAMADOS
+Si el paquete es devuelto por domicilio incorrecto, ausencia del destinatario o falta de recolección, el costo del nuevo envío será cubierto por el cliente.
+
+3. MODIFICACIONES
+Una vez registrado el pedido, no se garantiza que pueda modificarse.
+Toda modificación estará sujeta a disponibilidad y revisión.
+
+4. CASOS AJENOS A DS
+DS Distribuidor de Suplementos no será responsable por retrasos ocasionados por casos de fuerza mayor o situaciones ajenas a nuestra operación, tales como fenómenos naturales, bloqueos, accidentes, fallas en servicios, manifestaciones o cualquier otra situación externa.
+
+5. DIFERENCIAS ENTRE LOTES
+Un mismo producto puede presentar variaciones en sabor, aroma, color, textura, diseño o presentación entre distintos lotes, sin que esto afecte su autenticidad, calidad o efectividad.
+
+6. PRODUCTOS ABIERTOS
+No se aceptarán reclamaciones ni solicitudes de cambio sobre productos abiertos, manipulados o con sellos violados.
+
+7. PROMOCIONES
+Todas las promociones están sujetas a disponibilidad y pueden finalizar sin previo aviso.
+No son acumulables, salvo que se indique expresamente.
+Las promociones no aplican de forma retroactiva sobre compras realizadas con anterioridad.
+
+8. COMUNICACIÓN OFICIAL
+Únicamente serán válidos los precios, promociones, acuerdos e instrucciones enviados por los canales oficiales de DS Distribuidor de Suplementos.
+
+9. ATENCIÓN
+Los tiempos de respuesta pueden variar según el volumen de mensajes.
+La atención se realiza únicamente en horarios laborales.
+
+10. ACTUALIZACIÓN DE POLÍTICAS
+DS Distribuidor de Suplementos podrá modificar estos términos y condiciones en cualquier momento y sin previo aviso.
+Se recomienda revisarlos periódicamente.
+
+NOTAS IMPORTANTES
+Todos nuestros productos son 100% originales y sellados de fábrica.
+Le recomendamos leer completamente nuestras políticas antes de realizar su compra.
+Los tiempos de entrega son estimados y dependen de factores ajenos a DS y a la empresa de paquetería.'),
+('legal_privacidad', '');
 
 -- ── Usuarios (sin cambios) ────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
