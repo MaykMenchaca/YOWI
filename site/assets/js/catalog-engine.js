@@ -442,6 +442,21 @@
     };
   }
 
+  // Refleja cuántas categorías están marcadas en el texto del <summary> del
+  // desplegable, para que siga siendo legible aunque el usuario lo cierre.
+  function updateCatSummary(root) {
+    var summary = document.getElementById("cat-filter-summary");
+    if (!summary) return;
+    var seleccion = Array.prototype.map.call(
+      root.querySelectorAll('input[name="categoria"]:checked'), function (el) { return el.value; }
+    );
+    summary.textContent = seleccion.length === 0
+      ? "Todas las categorías"
+      : seleccion.length === 1
+        ? seleccion[0]
+        : seleccion.length + " categorías";
+  }
+
   // Construye los filtros dinámicos (categorías, marcas, rango de precio) a partir
   // de los productos reales cargados. Se llama una sola vez.
   function populateFilters(root, productos) {
@@ -508,7 +523,9 @@
     // Delegación de eventos: cubre también los filtros creados dinámicamente.
     var FILTER_NAMES = ["categoria", "marca", "precio_min", "precio_max", "solo_disponibles"];
     filtersRoot.addEventListener("change", function (e) {
-      if (e.target && FILTER_NAMES.indexOf(e.target.name) !== -1) refresh();
+      if (!e.target || FILTER_NAMES.indexOf(e.target.name) === -1) return;
+      if (e.target.name === "categoria") updateCatSummary(filtersRoot);
+      refresh();
     });
     filtersRoot.addEventListener("input", function (e) {
       if (e.target && (e.target.name === "precio_min" || e.target.name === "precio_max")) refresh();
