@@ -5,7 +5,7 @@
 <h1 align="center">Manual de usuario</h1>
 <p align="center"><b>Distribuidor de Suplementos (YOWI)</b> — tienda en línea y panel de administración</p>
 
-> Última actualización: 2026-08-03 · Este manual cubre **toda la tienda**: lo que ve y usa el cliente, y lo que puedes hacer tú desde el panel de administrador.
+> Última actualización: 2026-08-16 · Este manual cubre **toda la tienda**: lo que ve y usa el cliente, y lo que puedes hacer tú desde el panel de administrador.
 
 ---
 
@@ -14,7 +14,7 @@
 Está dividido en tres partes:
 
 1. **Parte 1 — Guía del cliente**: cada página que ve un visitante o comprador de la tienda.
-2. **Parte 2 — Guía del administrador**: cada página del panel `/admin`.
+2. **Parte 2 — Guía del administrador**: cada página del panel de administración.
 3. **Parte 3 — Seguridad**: cómo proteger tu cuenta de administrador con verificación en dos pasos.
 
 Cada sección tiene: qué es la página, una o más capturas de pantalla reales, y — cuando aplica — un diagrama con el flujo paso a paso. Al final hay un **Apéndice** con la paleta de colores de la marca y un glosario de términos.
@@ -107,6 +107,15 @@ Información de la tienda (misión, historia, ubicación) y un formulario de **C
 
 <img src="manual-img/cliente-09-nosotros-contacto.png" width="720">
 
+## Páginas legales (`privacidad.html` y `terminos.html`)
+
+Enlazadas desde el pie de página de toda la tienda:
+
+- **Aviso de Privacidad** (`privacidad.html`): explica qué datos se recaban en un registro/pedido, para qué se usan, y que se comparten con WhatsApp/Meta (para coordinar la entrega) y con la paquetería (para el envío) — nunca con nadie más. Incluye los derechos ARCO (Acceso, Rectificación, Cancelación, Oposición).
+- **Políticas de compra/envío y Términos** (`terminos.html`): condiciones de compra, tiempos y zonas de envío, y el resto de términos de uso de la tienda.
+
+El **registro de cuenta** y el **checkout** exigen aceptar estos textos con una casilla obligatoria antes de continuar — la fecha exacta de aceptación queda guardada, no es solo un botón decorativo.
+
 ## Carrito y checkout (`pedido.html`)
 
 Donde el cliente revisa lo que va a comprar y confirma sus datos de entrega.
@@ -181,6 +190,12 @@ Panel del cliente con 4 pestañas:
 <td><img src="manual-img/cliente-13-cuenta-direcciones.png" width="360"></td>
 </tr></table>
 
+### Eliminar mi cuenta
+
+Desde "Mis datos", el cliente puede eliminar su propia cuenta (pide su contraseña como confirmación).
+
+> ⚠️ **Cuidado** — no se puede deshacer desde la tienda. Borra el perfil, las direcciones guardadas y los favoritos. Los **pedidos anteriores se conservan** (se necesitan para la contabilidad), pero quedan anónimos: sin nombre, teléfono ni domicilio asociado.
+
 ---
 
 # 🔐 Parte 2 — Guía del administrador
@@ -200,8 +215,13 @@ flowchart LR
     Dashboard --> Pedidos
     Dashboard --> Promociones
     Dashboard --> Nosotros
+    Dashboard --> Clientes
+    Dashboard --> Usuarios
+    Dashboard --> Auditoria[Auditoría]
     Dashboard --> Seguridad
 ```
+
+Ese es el orden exacto del menú lateral en todas las páginas del panel.
 
 ## Dashboard (`panel-4x9qz/index.html`)
 
@@ -317,6 +337,44 @@ Edita el contenido de la página pública "Nosotros" (misión, valores, direcci�
 
 <img src="manual-img/admin-10-nosotros-editar.png" width="720">
 
+## Clientes (`panel-4x9qz/clientes.html`)
+
+Cuentas de clientes registradas en la tienda: nombre, correo, teléfono, cuántos pedidos tiene y desde cuándo está registrado.
+
+<img src="manual-img/admin-clientes.png" width="720">
+
+> ⚠️ **Cuidado — "Eliminar"**: borra el perfil de ese cliente (datos, direcciones, favoritos). Sus pedidos anteriores **se conservan** para la contabilidad, pero quedan anónimos (sin nombre, teléfono ni domicilio). No se puede deshacer.
+
+## Usuarios (`panel-4x9qz/usuarios.html`)
+
+Aquí se administran las cuentas de **quienes trabajan en el panel** (no confundir con "Clientes", que son los compradores de la tienda). Cada administrador tiene uno de 3 roles:
+
+| Rol | Puede hacer |
+|---|---|
+| **Dueño** | Control total — incluida esta misma pantalla de Usuarios, Auditoría y Seguridad avanzada. |
+| **Operador** | Cambiar pedidos y administrar el catálogo (productos, categorías, marcas, promociones). No puede hacer respaldos completos ni borrados masivos. |
+| **Solo lectura** | Puede consultar todo, pero no puede cambiar nada. Útil para alguien que solo necesita ver información (ej. contabilidad). |
+
+<img src="manual-img/admin-usuarios.png" width="720">
+
+- **Crear usuario**: nombre, correo, contraseña inicial y rol. Ese empleado deberá activar su propio 2FA la primera vez que inicie sesión — es obligatorio para todos, sin excepción.
+- **Editar / Cambiar contraseña**: ajustar el rol o forzar una contraseña nueva para esa cuenta.
+- **Desactivar**: bloquea el acceso sin borrar la cuenta (se puede reactivar después). Útil cuando alguien deja de trabajar contigo temporalmente.
+
+> ⚠️ **Cuidado — "Eliminar"**: borra la cuenta del administrador de forma permanente. Sus acciones pasadas se conservan en la Auditoría, pero mostrando "— (cuenta eliminada)" en vez de su nombre.
+
+## Auditoría (`panel-4x9qz/auditoria.html`, solo Dueño)
+
+El historial de qué hizo cada administrador, cuándo y desde qué dirección IP — para poder investigar cualquier cambio sospechoso o simplemente confirmar quién hizo qué.
+
+<img src="manual-img/admin-auditoria.png" width="720">
+
+- Se llena **sola**, automáticamente, con cada acción que un administrador realiza en el panel (crear/editar/borrar algo, iniciar sesión, etc.) — no hay nada que configurar.
+- **Filtros**: por administrador, por tipo de acción, y por rango de fechas — se pueden combinar.
+- Muestra los últimos 300 registros que coincidan con los filtros activos.
+- No incluye los intentos fallidos de inicio de sesión (eso vive en un sistema aparte, de protección contra fuerza bruta).
+- Es de **solo lectura** — únicamente el rol Dueño la puede ver, y no se puede editar ni borrar nada desde aquí.
+
 ## Respaldos (botón "Respaldar" / "Restaurar" en cada sección)
 
 Presente en las 7 páginas del panel (y como "Respaldo completo" en el Dashboard).
@@ -378,7 +436,7 @@ Usa uno de los **códigos de recuperación** guardados en el paso 3, en vez del 
 
 Desde la misma pantalla, con 2FA activo, puedes **regenerar los códigos de recuperación** (invalida los anteriores) o **desactivar el 2FA por completo** — ambas acciones piden un código válido de tu app como confirmación.
 
-> ℹ️ **Nota sobre auditoría** — el sistema sí guarda internamente un registro de qué acción hizo cada administrador y cuándo (para investigar un problema si hiciera falta), pero **no hay ninguna pantalla en el panel para consultarlo** — es una función técnica de respaldo, no un botón que puedas usar tú desde la interfaz.
+> ℹ️ **Nota sobre auditoría** — el sistema guarda automáticamente un registro de qué acción hizo cada administrador y cuándo. Se consulta desde **Panel → Auditoría** (ver la sección correspondiente arriba) — no hace falta entrar a la base de datos para revisarlo.
 
 ---
 
@@ -409,6 +467,8 @@ Desde la misma pantalla, con 2FA activo, puedes **regenerar los códigos de recu
 | **Reemplazar todo** | Modo del importador que desactiva (no borra) los productos ausentes del CSV. |
 | **2FA** | Verificación en dos pasos: contraseña + código de 6 dígitos de una app autenticadora. |
 | **Respaldo** | Archivo descargable con los datos de una sección, para restaurarlos si algo sale mal. |
+| **Rol** | Nivel de permisos de un administrador del panel: Dueño, Operador o Solo lectura. |
+| **Auditoría** | Historial automático de qué hizo cada administrador y cuándo, consultable en Panel → Auditoría. |
 
 ## Mapa completo de páginas
 
@@ -420,6 +480,8 @@ Desde la misma pantalla, con 2FA activo, puedes **regenerar los códigos de recu
 | Tienda | `marcas.html` | Directorio de marcas |
 | Tienda | `nosotros.html` | Información de la tienda + contacto por WhatsApp |
 | Tienda | `pedido.html` | Carrito (líneas por producto+sabor) + checkout |
+| Tienda | `privacidad.html` | Aviso de Privacidad |
+| Tienda | `terminos.html` | Políticas de compra/envío y Términos |
 | Cliente | `registro.html` | Crear una cuenta |
 | Cliente | `login.html` | Iniciar sesión |
 | Cliente | `recuperar.html` / `restablecer.html` | Recuperar contraseña olvidada |
@@ -432,4 +494,7 @@ Desde la misma pantalla, con 2FA activo, puedes **regenerar los códigos de recu
 | Admin | `panel-4x9qz/pedidos.html` | Ver pedidos y cambiar su estado |
 | Admin | `panel-4x9qz/promociones.html` | Carrusel de la portada: CRUD |
 | Admin | `panel-4x9qz/nosotros.html` | Editar la página pública "Nosotros" |
+| Admin | `panel-4x9qz/clientes.html` | Ver y eliminar cuentas de clientes |
+| Admin | `panel-4x9qz/usuarios.html` | Administradores del panel: crear, roles, contraseñas |
+| Admin | `panel-4x9qz/auditoria.html` | Historial de acciones de administradores (solo Dueño) |
 | Admin | `panel-4x9qz/seguridad.html` | Activar/gestionar el 2FA |
