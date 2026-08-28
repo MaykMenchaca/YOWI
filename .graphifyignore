@@ -1,0 +1,7 @@
+# Excluye del grafo de conocimiento (no del repo) la infraestructura de
+# metodología instalada en PASO 0 de CLAUDE.md — no es código de la tienda
+# DS/YOWI, y su volumen de nodos ahogaba las consultas reales sobre el
+# producto (ver docs/project-context.md).
+.claude/
+node_modules/
+graphify-out/
