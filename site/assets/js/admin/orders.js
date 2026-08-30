@@ -17,6 +17,15 @@
 
   var esc = window.DSSec.esc; // definición única en security-utils.js
 
+  // Arma el link directo al chat de WhatsApp del cliente (mismo formato 52+1+10
+  // dígitos que usa el número de la tienda, ver settings-inject.js FALLBACK_WA).
+  function waLink(telefono) {
+    var digits = String(telefono || "").replace(/\D/g, "");
+    if (!digits) return "";
+    var numero = digits.length === 10 ? "521" + digits : digits;
+    return "https://wa.me/" + numero;
+  }
+
   function money(n) {
     return "$" + Number(n).toLocaleString("es-MX", { minimumFractionDigits: 2 });
   }
@@ -66,7 +75,13 @@
       return '<tr class="border-b border-slate-700">' +
         '<td class="px-3 py-3 text-slate-300 font-mono">#' + o.id + '</td>' +
         '<td class="px-3 py-3">' +
-          '<div class="text-slate-200">' + esc(o.nombre_cliente) + '</div>' +
+          '<div class="text-slate-200 flex items-center gap-1.5">' + esc(o.nombre_cliente) +
+            (waLink(o.telefono)
+              ? '<a href="' + esc(waLink(o.telefono)) + '" target="_blank" rel="noopener" class="text-green-400 hover:text-green-300" title="Abrir WhatsApp con ' + esc(o.nombre_cliente) + '">' +
+                  '<span class="material-symbols-outlined text-base">chat</span>' +
+                '</a>'
+              : '') +
+          '</div>' +
           '<div class="text-slate-400 text-xs">' + esc(o.telefono || '') + (o.ciudad ? ' · ' + esc(o.ciudad) : '') + '</div>' +
           (o.direccion_envio ? '<div class="text-slate-400 text-xs mt-0.5">📦 ' + esc(o.direccion_envio) + '</div>' : '') +
           (o.user_email ? '<div class="text-slate-500 text-xs">' + esc(o.user_email) + '</div>' : '') +
