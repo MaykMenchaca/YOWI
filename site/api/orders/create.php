@@ -13,10 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Tope duro por línea: sin esto, un cliente (o un anónimo sin cuenta) puede pedir
-// cantidades absurdas (999999) que el código de abajo topaba al stock disponible y
-// aceptaba igual — con inventarios chicos, una sola petición podía vaciar el
-// catálogo entero. El tope no sustituye la reposición de stock al cancelar (eso ya
-// existe), es una segunda capa.
+// cantidades absurdas (999999) en una sola línea. El pedido nunca se bloquea por
+// disponibilidad (eso se confirma después por WhatsApp) — este tope es solo una
+// guardia de abuso, independiente de cualquier control de inventario.
 const DS_MAX_QTY_PER_LINE = 100;
 
 $body = ds_read_json_body();
@@ -60,9 +59,8 @@ if (empty($items)) {
 }
 // Techo al número de líneas del pedido. Sin esto, DS_MAX_QTY_PER_LINE es evadible
 // repitiendo el mismo producto en muchas líneas (100 × 5000 líneas = 500 000 unidades
-// en una sola petición), y una petición con miles de líneas retiene el FOR UPDATE de
-// toda la transacción de abajo durante minutos, congelando los checkouts reales.
-// 50 es generoso para un carrito real (el catálogo cabe varias veces).
+// en una sola petición). 50 es generoso para un carrito real (el catálogo cabe varias
+// veces).
 if (count($items) > 50) {
     ds_json_error('El pedido tiene demasiadas líneas (máximo 50)', 400);
 }
@@ -117,28 +115,16 @@ if (empty($requested)) {
     ds_json_error('El carrito está vacío', 400);
 }
 
-// Bloquear siempre en el MISMO orden (producto_id, luego sabor_id) sin importar en qué
-// orden el cliente agregó las líneas al carrito. Sin esto, el pedido A = [P5, P9] y el
-// pedido B = [P9, P5] corriendo a la vez podían deadlockear entre sí (cada uno esperando
-// el FOR UPDATE que el otro ya tiene) — MariaDB mata una de las dos transacciones y ese
-// cliente veía el mismo "No se pudo registrar el pedido" que un fallo real de stock.
-usort($requested, static function (array $a, array $b): int {
-    return $a['producto_id'] <=> $b['producto_id'] ?: ($a['sabor_id'] ?? 0) <=> ($b['sabor_id'] ?? 0);
-});
-
 $userId = ds_current_user_id();
 
 $pdo->beginTransaction();
 try {
-    // Lectura de producto DENTRO de la transacción y con bloqueo de fila (FOR UPDATE)
-    // para evitar sobreventa bajo concurrencia. Igual para el sabor elegido: su stock y
-    // su precio (si tiene uno propio) también se bloquean y se leen de la BD, nunca del
-    // cliente.
-    $lookup = $pdo->prepare('SELECT nombre, precio, stock FROM products WHERE id = ? AND activo = 1 FOR UPDATE');
-    $dec = $pdo->prepare('UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?');
-    $lookupFlavor = $pdo->prepare('SELECT id, nombre, stock, precio FROM product_flavors WHERE id = ? AND product_id = ? AND activo = 1 FOR UPDATE');
+    // Lectura de producto/sabor DENTRO de la transacción: nombre y precio (si el sabor
+    // tiene uno propio) siempre se toman de la BD, nunca del cliente. No hay nada que
+    // bloquear ni descontar — la disponibilidad se confirma después por WhatsApp.
+    $lookup = $pdo->prepare('SELECT nombre, precio FROM products WHERE id = ? AND activo = 1');
+    $lookupFlavor = $pdo->prepare('SELECT id, nombre FROM product_flavors WHERE id = ? AND product_id = ? AND activo = 1');
     $countFlavors = $pdo->prepare('SELECT COUNT(*) FROM product_flavors WHERE product_id = ? AND activo = 1');
-    $decFlavor = $pdo->prepare('UPDATE product_flavors SET stock = stock - ? WHERE id = ? AND stock >= ?');
 
     $cleanItems = [];
     $total = 0.0;
@@ -182,44 +168,8 @@ try {
 
         $nombreParaAjuste = $producto['nombre'] . ($sabor !== null ? ' (' . $sabor['nombre'] . ')' : '');
 
-        if ($sabor !== null) {
-            // Modelo de stock por sabor: misma semántica que products.stock (NULL = sin
-            // control, 0 = agotado). El precio del sabor manda si tiene uno propio.
-            $stockSabor = $sabor['stock'];
-            if ($stockSabor !== null) {
-                $stockSabor = (int) $stockSabor;
-                if ($stockSabor <= 0) {
-                    $ajustes[] = ['producto_id' => $productoId, 'sabor_id' => $saborId, 'nombre' => $nombreParaAjuste,
-                        'motivo' => 'agotado', 'cantidad_pedida' => $cantidad, 'cantidad_final' => 0];
-                    continue; // ese sabor está agotado: se descarta el item
-                }
-                if ($cantidad > $stockSabor) {
-                    $ajustes[] = ['producto_id' => $productoId, 'sabor_id' => $saborId, 'nombre' => $nombreParaAjuste,
-                        'motivo' => 'stock_insuficiente', 'cantidad_pedida' => $cantidad, 'cantidad_final' => $stockSabor];
-                    $cantidad = $stockSabor; // topa al disponible de ESE sabor
-                }
-            }
-            $precioUnitario = $sabor['precio'] !== null ? (float) $sabor['precio'] : (float) $producto['precio'];
-            $controlaStock = $stockSabor !== null;
-        } else {
-            // Producto sin sabores: modelo de stock de siempre, a nivel producto.
-            $stock = $producto['stock']; // null | int
-            if ($stock !== null) {
-                $stock = (int) $stock;
-                if ($stock <= 0) {
-                    $ajustes[] = ['producto_id' => $productoId, 'sabor_id' => null, 'nombre' => $nombreParaAjuste,
-                        'motivo' => 'agotado', 'cantidad_pedida' => $cantidad, 'cantidad_final' => 0];
-                    continue; // agotado: se descarta el item
-                }
-                if ($cantidad > $stock) {
-                    $ajustes[] = ['producto_id' => $productoId, 'sabor_id' => null, 'nombre' => $nombreParaAjuste,
-                        'motivo' => 'stock_insuficiente', 'cantidad_pedida' => $cantidad, 'cantidad_final' => $stock];
-                    $cantidad = $stock; // topa al disponible
-                }
-            }
-            $precioUnitario = (float) $producto['precio'];
-            $controlaStock = $stock !== null;
-        }
+        // Precio único: el sabor es solo un nombre, el precio siempre es el del producto.
+        $precioUnitario = (float) $producto['precio'];
 
         $subtotal = round($precioUnitario * $cantidad, 2);
         $total += $subtotal;
@@ -231,7 +181,6 @@ try {
             'precio_unitario' => $precioUnitario,
             'cantidad' => $cantidad,
             'subtotal' => $subtotal,
-            'controla_stock' => $controlaStock,
         ];
     }
 
@@ -281,23 +230,6 @@ try {
             $item['cantidad'],
             $item['subtotal'],
         ]);
-        // Descontar inventario con guardia; si otra transacción ganó la última unidad,
-        // rowCount() == 0 y se aborta todo el pedido (rollBack). Con sabor, el descuento
-        // es sobre el stock DE ESE SABOR, no del producto (el producto no tiene stock
-        // propio que controlar cuando ya se vende por sabor).
-        if ($item['controla_stock']) {
-            if ($item['sabor_id'] !== null) {
-                $decFlavor->execute([$item['cantidad'], $item['sabor_id'], $item['cantidad']]);
-                if ($decFlavor->rowCount() === 0) {
-                    throw new RuntimeException('stock insuficiente');
-                }
-            } else {
-                $dec->execute([$item['cantidad'], $item['producto_id'], $item['cantidad']]);
-                if ($dec->rowCount() === 0) {
-                    throw new RuntimeException('stock insuficiente');
-                }
-            }
-        }
     }
 
     $pdo->commit();
