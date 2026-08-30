@@ -433,13 +433,19 @@
               precio: parseFloat(addBtn.getAttribute("data-sabor-precio")),
             }
           : null;
+        // Cantidad: la ficha de producto trae un stepper (#pdp-qty-value); las tarjetas
+        // del catálogo no lo tienen, así que siguen agregando 1 como siempre.
+        var qtyEl = document.getElementById("pdp-qty-value");
+        var cantidad = qtyEl ? (parseInt(qtyEl.textContent, 10) || 1) : 1;
         global.DSCatalog.fetchProductos().then(function (productos) {
           var wanted = addBtn.getAttribute("data-product-id");
           var p = productos.filter(function (item) { return String(item.id) === String(wanted); })[0];
           if (p) {
-            var persistido = addItem(p, 1, sabor);
+            var persistido = addItem(p, cantidad, sabor);
             if (!persistido) {
               alert("Se agregó \"" + p.nombre + "\" al carrito, pero tu navegador está bloqueando el guardado (¿modo privado?). Puede perderse si cambias de página — te recomendamos completar tu compra ahora.");
+            } else if (qtyEl) {
+              qtyEl.textContent = "1"; // reinicia el stepper tras agregar con éxito
             }
           }
         }).catch(function () {

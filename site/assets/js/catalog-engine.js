@@ -234,20 +234,30 @@
   // Arma el mensaje de "Comprar por WhatsApp" con el producto (y sabor, si aplica) real
   // en vez de dejar el enlace genérico sin datos que traía antes (wa.me/NUMERO a secas,
   // sin texto — el cliente llegaba al chat y tenía que escribir todo desde cero).
-  function updateWhatsAppBuyLink(container, p, sabor) {
+  function updateWhatsAppBuyLink(container, p, sabor, cantidad) {
     var link = container.querySelector("#whatsapp-buy-link");
     if (!link) return;
+    cantidad = cantidad || 1;
     var nombre = sabor ? p.nombre + " (" + sabor.nombre + ")" : p.nombre;
-    var texto = "Hola DS, me interesa: " + nombre + " — " + money(p.precio);
+    var texto = "Hola DS, me interesa: " + cantidad + "x " + nombre + " — " + money(p.precio * cantidad);
     var numero = global.DSWaNumber ? global.DSWaNumber() : "5218331645172";
     link.setAttribute("href", "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto));
+  }
+
+  // Lee la cantidad elegida en el stepper de la ficha de producto (#pdp-qty-value). Sin
+  // tope máximo en la UI — el pedido nunca se bloquea por cantidad, solo hay un tope de
+  // abuso del lado del servidor (orders/create.php).
+  function getPdpQty(container) {
+    var el = container.querySelector("#pdp-qty-value");
+    var n = el ? parseInt(el.textContent, 10) : 1;
+    return n > 0 ? n : 1;
   }
 
   // Habilita/deshabilita "Agregar al carrito" según el estado: producto con sabores sin
   // elegir uno todavía ("Elige un sabor"), o listo para agregar (con o sin sabor
   // elegido, según aplique). Nunca se deshabilita por disponibilidad.
   function updateAddToCartState(container, p, sabor) {
-    updateWhatsAppBuyLink(container, p, sabor);
+    updateWhatsAppBuyLink(container, p, sabor, getPdpQty(container));
     var btn = container.querySelector(".add-to-cart-btn");
     if (!btn) return;
     var tieneSabores = !!(p.sabores && p.sabores.length);
@@ -294,6 +304,36 @@
         nombre: chip.getAttribute("data-sabor-nombre"),
         precio: parseFloat(chip.getAttribute("data-sabor-precio")),
       };
+      updateAddToCartState(container, p, sabor);
+    });
+  }
+
+  // Stepper de cantidad en la ficha de producto: estado local (solo el número en
+  // pantalla), no toca el carrito hasta que se le da clic a "Agregar al carrito".
+  // Lee el sabor actual de los mismos data-sabor-* que ya trae el botón de agregar
+  // (los pone updateAddToCartState al elegir sabor), para refrescar el link de
+  // WhatsApp con la cantidad nueva sin duplicar el estado del sabor elegido.
+  function wireQtyStepper(container, p) {
+    var qtyEl = container.querySelector("#pdp-qty-value");
+    if (!qtyEl) return;
+    var box = qtyEl.closest("div");
+    if (!box) return;
+    box.addEventListener("click", function (e) {
+      var btn = e.target.closest(".pdp-qty-btn");
+      if (!btn) return;
+      var delta = parseInt(btn.getAttribute("data-delta"), 10) || 0;
+      var actual = Math.max(1, (parseInt(qtyEl.textContent, 10) || 1) + delta);
+      qtyEl.textContent = actual;
+
+      var addBtn = container.querySelector(".add-to-cart-btn");
+      var saborId = addBtn ? addBtn.getAttribute("data-sabor-id") : null;
+      var sabor = saborId
+        ? {
+            id: saborId,
+            nombre: addBtn.getAttribute("data-sabor-nombre"),
+            precio: parseFloat(addBtn.getAttribute("data-sabor-precio")),
+          }
+        : null;
       updateAddToCartState(container, p, sabor);
     });
   }
@@ -376,6 +416,7 @@
           flavorSection.classList.add("hidden");
         }
       }
+      wireQtyStepper(container, p);
       updateAddToCartState(container, p, null);
       renderGallery(p, container);
 
