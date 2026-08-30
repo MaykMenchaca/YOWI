@@ -234,10 +234,6 @@
         return "El sabor que elegiste de " + nombre + " ya no está disponible.";
       case "falta_elegir_sabor":
         return nombre + " necesita que elijas un sabor — no se pudo agregar.";
-      case "agotado":
-        return nombre + " está agotado y se quitó de tu pedido.";
-      case "stock_insuficiente":
-        return "Solo había " + a.cantidad_final + " de " + nombre + " disponible(s); tu pedido se ajustó a esa cantidad.";
       default:
         return nombre + ": tu pedido se ajustó.";
     }
@@ -331,33 +327,26 @@
     var notice = document.getElementById("order-adjustments-notice");
     if (notice) notice.classList.add("hidden");
 
-    // Mensaje PRELIMINAR, construido con lo que el cliente cree que compró — se usa solo
-    // para tener algo que mostrar mientras se abre la pestaña (tiene que abrirse ahora,
-    // con el gesto del click, o el navegador bloquea el pop-up). Si el pedido se ajusta
-    // en el servidor (algo se agotó, se topó una cantidad…), este mensaje SE REEMPLAZA
-    // más abajo con uno reconstruido desde la respuesta real del servidor — así lo que
-    // llega por WhatsApp siempre coincide con lo que quedó guardado en la base de datos.
-    var mensajePreliminar = buildWhatsAppMessage(items, d);
-    var waUrl = "https://wa.me/" + waNumber() + "?text=" + encodeURIComponent(mensajePreliminar);
-    var waWin = window.open("", "_blank");
+    // El pedido NUNCA se bloquea por disponibilidad — eso se confirma después por
+    // WhatsApp, no en el sitio. Por eso WhatsApp se abre YA, con el mensaje armado del
+    // lado del cliente, sin esperar al servidor: no hay nada que el servidor pueda
+    // "ajustar" que valga la pena retrasar la pestaña (tiene que abrirse dentro del
+    // gesto del click o el navegador bloquea el pop-up).
+    var mensaje = buildWhatsAppMessage(items, d);
+    var waUrl = "https://wa.me/" + waNumber() + "?text=" + encodeURIComponent(mensaje);
+    window.open(waUrl, "_blank");
 
-    // Evita doble clic = pedido duplicado: mientras el POST está en vuelo, el botón se
-    // deshabilita. Se reactiva si algo falla (para poder reintentar); si el pedido se
-    // registra, la página cambia de estado (carrito vacío) y no hace falta reactivarlo.
+    // El pedido se considera "hecho" en cuanto se abre WhatsApp, no cuando el servidor
+    // responde: se limpia el carrito y se reactiva el botón de una vez.
+    saveCart([]);
     var submitBtn = document.getElementById("submit-order-btn");
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      if (!submitBtn.getAttribute("data-label")) submitBtn.setAttribute("data-label", submitBtn.textContent);
-      submitBtn.textContent = "Enviando…";
+    if (submitBtn && submitBtn.getAttribute("data-label")) {
+      submitBtn.textContent = submitBtn.getAttribute("data-label");
     }
 
-    function reactivarBoton() {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        if (submitBtn.getAttribute("data-label")) submitBtn.textContent = submitBtn.getAttribute("data-label");
-      }
-    }
-
+    // Registrar el pedido en la BD queda en segundo plano: WhatsApp ya está abierto, así
+    // que ni un ajuste (línea recortada, producto ya inactivo…) ni un fallo del POST
+    // deben tocar esa pestaña — solo se avisa en la página, sin bloquear nada.
     if (global.DSApi) {
       global.DSApi.apiFetch("api/orders/create.php", {
         method: "POST",
@@ -376,47 +365,19 @@
               cantidad: i.cantidad,
             };
           }),
-          mensaje_whatsapp: mensajePreliminar,
+          mensaje_whatsapp: mensaje,
           privacidad_aceptada: privacidadAceptada,
         },
       })
         .then(function (data) {
-          saveCart([]);
-          // Reconstruir el mensaje desde lo que el SERVIDOR de verdad guardó (data.items),
-          // no desde el carrito local — si algo se ajustó, esto lo refleja exacto.
-          // La forma del item del servidor (precio_unitario/nombre_producto) no es la
-          // misma que la del carrito local (precio/nombre); se normaliza antes de pasarla
-          // a buildWhatsAppMessage, que espera la forma del carrito.
-          var itemsConfirmados = ((data && data.items) || items).map(function (i) {
-            return {
-              sabor: i.sabor,
-              nombre: i.nombre_producto || i.nombre,
-              precio: i.precio_unitario != null ? i.precio_unitario : i.precio,
-              cantidad: i.cantidad,
-            };
-          });
-          var mensajeFinal = buildWhatsAppMessage(itemsConfirmados, d);
-          var waUrlFinal = "https://wa.me/" + waNumber() + "?text=" + encodeURIComponent(mensajeFinal);
           if (data && data.ajustes && data.ajustes.length) mostrarAjustes(data.ajustes);
-          if (waWin) { waWin.location = waUrlFinal; } else { window.open(waUrlFinal, "_blank"); }
         })
-        .catch(function (err) {
-          if (waWin) waWin.close();
-          reactivarBoton();
-          // Si el servidor sabe exactamente por qué se vació el carrito (producto agotado,
-          // ya no existe…), mostrar eso en vez del genérico "carrito vacío" que dejaba al
-          // cliente viendo su producto en pantalla mientras el error decía lo contrario.
-          var ajustes = err.data && err.data.ajustes;
-          if (ajustes && ajustes.length) {
-            showFieldError(form, "form", ajustes.map(ajusteTexto).join(" ") + " Actualiza tu carrito e intenta de nuevo.");
-          } else {
-            showFieldError(form, "form", "No se pudo registrar el pedido: " + err.message + ". Intenta de nuevo.");
+        .catch(function () {
+          if (notice) {
+            notice.textContent = "Tu pedido se envió por WhatsApp. No pudimos guardar una copia en nuestro sistema — lo confirmamos contigo por ese medio.";
+            notice.classList.remove("hidden");
           }
         });
-    } else {
-      // Sin cliente API (degradado): abrir WhatsApp igual, sin regresión.
-      reactivarBoton();
-      if (waWin) { waWin.location = waUrl; } else { window.open(waUrl, "_blank"); }
     }
   }
 

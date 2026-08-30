@@ -61,26 +61,12 @@
     return u ? (c + " " + u).trim() : c;
   }
 
-  // Con sabores, el producto solo se ve agotado si TODOS sus sabores lo están —
-  // products.stock deja de mandar en cuanto el producto tiene sabores (F3).
-  function isAgotado(p) {
-    if (p.sabores && p.sabores.length) {
-      return p.sabores.every(function (s) { return s.stock === 0; });
-    }
-    return p.stock === 0; // NULL/undefined = sin control (ilimitado); >0 = disponible.
-  }
-
   function productCardHTML(p) {
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
-    var agotado = isAgotado(p);
     var tieneSabores = !!(p.sabores && p.sabores.length);
-    var precioHTML = (tieneSabores && p.precio_desde != null)
-      ? '<span class="text-gray-400 font-normal text-sm">Desde</span> ' + money(p.precio_desde)
-      : money(p.precio);
+    var precioHTML = money(p.precio);
     var botonHTML;
-    if (agotado) {
-      botonHTML = '<button type="button" class="bg-gray-200 text-gray-400 font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm cursor-not-allowed" data-product-id="' + esc(p.id) + '" disabled>Agotado</button>';
-    } else if (tieneSabores) {
+    if (tieneSabores) {
       // Con sabores, no se agrega "a ciegas": el botón lleva a la ficha a elegir uno.
       botonHTML = '<a href="' + detailUrl + '" class="block text-center bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity">Elegir sabor</a>';
     } else {
@@ -94,9 +80,6 @@
               '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
             '</div>' +
           '</a>' +
-          (agotado
-            ? '<span class="absolute top-2 left-2 bg-ink text-white text-[11px] font-extrabold uppercase tracking-wide px-2 py-1">Agotado</span>'
-            : '') +
           '<button type="button" class="favorite-btn absolute top-2 right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 shadow hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
             '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 0;">favorite</span>' +
           '</button>' +
@@ -125,7 +108,6 @@
       if (filtros.marca && filtros.marca.length && filtros.marca.indexOf(p.marca) === -1) return false;
       if (filtros.precioMin != null && p.precio < filtros.precioMin) return false;
       if (filtros.precioMax != null && p.precio > filtros.precioMax) return false;
-      if (filtros.soloDisponibles && isAgotado(p)) return false;
       return true;
     });
   }
@@ -234,31 +216,19 @@
     renderGrid((featured.length ? featured : productos).slice(0, limit || 4), container);
   }
 
-  // Chips de sabor (F3.6): un <button> por sabor, deshabilitado y tachado si está
-  // agotado. data-sabor-* lleva lo necesario para armar el carrito sin volver a pedir
-  // el producto (id, nombre para mostrar, precio EFECTIVO ya resuelto: el del sabor si
-  // tiene uno propio, si no el del producto).
+  // Chips de sabor (F3.6): un <button> por sabor. data-sabor-* lleva lo necesario para
+  // armar el carrito sin volver a pedir el producto (id, nombre para mostrar, precio
+  // del producto — un sabor es solo un nombre, no tiene precio propio).
   function flavorChipsHTML(p) {
+    // Un sabor es solo un nombre: siempre usa el precio del producto, siempre
+    // seleccionable (la disponibilidad se confirma por WhatsApp, no aquí).
     return p.sabores.map(function (s) {
-      var agotado = s.stock === 0;
-      var precioEfectivo = s.precio != null ? s.precio : p.precio;
       return (
-        '<button type="button" class="flavor-chip px-4 py-2 border-2 rounded-full text-sm font-bold uppercase tracking-wide transition-colors min-h-[44px] ' +
-        (agotado
-          ? 'border-gray-200 text-gray-300 line-through cursor-not-allowed'
-          : 'border-gray-300 text-ink hover:border-brand') + '"' +
-        ' data-sabor-id="' + esc(s.id) + '" data-sabor-nombre="' + esc(s.nombre) + '" data-sabor-precio="' + esc(precioEfectivo) + '"' +
-        (agotado ? ' disabled' : '') +
-        ' aria-pressed="false">' + esc(s.nombre) + (agotado ? ' (Agotado)' : '') + '</button>'
+        '<button type="button" class="flavor-chip px-4 py-2 border-2 rounded-full text-sm font-bold uppercase tracking-wide transition-colors min-h-[44px] border-gray-300 text-ink hover:border-brand"' +
+        ' data-sabor-id="' + esc(s.id) + '" data-sabor-nombre="' + esc(s.nombre) + '" data-sabor-precio="' + esc(p.precio) + '"' +
+        ' aria-pressed="false">' + esc(s.nombre) + '</button>'
       );
     }).join("");
-  }
-
-  function updatePriceDisplay(container, p, sabor) {
-    var el = container.querySelector('[data-field="precio"]');
-    if (!el) return;
-    var precio = sabor ? sabor.precio : p.precio;
-    el.textContent = money(precio);
   }
 
   // Arma el mensaje de "Comprar por WhatsApp" con el producto (y sabor, si aplica) real
@@ -268,15 +238,14 @@
     var link = container.querySelector("#whatsapp-buy-link");
     if (!link) return;
     var nombre = sabor ? p.nombre + " (" + sabor.nombre + ")" : p.nombre;
-    var precio = sabor && sabor.precio != null ? sabor.precio : p.precio;
-    var texto = "Hola DS, me interesa: " + nombre + " — " + money(precio);
+    var texto = "Hola DS, me interesa: " + nombre + " — " + money(p.precio);
     var numero = global.DSWaNumber ? global.DSWaNumber() : "5218331645172";
     link.setAttribute("href", "https://wa.me/" + numero + "?text=" + encodeURIComponent(texto));
   }
 
-  // Habilita/deshabilita "Agregar al carrito" según el estado: producto agotado (nunca
-  // se habilita), producto con sabores sin elegir uno todavía ("Elige un sabor"), o listo
-  // para agregar (con o sin sabor elegido, según aplique).
+  // Habilita/deshabilita "Agregar al carrito" según el estado: producto con sabores sin
+  // elegir uno todavía ("Elige un sabor"), o listo para agregar (con o sin sabor
+  // elegido, según aplique). Nunca se deshabilita por disponibilidad.
   function updateAddToCartState(container, p, sabor) {
     updateWhatsAppBuyLink(container, p, sabor);
     var btn = container.querySelector(".add-to-cart-btn");
@@ -285,11 +254,6 @@
     if (!btn.getAttribute("data-label")) btn.setAttribute("data-label", btn.textContent);
     var label = btn.getAttribute("data-label");
 
-    if (isAgotado(p)) {
-      btn.disabled = true;
-      btn.textContent = "Agotado";
-      return;
-    }
     if (tieneSabores && !sabor) {
       btn.disabled = true;
       btn.textContent = "Elige un sabor";
@@ -330,7 +294,6 @@
         nombre: chip.getAttribute("data-sabor-nombre"),
         precio: parseFloat(chip.getAttribute("data-sabor-precio")),
       };
-      updatePriceDisplay(container, p, sabor);
       updateAddToCartState(container, p, sabor);
     });
   }
@@ -432,13 +395,11 @@
     var marca = marcaSel && marcaSel.value ? [marcaSel.value] : [];
     var minInput = root.querySelector('input[name="precio_min"]');
     var maxInput = root.querySelector('input[name="precio_max"]');
-    var dispoInput = root.querySelector('input[name="solo_disponibles"]');
     return {
       categoria: categoria,
       marca: marca,
       precioMin: minInput && minInput.value !== "" ? Number(minInput.value) : null,
       precioMax: maxInput && maxInput.value !== "" ? Number(maxInput.value) : null,
-      soloDisponibles: !!(dispoInput && dispoInput.checked),
     };
   }
 
@@ -521,7 +482,7 @@
     }
 
     // Delegación de eventos: cubre también los filtros creados dinámicamente.
-    var FILTER_NAMES = ["categoria", "marca", "precio_min", "precio_max", "solo_disponibles"];
+    var FILTER_NAMES = ["categoria", "marca", "precio_min", "precio_max"];
     filtersRoot.addEventListener("change", function (e) {
       if (!e.target || FILTER_NAMES.indexOf(e.target.name) === -1) return;
       if (e.target.name === "categoria") updateCatSummary(filtersRoot);
@@ -535,7 +496,7 @@
     var clearBtn = document.getElementById("clear-filters-btn");
     if (clearBtn) {
       clearBtn.addEventListener("click", function () {
-        filtersRoot.querySelectorAll('input[name="categoria"], input[name="solo_disponibles"]').forEach(function (el) { el.checked = false; });
+        filtersRoot.querySelectorAll('input[name="categoria"]').forEach(function (el) { el.checked = false; });
         filtersRoot.querySelectorAll('input[name="precio_min"], input[name="precio_max"]').forEach(function (el) { el.value = ""; });
         var ms = filtersRoot.querySelector('select[name="marca"]'); if (ms) ms.value = "";
         if (searchInput) searchInput.value = "";

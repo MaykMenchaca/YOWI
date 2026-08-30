@@ -128,7 +128,7 @@
             <th class="px-3 py-3">Nombre</th>
             <th class="px-3 py-3">SKU</th>
             <th class="px-3 py-3 text-right">Precio</th>
-            <th class="px-3 py-3 text-center">Stock</th>
+            <th class="px-3 py-3 text-center">Existencias</th>
             <th class="px-3 py-3 text-center">Dest.</th>
             <th class="px-3 py-3 text-center">Estado</th>
             <th class="px-3 py-3">Acciones</th>
@@ -186,10 +186,10 @@
               class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
           </div>
           <div>
-            <label class="block text-slate-300 text-sm font-medium mb-1">Stock</label>
-            <input name="stock" type="number" min="0" placeholder="Vacío = sin control"
+            <label class="block text-slate-300 text-sm font-medium mb-1">Existencias (referencia)</label>
+            <input name="stock" type="number" min="0" placeholder="Opcional"
               class="w-full bg-slate-700 border border-slate-600 rounded-none px-4 py-2 text-slate-100 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" />
-            <p class="text-slate-400 text-xs mt-1">Vacío = sin control de inventario · 0 = agotado</p>
+            <p class="text-slate-400 text-xs mt-1">Solo para tu referencia interna — nunca bloquea ni oculta el producto en la tienda.</p>
           </div>
           <div>
             <label class="block text-slate-300 text-sm font-medium mb-1">Cantidad / presentación</label>
@@ -243,7 +243,7 @@
           <p id="flavors-locked-msg" class="hidden text-slate-400 text-sm mb-2">Guarda el producto primero para agregar sabores.</p>
           <div id="flavors-rows" class="space-y-2 mb-2"></div>
           <button type="button" id="flavor-add-row-btn" class="text-brand hover:text-cobalt-500 text-sm font-semibold">+ Agregar sabor</button>
-          <p class="text-slate-500 text-xs mt-1">Precio y stock vacíos = usa el del producto / sin control de inventario.</p>
+          <p class="text-slate-500 text-xs mt-1">Los sabores solo llevan nombre. Todos usan el mismo precio del producto.</p>
         </div>
 
         <!-- Galería de imágenes -->
@@ -293,7 +293,7 @@
           Columnas: <code>sku, nombre, marca, categoria, cantidad, unidad, descripcion, precio, precio_original, stock, imagen, imagenes, badge, sabores, destacado, activo</code>.
           Obligatorias: nombre, marca, categoria, precio.
           <code>imagenes</code>: varias rutas/URLs separadas por <code>|</code> (galería adicional).
-          <code>sabores</code>: <code>nombre:stock:precio|nombre2::precio2|nombre3</code> (stock y precio opcionales; vacío = usa el del producto / sin control de inventario).
+          <code>sabores</code>: nombres separados por <code>|</code>, por ejemplo <code>Chocolate|Vainilla|Fresa</code> (solo nombre, todos usan el precio del producto).
         </p>
 
         <label class="flex items-start gap-2 mt-4 p-3 rounded border border-amber-800 bg-amber-900/20 cursor-pointer">

@@ -28,7 +28,7 @@ if ($q !== '') {
 }
 
 $sql = 'SELECT p.id, p.nombre, p.marca, c.nombre AS categoria, c.slug AS categoria_slug,
-               p.cantidad, p.unidad, p.descripcion, p.precio, p.precio_original, p.stock,
+               p.cantidad, p.unidad, p.descripcion, p.precio, p.precio_original,
                p.imagen, p.badge, p.sku, p.destacado
         FROM products p
         JOIN categories c ON c.id = p.category_id
@@ -58,39 +58,24 @@ if (!empty($productIds)) {
     }
 
     $fStmt = $pdo->prepare(
-        "SELECT id, product_id, nombre, slug, stock, precio
+        "SELECT id, product_id, nombre, slug
          FROM product_flavors
          WHERE product_id IN ($placeholders) AND activo = 1
          ORDER BY orden"
     );
     $fStmt->execute($productIds);
     foreach ($fStmt->fetchAll() as $f) {
+        // Un sabor es solo un nombre: el precio siempre es el del producto (F sin
+        // precio/stock propios), no hay nada más que devolver aquí.
         $flavorsByProduct[(int) $f['product_id']][] = [
             'id'     => (int) $f['id'],
             'nombre' => $f['nombre'],
             'slug'   => $f['slug'],
-            'stock'  => $f['stock'] !== null ? (int) $f['stock'] : null,
-            'precio' => $f['precio'] !== null ? (float) $f['precio'] : null,
         ];
     }
 }
 
 $data = array_map(static function ($r) use ($flavorsByProduct, $imagesByProduct) {
-    $precioBase = (float) $r['precio'];
-    $sabores    = $flavorsByProduct[(int) $r['id']] ?? [];
-
-    // "Desde $X" (F3.5): solo si el producto tiene sabores y sus precios EFECTIVOS
-    // (el propio del sabor, o si no tiene, el del producto) no son todos iguales.
-    $precioDesde = null;
-    if (!empty($sabores)) {
-        $efectivos = array_map(static fn($s) => $s['precio'] ?? $precioBase, $sabores);
-        $min = min($efectivos);
-        $max = max($efectivos);
-        if (abs($max - $min) > 0.001) {
-            $precioDesde = $min;
-        }
-    }
-
     return [
         'id'             => (int) $r['id'],
         'nombre'         => $r['nombre'],
@@ -100,15 +85,13 @@ $data = array_map(static function ($r) use ($flavorsByProduct, $imagesByProduct)
         'cantidad'       => $r['cantidad'],
         'unidad'         => $r['unidad'],
         'descripcion'    => $r['descripcion'] ?? '',
-        'precio'         => $precioBase,
+        'precio'         => (float) $r['precio'],
         'precio_original'=> $r['precio_original'] !== null ? (float) $r['precio_original'] : null,
-        'precio_desde'   => $precioDesde,
-        'stock'          => $r['stock'] !== null ? (int) $r['stock'] : null,
         'imagen'         => $r['imagen'],
         'badge'          => $r['badge'],
         'sku'            => $r['sku'],
         'destacado'      => (bool) $r['destacado'],
-        'sabores'        => $sabores,
+        'sabores'        => $flavorsByProduct[(int) $r['id']] ?? [],
         'imagenes'       => $imagesByProduct[(int) $r['id']] ?? [],
     ];
 }, $rows);

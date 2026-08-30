@@ -119,10 +119,7 @@
           '<div class="text-slate-400 text-xs">' + esc(p.marca) + ' · ' + esc(p.categoria) + '</div></td>' +
         '<td class="px-3 py-3 text-slate-400 text-xs font-mono">' + (p.sku ? esc(p.sku) : '<span class="text-slate-600">—</span>') + '</td>' +
         '<td class="px-3 py-3 text-slate-300 text-right">' + money(p.precio) + '</td>' +
-        '<td class="px-3 py-3 text-center">' +
-          (p.stock === null
-            ? '<span class="px-2 py-0.5 rounded text-xs bg-slate-700 text-slate-300">Sin control</span>'
-            : '<span class="px-2 py-0.5 rounded text-xs ' + (p.stock > 0 ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300') + '">' + (p.stock > 0 ? p.stock : 'Agotado') + '</span>') + '</td>' +
+        '<td class="px-3 py-3 text-center text-slate-400 text-xs">' + (p.stock === null ? '—' : p.stock) + '</td>' +
         '<td class="px-3 py-3 text-center">' + (p.destacado
           ? '<svg viewBox="0 0 24 24" class="w-4 h-4 inline-block text-yellow-400" fill="currentColor" aria-label="Destacado"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>'
           : '<span class="text-slate-600">—</span>') + '</td>' +
@@ -244,13 +241,9 @@
   function flavorRowHtml(f) {
     f = f || {};
     var nombre = f.nombre != null ? f.nombre : "";
-    var stock  = (f.stock === null || f.stock === undefined) ? "" : String(f.stock);
-    var precio = (f.precio === null || f.precio === undefined) ? "" : String(f.precio);
     return (
       '<div class="flex gap-2 items-center flavor-row">' +
         '<input type="text" class="flavor-nombre flex-1 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Nombre del sabor" value="' + esc(nombre) + '" />' +
-        '<input type="number" min="0" class="flavor-stock w-28 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Sin control" value="' + stock + '" />' +
-        '<input type="number" step="0.01" min="0" class="flavor-precio w-32 bg-slate-700 border border-slate-600 rounded-none px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" placeholder="Precio del producto" value="' + precio + '" />' +
         '<button type="button" class="flavor-remove-btn btn-link-danger text-sm px-2 shrink-0">Quitar</button>' +
       '</div>'
     );
@@ -273,13 +266,7 @@
     rows.forEach(function (row) {
       var nombre = row.querySelector(".flavor-nombre").value.trim();
       if (!nombre) return;
-      var stockVal  = row.querySelector(".flavor-stock").value.trim();
-      var precioVal = row.querySelector(".flavor-precio").value.trim();
-      out.push({
-        nombre: nombre,
-        stock:  stockVal === "" ? null : Math.max(0, parseInt(stockVal, 10) || 0),
-        precio: precioVal === "" ? null : parseFloat(precioVal),
-      });
+      out.push({ nombre: nombre });
     });
     return out;
   }
@@ -546,7 +533,7 @@
   function downloadTemplate() {
     var rows = [
       "sku,nombre,marca,categoria,cantidad,unidad,descripcion,precio,precio_original,stock,imagen,imagenes,badge,sabores,destacado,activo",
-      ',Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2,lb,Proteína de suero aislada,899.00,1099.00,15,,,MÁS VENDIDO,"Chocolate:10:899|Vainilla:5:949|Fresa",1,1',
+      ',Proteína Whey Gold Standard,Optimum Nutrition,Proteínas,2,lb,Proteína de suero aislada,899.00,1099.00,15,,,MÁS VENDIDO,"Chocolate|Vainilla|Fresa",1,1',
       ",Creatina Monohidratada,Universal,Creatina,300,g,Creatina micronizada,349.00,,30,,,,,0,1",
     ].join("\r\n");
     // BOM para que Excel abra los acentos correctamente.
