@@ -75,10 +75,10 @@
       return '<tr class="border-b border-slate-700">' +
         '<td class="px-3 py-3 text-slate-300 font-mono">#' + o.id + '</td>' +
         '<td class="px-3 py-3">' +
-          '<div class="text-slate-200 flex items-center gap-1.5">' + esc(o.nombre_cliente) +
+          '<div class="text-slate-200 flex items-center gap-2">' + esc(o.nombre_cliente) +
             (waLink(o.telefono)
-              ? '<a href="' + esc(waLink(o.telefono)) + '" target="_blank" rel="noopener" class="text-green-400 hover:text-green-300" title="Abrir WhatsApp con ' + esc(o.nombre_cliente) + '">' +
-                  '<span class="material-symbols-outlined text-base">chat</span>' +
+              ? '<a href="' + esc(waLink(o.telefono)) + '" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-900/40 text-green-400 hover:bg-green-800/60 hover:text-green-300 transition-colors shrink-0" title="Abrir WhatsApp con ' + esc(o.nombre_cliente) + '">' +
+                  '<span class="material-symbols-outlined text-sm" style="font-variation-settings:\'FILL\' 1;">chat</span>' +
                 '</a>'
               : '') +
           '</div>' +
