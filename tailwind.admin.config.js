@@ -5,7 +5,7 @@
    red, blue, yellow, cyan, con opacidades). Salida: site/assets/css/admin.css */
 module.exports = {
   content: [
-    "./site/admin/*.html",
+    "./site/panel-4x9qz/*.html",
     "./site/assets/js/admin/*.js",
     "./site/assets/js/fuzzy.js",
   ],
