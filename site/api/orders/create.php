@@ -186,8 +186,8 @@ try {
 
     if (empty($cleanItems)) {
         $pdo->rollBack();
-        // No es "carrito vacío" a secas: se sabe exactamente por qué se vació (agotado,
-        // ya no existe, etc.) — se manda el detalle para que el front dé un mensaje
+        // No es "carrito vacío" a secas: se sabe exactamente por qué se vació (producto
+        // ya no existe, sabor inactivo, etc.) — se manda el detalle para que el front dé un mensaje
         // honesto en vez del genérico, que confundía al cliente (veía su ítem en pantalla
         // mientras el servidor decía "vacío").
         http_response_code(400);
