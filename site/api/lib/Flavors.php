@@ -1,7 +1,11 @@
 <?php
 declare(strict_types=1);
 
-// Sabores por producto: nombre + stock propio + precio propio.
+// Sabores por producto: solo nombre. No tienen precio ni stock propios — el pedido
+// nunca se bloquea por disponibilidad y todos los sabores cuestan lo mismo que el
+// producto (se confirma por WhatsApp). Las columnas stock/precio de product_flavors
+// se dejan en NULL; siguen existiendo en la BD por si algún día se quiere revertir,
+// pero nada las lee.
 // Usado por el importador de CSV (F3.2) y por el editor del panel (F3.3), para que
 // ambos caminos apliquen exactamente la misma regla de sincronización.
 
@@ -15,10 +19,11 @@ function ds_slugify_flavor(string $nombre): string
 
 /**
  * Reemplaza el conjunto completo de sabores de un producto por $parsedFlavors.
- * $parsedFlavors: lista de ['nombre' => string, 'stock' => ?int, 'precio' => ?float].
+ * $parsedFlavors: lista de ['nombre' => string, ...] — cualquier 'stock'/'precio' que
+ * traiga se ignora (se guarda siempre NULL).
  *
  * Empareja por slug: si ya existe un sabor con ese slug en el producto, se actualiza
- * (nombre/stock/precio/orden); si no, se crea. Los sabores existentes que ya NO estén
+ * (nombre/orden); si no, se crea. Los sabores existentes que ya NO estén
  * en la lista nueva se BORRAN (a diferencia de los productos, un sabor es un
  * sub-recurso del producto: no tiene sentido "desactivarlo" en vez de quitarlo, y
  * order_items.sabor solo guarda el nombre como texto, así que borrar un sabor nunca
@@ -44,8 +49,6 @@ function ds_sync_product_flavors(PDO $pdo, int $productId, array $parsedFlavors)
         }
         $bySlug[$slug] = [
             'nombre' => mb_substr($nombre, 0, 80),
-            'stock'  => isset($f['stock']) && $f['stock'] !== null ? max(0, (int) $f['stock']) : null,
-            'precio' => isset($f['precio']) && $f['precio'] !== null ? max(0.0, (float) $f['precio']) : null,
             'orden'  => $orden++,
         ];
     }
@@ -57,18 +60,20 @@ function ds_sync_product_flavors(PDO $pdo, int $productId, array $parsedFlavors)
         $existing[$row['slug']] = (int) $row['id'];
     }
 
+    // stock/precio siempre NULL: la columna se queda en la BD (no se toca el esquema)
+    // pero nada la escribe con un valor real ya.
     $insert = $pdo->prepare(
-        'INSERT INTO product_flavors (product_id, nombre, slug, stock, precio, orden, activo) VALUES (?, ?, ?, ?, ?, ?, 1)'
+        'INSERT INTO product_flavors (product_id, nombre, slug, stock, precio, orden, activo) VALUES (?, ?, ?, NULL, NULL, ?, 1)'
     );
     $update = $pdo->prepare(
-        'UPDATE product_flavors SET nombre = ?, stock = ?, precio = ?, orden = ?, activo = 1 WHERE id = ?'
+        'UPDATE product_flavors SET nombre = ?, stock = NULL, precio = NULL, orden = ?, activo = 1 WHERE id = ?'
     );
 
     foreach ($bySlug as $slug => $f) {
         if (isset($existing[$slug])) {
-            $update->execute([$f['nombre'], $f['stock'], $f['precio'], $f['orden'], $existing[$slug]]);
+            $update->execute([$f['nombre'], $f['orden'], $existing[$slug]]);
         } else {
-            $insert->execute([$productId, $f['nombre'], $slug, $f['stock'], $f['precio'], $f['orden']]);
+            $insert->execute([$productId, $f['nombre'], $slug, $f['orden']]);
         }
     }
 
@@ -84,9 +89,10 @@ function ds_sync_product_flavors(PDO $pdo, int $productId, array $parsedFlavors)
 }
 
 /**
- * Parsea la columna CSV `sabores`: "Chocolate:10:899|Mocha::999|Fresa" ->
- * [['nombre'=>'Chocolate','stock'=>10,'precio'=>899.0], ['nombre'=>'Mocha','stock'=>null,'precio'=>999.0], ['nombre'=>'Fresa','stock'=>null,'precio'=>null]]
- * Formato por entrada: nombre[:stock[:precio]], los dos últimos opcionales.
+ * Parsea la columna CSV `sabores`: acepta tanto el formato nuevo "Chocolate|Mocha|Fresa"
+ * como el viejo "Chocolate:10:899|Mocha::999|Fresa" (por compatibilidad con CSVs ya
+ * exportados) -> [['nombre'=>'Chocolate'], ['nombre'=>'Mocha'], ['nombre'=>'Fresa']].
+ * Si una entrada trae ":stock:precio" se ignora esa parte, solo se usa el nombre.
  */
 function ds_parse_flavors_csv(string $raw, callable $toNumber): array
 {
@@ -105,15 +111,7 @@ function ds_parse_flavors_csv(string $raw, callable $toNumber): array
         if ($nombre === '') {
             continue;
         }
-        $stockRaw = trim($parts[1] ?? '');
-        $precioRaw = trim($parts[2] ?? '');
-        $stock = $stockRaw !== '' ? $toNumber($stockRaw) : null;
-        $precio = $precioRaw !== '' ? $toNumber($precioRaw) : null;
-        $out[] = [
-            'nombre' => $nombre,
-            'stock'  => $stock !== null ? (int) $stock : null,
-            'precio' => $precio !== null ? (float) $precio : null,
-        ];
+        $out[] = ['nombre' => $nombre];
     }
     return $out;
 }
