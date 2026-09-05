@@ -38,6 +38,16 @@
     return csrfPromise;
   }
 
+  // google-callback.php redirige aquí con ?google_error=1 si algo falló en el camino
+  // (ver api/auth/google-callback.php) — mismo patrón que admin/seguridad.js usa para
+  // leer un flag de la URL al cargar la página.
+  function showGoogleErrorIfAny() {
+    if (new URLSearchParams(window.location.search).get("google_error") !== "1") return;
+    var form = document.getElementById("login-form");
+    if (!form) return;
+    showFormError(form, "No se pudo iniciar sesión con Google. Inténtalo de nuevo o usa tu correo y contraseña.");
+  }
+
   function bindLoginForm() {
     var form = document.getElementById("login-form");
     if (!form) return;
@@ -119,6 +129,12 @@
         currentUser = data.user;
         fillProfile(currentUser);
         revealSessionGate();
+        // Cuentas creadas vía "Continuar con Google" se saltan el checkbox de términos
+        // de registro.html — bloquear con un aviso obligatorio hasta que los acepte.
+        var termsModal = document.getElementById("terms-modal");
+        if (termsModal && currentUser.terms_accepted === false) {
+          termsModal.classList.remove("hidden");
+        }
         if (ordersBox) {
           global.DSApi.apiFetch("api/orders/list.php").then(function (orders) {
             renderOrders(orders, ordersBox);
@@ -235,6 +251,27 @@
             setBusy(pwForm, false);
           })
           .catch(function (er) { showFormError(pwForm, er.message); setBusy(pwForm, false); });
+      });
+    }
+
+    // ── Aceptar términos (cuentas creadas vía Google) ──
+    var termsForm = document.getElementById("terms-accept-form");
+    if (termsForm) {
+      termsForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var errBox = termsForm.querySelector("[data-terms-error]");
+        if (errBox) errBox.classList.add("hidden");
+        setBusy(termsForm, true);
+        global.DSApi.apiFetch("api/auth/accept-terms.php", { method: "POST", body: {} })
+          .then(function () {
+            if (currentUser) currentUser.terms_accepted = true;
+            var modal = document.getElementById("terms-modal");
+            if (modal) modal.classList.add("hidden");
+          })
+          .catch(function (er) {
+            if (errBox) { errBox.textContent = er.message; errBox.classList.remove("hidden"); }
+            setBusy(termsForm, false);
+          });
       });
     }
 
@@ -378,5 +415,6 @@
     bindCuentaPage();
     bindForgotForm();
     bindResetForm();
+    showGoogleErrorIfAny();
   });
 })(window);

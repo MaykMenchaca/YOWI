@@ -390,12 +390,14 @@ CREATE TABLE IF NOT EXISTS users (
     nombre         VARCHAR(150) NOT NULL,
     email          VARCHAR(190) NOT NULL,
     telefono       VARCHAR(30)  NULL,
-    password_hash  VARCHAR(255) NOT NULL,
+    password_hash  VARCHAR(255) NULL, -- NULL = cuenta creada solo vía Google (sin contraseña propia)
+    google_id      VARCHAR(64)  NULL, -- sub de Google; NULL si la cuenta nunca se vinculó
     password_changed_at DATETIME NULL,
     email_verified TINYINT(1)   NOT NULL DEFAULT 0,
     terms_accepted_at DATETIME  NULL, -- fecha real en que aceptó términos/privacidad al registrarse
     created_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_users_email (email)
+    UNIQUE KEY uq_users_email (email),
+    UNIQUE KEY uq_users_google_id (google_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── Tokens de verificación de email y recuperación de contraseña ──────────────
