@@ -18,7 +18,7 @@ if ($userId === null) {
 }
 
 $pdo = ds_get_pdo();
-$stmt = $pdo->prepare('SELECT id, nombre, email, telefono FROM users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, nombre, email, telefono, terms_accepted_at FROM users WHERE id = ?');
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
@@ -33,6 +33,10 @@ ds_json_success([
         'nombre' => $user['nombre'],
         'email' => $user['email'],
         'telefono' => $user['telefono'],
+        // Cuentas creadas vía Google pueden no tener términos aceptados todavía
+        // (ver api/auth/google-callback.php) — cuenta.html usa esto para mostrar el
+        // aviso obligatorio hasta que los acepte.
+        'terms_accepted' => $user['terms_accepted_at'] !== null,
     ],
     'csrf_token' => ds_csrf_token(),
 ]);

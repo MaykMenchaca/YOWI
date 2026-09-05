@@ -202,6 +202,24 @@ Entiendo que esta acción no se puede deshacer.
 </section>
 </div>
 </div>
+<!-- Modal aceptar términos (cuentas creadas vía Google, que se saltan el checkbox de
+     registro.html) — sin botón de cancelar, es obligatorio. -->
+<div id="terms-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+<div class="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">
+<h3 class="font-display font-extrabold text-xl uppercase text-ink mb-4">Un último paso</h3>
+<p class="font-body text-sm text-gray-600 mb-4">Antes de continuar, confirma que aceptas nuestros términos.</p>
+<form id="terms-accept-form" class="space-y-4">
+<div class="flex items-start gap-3">
+<input class="mt-1 border-gray-200 rounded text-brand-container focus:ring-[#378ADD] cursor-pointer" id="terms-accept" required type="checkbox"/>
+<label class="font-body text-sm text-gray-500 cursor-pointer" for="terms-accept">
+Acepto los <a class="text-brand hover:underline" href="terminos.html#terminos" target="_blank" rel="noopener">Términos y condiciones</a> y la <a class="text-brand hover:underline" href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a>.
+</label>
+</div>
+<p data-terms-error class="text-error text-sm hidden"></p>
+<button type="submit" class="w-full btn-primary py-2.5 rounded font-bold uppercase tracking-widest text-xs">Continuar</button>
+</form>
+</div>
+</div>
 <!-- Modal editar perfil -->
 <div id="edit-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
 <div class="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl">

@@ -35,6 +35,18 @@ return [
     // panel (ver docs/despliegue-hostinger.md, sección de 2FA).
     'TOTP_ENCRYPTION_KEY' => 'cambiar_por_una_clave_generada_de_32_bytes_en_base64',
 
+    // ── Google OAuth ("Iniciar sesión con Google") ────────────────────────────
+    // Flujo Authorization Code del lado del servidor — SIN el SDK de Google en el
+    // navegador (evitaría abrir script-src 'self' del CSP a un dominio externo).
+    // Obtener en https://console.cloud.google.com/apis/credentials:
+    //   1. Crear un "OAuth client ID" de tipo "Web application".
+    //   2. Authorized JavaScript origin: https://distribuidordesuplementos.com.mx
+    //   3. Authorized redirect URI:      https://distribuidordesuplementos.com.mx/api/auth/google-callback.php
+    // Si se dejan vacíos, o si falta APP_URL de arriba, "Continuar con Google" se
+    // desactiva solo (redirige con google_error=1) en vez de tronar.
+    'GOOGLE_CLIENT_ID'     => '',
+    'GOOGLE_CLIENT_SECRET' => '',
+
     // ── Debug (solo local) ────────────────────────────────────────────────────
     // 'DS_DEBUG' => '1',   // muestra errores en pantalla SOLO en desarrollo
 ];
