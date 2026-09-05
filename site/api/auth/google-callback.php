@@ -5,6 +5,7 @@ require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../lib/Response.php';
 require __DIR__ . '/../lib/Session.php';
 require __DIR__ . '/../lib/RateLimit.php';
+require __DIR__ . '/../lib/Mailer.php'; // ds_app_url(), que usa GoogleAuth.php
 require __DIR__ . '/../lib/GoogleAuth.php';
 
 // GET /api/auth/google-callback.php — Google redirige aquí con ?code=...&state=...
