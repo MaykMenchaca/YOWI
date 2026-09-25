@@ -37,6 +37,13 @@ if (!$user) {
     ds_login_record('cliente', $email, $ip, false);
     ds_json_error('Credenciales inválidas', 401);
 }
+// Cuenta creada con Google (sin contraseña): misma respuesta y mismo tiempo que una
+// contraseña incorrecta, para no delatar que el correo existe.
+if ($user['password_hash'] === null) {
+    ds_dummy_password_check();
+    ds_login_record('cliente', $email, $ip, false);
+    ds_json_error('Credenciales inválidas', 401);
+}
 if (!password_verify($password, $user['password_hash'])) {
     ds_login_record('cliente', $email, $ip, false);
     ds_json_error('Credenciales inválidas', 401);

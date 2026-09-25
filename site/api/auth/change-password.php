@@ -33,6 +33,9 @@ $stmt = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?');
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 if (!$user) ds_json_error('Cuenta no encontrada', 404);
+if ($user['password_hash'] === null) {
+    ds_json_error('Tu cuenta entra con Google y no tiene contraseña', 400);
+}
 
 if (!password_verify($actual, (string) $user['password_hash'])) {
     ds_json_error('Tu contraseña actual no es correcta', 401);

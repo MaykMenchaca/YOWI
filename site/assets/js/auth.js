@@ -135,6 +135,7 @@
         if (termsModal && currentUser.terms_accepted === false) {
           termsModal.classList.remove("hidden");
         }
+        if (currentUser.tiene_password === false) adaptarCuentaSinPassword();
         if (ordersBox) {
           global.DSApi.apiFetch("api/orders/list.php").then(function (orders) {
             renderOrders(orders, ordersBox);
@@ -277,6 +278,21 @@
 
     // ── Eliminar cuenta ──
     var delForm = document.getElementById("delete-account-form");
+    var sinPassword = false;
+
+    // Cuenta creada con Google: no tiene contraseña que cambiar ni con cuál confirmar.
+    function adaptarCuentaSinPassword() {
+      sinPassword = true;
+      var pwSection = document.getElementById("change-password-section");
+      if (pwSection) pwSection.classList.add("hidden");
+      if (!delForm) return;
+      var input = delForm.querySelector("#da-password");
+      var label = input.parentNode.querySelector("label");
+      if (label) label.textContent = "Escribe tu correo para confirmar";
+      input.type = "email";
+      input.setAttribute("autocomplete", "off");
+    }
+
     if (delForm) {
       delForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -287,7 +303,7 @@
         setBusy(delForm, true);
         global.DSApi.apiFetch("api/auth/delete-account.php", {
           method: "POST",
-          body: { password: password },
+          body: sinPassword ? { confirmacion: password } : { password: password },
         })
           .then(function () { window.location.href = "index.html"; })
           .catch(function (er) { showFormError(delForm, er.message); setBusy(delForm, false); });

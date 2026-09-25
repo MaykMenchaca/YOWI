@@ -55,6 +55,40 @@ function ds_http_post_form(string $url, array $fields): ?array
     return is_array($decoded) ? $decoded : null;
 }
 
+// Vincula el Google de $email a la cuenta existente con ese correo, o crea una nueva
+// (sin contraseña ni términos aceptados — cuenta.html exige aceptarlos). Devuelve el id.
+function ds_google_link_or_create(PDO $pdo, string $email, string $sub, string $nombre): int
+{
+    $stmt = $pdo->prepare('SELECT id, google_id, email_verified FROM users WHERE email = ?');
+    $stmt->execute([$email]);
+    $existing = $stmt->fetch();
+
+    if (!$existing) {
+        $pdo->prepare(
+            'INSERT INTO users (nombre, email, password_hash, google_id, email_verified, terms_accepted_at)
+             VALUES (?, ?, NULL, ?, 1, NULL)'
+        )->execute([$nombre, $email, $sub]);
+        return (int) $pdo->lastInsertId();
+    }
+
+    $userId = (int) $existing['id'];
+    if (empty($existing['google_id'])) {
+        if ((int) $existing['email_verified'] === 1) {
+            $pdo->prepare('UPDATE users SET google_id = ? WHERE id = ?')->execute([$sub, $userId]);
+        } else {
+            // Registrarse no exige verificar el correo, así que cualquiera pudo crear esta
+            // cuenta con el correo de otra persona y su propia contraseña. Google acaba de
+            // probar quién es el dueño real: se borra esa contraseña y password_changed_at
+            // cierra las sesiones abiertas con ella (ds_session_check_password_change).
+            $pdo->prepare(
+                'UPDATE users SET google_id = ?, email_verified = 1, password_hash = NULL,
+                                  password_changed_at = NOW() WHERE id = ?'
+            )->execute([$sub, $userId]);
+        }
+    }
+    return $userId;
+}
+
 // Decodifica el payload de un id_token (JWT) SIN verificar la firma. Es seguro aquí
 // porque el token nunca pasa por el navegador del cliente: llega directo en la
 // respuesta de una petición HTTPS servidor-a-servidor a oauth2.googleapis.com — esa

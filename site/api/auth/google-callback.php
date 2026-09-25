@@ -83,33 +83,8 @@ if ($nombre === '') {
     $nombre = explode('@', $email)[0];
 }
 
-$pdo = ds_get_pdo();
-
 try {
-    $stmt = $pdo->prepare('SELECT id, google_id FROM users WHERE email = ?');
-    $stmt->execute([$email]);
-    $existing = $stmt->fetch();
-
-    if ($existing) {
-        $userId = (int) $existing['id'];
-        // Vincular sin tocar password_hash existente. Mismo correo = misma cuenta: es
-        // seguro porque Google solo manda email_verified=true cuando de verdad
-        // confirmó que ese correo le pertenece a esta persona.
-        if (empty($existing['google_id'])) {
-            $pdo->prepare('UPDATE users SET google_id = ?, email_verified = 1 WHERE id = ?')
-                ->execute([$sub, $userId]);
-        }
-    } else {
-        // Cuenta nueva vía Google: sin contraseña propia (password_hash NULL) y sin
-        // términos aceptados todavía (el flujo de Google no pasa por ese checkbox) —
-        // cuenta.html bloquea con un aviso obligatorio hasta que los acepte.
-        $insert = $pdo->prepare(
-            'INSERT INTO users (nombre, email, password_hash, google_id, email_verified, terms_accepted_at)
-             VALUES (?, ?, NULL, ?, 1, NULL)'
-        );
-        $insert->execute([$nombre, $email, $sub]);
-        $userId = (int) $pdo->lastInsertId();
-    }
+    $userId = ds_google_link_or_create(ds_get_pdo(), $email, $sub, $nombre);
 } catch (Throwable $e) {
     error_log('google-callback.php DB: ' . $e->getMessage());
     ds_google_redirect($failUrl);

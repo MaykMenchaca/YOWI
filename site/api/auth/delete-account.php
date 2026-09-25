@@ -23,17 +23,26 @@ ds_rate_limit_ip('delete-account', ds_client_ip(), 5, 15);
 // Re-pedir la contraseña: borrar la cuenta es irreversible, así que una sesión
 // secuestrada (equipo desatendido, cookie robada) no debe poder hacerlo sin saber la
 // contraseña real — mismo criterio que activar/desactivar 2FA en el panel admin.
-$password = (string) ($body['password'] ?? '');
-if ($password === '') ds_json_error('Confirma tu contraseña para eliminar tu cuenta', 400);
-
 $pdo = ds_get_pdo();
 $stmt = $pdo->prepare('SELECT email, password_hash FROM users WHERE id = ?');
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 if (!$user) ds_json_error('Cuenta no encontrada', 404);
 
-if (!password_verify($password, (string) $user['password_hash'])) {
-    ds_json_error('Contraseña incorrecta', 401);
+if ($user['password_hash'] === null) {
+    // Cuenta solo de Google: no hay contraseña que pedir, así que confirma escribiendo
+    // su correo (evita borrados por un clic accidental; la sesión y el CSRF ya se exigen).
+    $confirmacion = strtolower(trim((string) ($body['confirmacion'] ?? '')));
+    if ($confirmacion === '') ds_json_error('Escribe tu correo para confirmar', 400);
+    if (!hash_equals(strtolower((string) $user['email']), $confirmacion)) {
+        ds_json_error('El correo no coincide con el de tu cuenta', 401);
+    }
+} else {
+    $password = (string) ($body['password'] ?? '');
+    if ($password === '') ds_json_error('Confirma tu contraseña para eliminar tu cuenta', 400);
+    if (!password_verify($password, (string) $user['password_hash'])) {
+        ds_json_error('Contraseña incorrecta', 401);
+    }
 }
 
 try {
