@@ -12,8 +12,8 @@
     var reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var n = banners.length;
 
-    // Misma proporción que los banners (8:3) para mostrarlos completos en cualquier pantalla.
-    hero.className = "relative bg-ink overflow-hidden aspect-[8/3]";
+    // pb-5 = los 20px que la franja azul (margin-top:-20px en index.html) se monta sobre el hero.
+    hero.className = "relative bg-ink overflow-hidden pb-5";
 
     var slides = banners.map(function (b, i) {
       var alt = b.titulo ? escAttr(b.titulo) : "Promoción";
@@ -31,14 +31,16 @@
       : "";
 
     var dots = n > 1
-      ? '<div class="absolute bottom-2 md:bottom-4 left-0 right-0 flex justify-center gap-2 z-20">' +
+      ? '<div class="flex justify-center gap-2 pt-3">' +
         banners.map(function (b, i) {
           return '<button type="button" class="ds-dot w-2.5 h-2.5 rounded-full transition-colors ' +
             (i === 0 ? "bg-lime" : "bg-white/50") + '" data-idx="' + i + '" aria-label="Promoción ' + (i + 1) + '"></button>';
         }).join("") + '</div>'
       : "";
 
-    hero.innerHTML = '<div class="relative w-full h-full">' + slides + arrows + dots + '</div>';
+    // Misma proporción que los banners (8:3) para mostrarlos completos en cualquier pantalla.
+    // Los puntitos van debajo de la imagen para no tapar el texto del banner.
+    hero.innerHTML = '<div class="relative w-full aspect-[8/3]">' + slides + arrows + '</div>' + dots;
 
     var idx = 0, timer = null;
     var slideEls = hero.querySelectorAll(".ds-slide");
