@@ -12,12 +12,13 @@
     var reduce = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var n = banners.length;
 
-    hero.className = "relative bg-ink overflow-hidden min-h-[320px] md:min-h-[520px]";
+    // Misma proporción que los banners (8:3) para mostrarlos completos en cualquier pantalla.
+    hero.className = "relative bg-ink overflow-hidden aspect-[8/3]";
 
     var slides = banners.map(function (b, i) {
       var alt = b.titulo ? escAttr(b.titulo) : "Promoción";
       var img = '<img src="' + escAttr(apiUrl(b.imagen)) + '" alt="' + alt +
-        '" class="w-full h-full object-cover" loading="' + (i === 0 ? "eager" : "lazy") + '"/>';
+        '" class="w-full h-full object-contain" loading="' + (i === 0 ? "eager" : "lazy") + '"/>';
       var href = safeHref(b.enlace);
       var inner = href ? '<a href="' + escAttr(href) + '" class="block w-full h-full">' + img + '</a>' : img;
       return '<div class="ds-slide absolute inset-0 transition-opacity duration-500 ' +
@@ -30,14 +31,14 @@
       : "";
 
     var dots = n > 1
-      ? '<div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">' +
+      ? '<div class="absolute bottom-2 md:bottom-4 left-0 right-0 flex justify-center gap-2 z-20">' +
         banners.map(function (b, i) {
           return '<button type="button" class="ds-dot w-2.5 h-2.5 rounded-full transition-colors ' +
             (i === 0 ? "bg-lime" : "bg-white/50") + '" data-idx="' + i + '" aria-label="Promoción ' + (i + 1) + '"></button>';
         }).join("") + '</div>'
       : "";
 
-    hero.innerHTML = '<div class="relative w-full h-full min-h-[320px] md:min-h-[520px]">' + slides + arrows + dots + '</div>';
+    hero.innerHTML = '<div class="relative w-full h-full">' + slides + arrows + dots + '</div>';
 
     var idx = 0, timer = null;
     var slideEls = hero.querySelectorAll(".ds-slide");
