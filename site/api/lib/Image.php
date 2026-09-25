@@ -17,7 +17,9 @@ declare(strict_types=1);
 // memory_limit o tumba el proceso, con solo sesión de admin (quien sube imágenes).
 const DS_MAX_IMAGE_PIXELS = 40_000_000; // p. ej. 6300×6300, de sobra para cualquier foto de producto
 
-function ds_reencode_image(string $src, string $dest, string $mime): bool
+// $quality aplica a JPEG/WebP. Con JPEG ≥ 90 libgd deja el color sin submuestrear
+// (4:4:4), lo que mantiene nítido el texto de color en banners.
+function ds_reencode_image(string $src, string $dest, string $mime, int $quality = 85): bool
 {
     if (!function_exists('imagecreatefromjpeg')) {
         return false; // GD no disponible
@@ -56,13 +58,13 @@ function ds_reencode_image(string $src, string $dest, string $mime): bool
 
     switch ($mime) {
         case 'image/jpeg':
-            $ok = imagejpeg($img, $dest, 85);
+            $ok = imagejpeg($img, $dest, $quality);
             break;
         case 'image/png':
             $ok = imagepng($img, $dest, 6);
             break;
         case 'image/webp':
-            $ok = function_exists('imagewebp') ? imagewebp($img, $dest, 85) : false;
+            $ok = function_exists('imagewebp') ? imagewebp($img, $dest, $quality) : false;
             break;
         default:
             $ok = false;

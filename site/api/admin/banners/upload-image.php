@@ -62,7 +62,8 @@ if (!file_exists($htaccess)) {
 }
 
 // Re-encodar SIEMPRE con GD (elimina payloads/EXIF). Si falla, se RECHAZA la subida.
-if (!ds_reencode_image($file['tmp_name'], $destDir . $safeName, $mime)) {
+// Calidad 92 (no 85): los banners llevan texto fino de color que se emborrona al comprimir más.
+if (!ds_reencode_image($file['tmp_name'], $destDir . $safeName, $mime, 92)) {
     @unlink($destDir . $safeName); // por si se creó un archivo parcial
     ds_json_error('No se pudo procesar la imagen de forma segura. Revisa el archivo (JPG, PNG o WebP válido) e inténtalo de nuevo.', 422);
 }
