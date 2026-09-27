@@ -547,12 +547,39 @@
     var filtersRoot = document.querySelector("aside") || document;
     var filtersBuilt = false;
 
-    function refresh() {
+    // Solo las tarjetas en pantalla (o casi): animar las 300+ trabaría un celular, y las de
+    // más abajo nadie las ve. Van en orden de arriba a abajo, así que se corta en cuanto una
+    // queda por debajo de la pantalla.
+    function cardsOnScreen() {
+      var vh = global.innerHeight || 800;
+      var out = [];
+      var cards = grid.querySelectorAll("[data-product-id]");
+      for (var i = 0; i < cards.length; i++) {
+        var r = cards[i].getBoundingClientRect();
+        if (r.top > vh + 100) break;
+        if (r.bottom > -100) out.push(cards[i]);
+      }
+      return out;
+    }
+
+    // animate=true solo al marcar filtros (categoría, marca, limpiar): el buscador y los
+    // precios se usan tecla por tecla y animarlos se sentiría lento. Se probó GSAP Flip
+    // (tarjetas deslizándose a su nuevo lugar): en un celular lento retrasaba ~90 ms la
+    // aparición del resultado; esta entrada en cascada con WAAPI cuesta mucho menos.
+    function refresh(animate) {
       fetchProductos().then(function (productos) {
         if (!filtersBuilt) { populateFilters(filtersRoot, productos); filtersBuilt = true; }
         var result = applyFilters(productos, readFilters(filtersRoot));
         result = applySearch(result, searchInput ? searchInput.value : "");
         renderGrid(result, grid);
+        if (animate === true && !reduceMotion && grid.animate) {
+          cardsOnScreen().forEach(function (el, i) {
+            el.animate(
+              [{ opacity: 0, transform: "translateY(8px) scale(0.97)" }, { opacity: 1, transform: "none" }],
+              { duration: 250, delay: Math.min(i, 8) * 30, easing: EASE_OUT, fill: "backwards" }
+            );
+          });
+        }
         if (!result.length) {
           grid.innerHTML = productos.length
             ? '<p class="p-6 text-center text-gray-500 col-span-full font-bold">No encontramos productos con esa búsqueda. Prueba con otra palabra.</p>'
@@ -570,7 +597,7 @@
     filtersRoot.addEventListener("change", function (e) {
       if (!e.target || FILTER_NAMES.indexOf(e.target.name) === -1) return;
       if (e.target.name === "categoria") updateCatSummary(filtersRoot);
-      refresh();
+      refresh(e.target.name === "categoria" || e.target.name === "marca");
     });
     filtersRoot.addEventListener("input", function (e) {
       if (e.target && (e.target.name === "precio_min" || e.target.name === "precio_max")) refresh();
@@ -584,7 +611,7 @@
         filtersRoot.querySelectorAll('input[name="precio_min"], input[name="precio_max"]').forEach(function (el) { el.value = ""; });
         var ms = filtersRoot.querySelector('select[name="marca"]'); if (ms) ms.value = "";
         if (searchInput) searchInput.value = "";
-        refresh();
+        refresh(true);
       });
     }
 
