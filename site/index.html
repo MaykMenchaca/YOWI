@@ -52,9 +52,13 @@ button:active,a[href]:active{transform:scale(.97);}
 
 <main class="min-h-screen">
   <!-- Hero Section (si hay promociones, hero-carousel.js lo convierte en carrusel) -->
-  <div id="hero" class="relative bg-ink py-32 px-4 md:px-12 overflow-hidden flex items-center justify-center min-h-[600px]">
+  <!-- Arranca como espacio reservado del tamaño del carrusel (sin brinco al cargar). Si no hay
+       promociones, hero-carousel.js le pone data-default-class y muestra el texto. -->
+  <div id="hero" class="relative bg-ink overflow-hidden pb-5" data-default-class="relative bg-ink py-32 px-4 md:px-12 overflow-hidden flex items-center justify-center min-h-[600px]">
     <div class="absolute inset-0 opacity-50" style="background:repeating-linear-gradient(-8deg,transparent,transparent 60px,#1a2030 60px,#1a2030 62px)"></div>
-    <div class="relative z-10 max-w-[1280px] w-full mx-auto flex flex-col items-start">
+    <div data-hero-placeholder class="w-full aspect-[8/3]"></div>
+    <div data-hero-placeholder class="h-[22px]"></div>
+    <div data-hero-content class="hidden relative z-10 max-w-[1280px] w-full mx-auto flex flex-col items-start">
       <h1 class="font-display font-extrabold uppercase tracking-tight text-white mb-6" style="font-size:clamp(3rem,8vw,5.5rem);line-height:0.92;letter-spacing:-0.02em;">Suplementos originales<br>al mejor precio</h1>
       <div class="w-24 h-2 bg-lime mb-8"></div>
       <p class="font-body text-lg text-gray-300 max-w-2xl mb-12">Proteínas, creatina, pre-entrenos y más de 300 productos de marcas reconocidas. Pídelos por WhatsApp y te los llevamos a casa.</p>
