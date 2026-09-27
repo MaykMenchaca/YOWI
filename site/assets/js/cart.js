@@ -89,7 +89,22 @@
   // segundo toque (por no ver respuesta) meta otra pieza. Si mientras tanto la ficha cambió
   // el botón (p. ej. otro sabor), no se le pisa el texto.
   var ADDED_LABEL = "✓ Agregado";
-  function showAddedFeedback(btn, originalLabel) {
+  // Los lectores de pantalla no siempre leen el cambio de texto de un botón: este aviso
+  // invisible sí se anuncia.
+  var liveRegion = null;
+  function announce(msg) {
+    if (!liveRegion) {
+      liveRegion = document.createElement("div");
+      liveRegion.className = "sr-only";
+      liveRegion.setAttribute("aria-live", "polite");
+      document.body.appendChild(liveRegion);
+    }
+    liveRegion.textContent = "";
+    setTimeout(function () { liveRegion.textContent = msg; }, 50);
+  }
+
+  function showAddedFeedback(btn, originalLabel, nombre) {
+    announce("\"" + nombre + "\" agregado al carrito");
     btn.textContent = ADDED_LABEL;
     setTimeout(function () {
       if (btn.textContent !== ADDED_LABEL) return;
@@ -502,7 +517,7 @@
           var p = productos.filter(function (item) { return String(item.id) === String(wanted); })[0];
           if (!p) { addBtn.disabled = false; return; }
           var persistido = addItem(p, cantidad, sabor);
-          showAddedFeedback(addBtn, originalLabel);
+          showAddedFeedback(addBtn, originalLabel, p.nombre);
           if (!persistido) {
             alert("Se agregó \"" + p.nombre + "\" al carrito, pero tu navegador está bloqueando el guardado (¿modo privado?). Puede perderse si cambias de página — te recomendamos completar tu compra ahora.");
           } else if (qtyEl) {
