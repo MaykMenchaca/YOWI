@@ -338,11 +338,54 @@
     });
   }
 
+  var reduceMotion = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+
+  // Cambia la foto principal hasta que la nueva ya cargó (sin parpadeo en blanco) y la
+  // muestra con un fundido corto. Si se toca otra miniatura antes, gana la última.
+  var swapToken = 0;
+  function swapMainImage(mainImg, url) {
+    if (mainImg.getAttribute("src") === url) return;
+    var token = ++swapToken;
+    var pre = new Image();
+    pre.onload = pre.onerror = function () {
+      if (token !== swapToken) return;
+      mainImg.setAttribute("src", url);
+      if (!reduceMotion && mainImg.animate) {
+        mainImg.animate([{ opacity: 0.3 }, { opacity: 1 }], { duration: 180, easing: EASE_OUT });
+      }
+    };
+    pre.src = url;
+  }
+
+  // Zoom 1.6× que sigue al mouse, solo con mouse real (en celular un toque no amplía).
+  function setupImageZoom(mainImg) {
+    if (!mainImg || mainImg.getAttribute("data-zoom") || reduceMotion) return;
+    if (!(global.matchMedia && global.matchMedia("(hover: hover) and (pointer: fine)").matches)) return;
+    mainImg.setAttribute("data-zoom", "1");
+    var box = mainImg.parentNode;
+    box.classList.add("overflow-hidden", "cursor-zoom-in");
+    mainImg.style.transition = "transform 200ms " + EASE_OUT + ", opacity 200ms";
+    box.addEventListener("mousemove", function (e) {
+      // Medidas de layout (offset*), no getBoundingClientRect: esa ya incluye el zoom y
+      // haría que el punto ampliado se desviara del mouse.
+      var br = box.getBoundingClientRect();
+      var left = br.left + box.clientLeft + mainImg.offsetLeft;
+      var top = br.top + box.clientTop + mainImg.offsetTop;
+      var x = Math.min(100, Math.max(0, ((e.clientX - left) / mainImg.offsetWidth) * 100));
+      var y = Math.min(100, Math.max(0, ((e.clientY - top) / mainImg.offsetHeight) * 100));
+      mainImg.style.transformOrigin = x.toFixed(1) + "% " + y.toFixed(1) + "%";
+    });
+    box.addEventListener("mouseenter", function () { mainImg.style.transform = "scale(1.6)"; });
+    box.addEventListener("mouseleave", function () { mainImg.style.transform = ""; });
+  }
+
   // Galería (F4.5): imagen principal + miniaturas de galería. Con 1 sola imagen (o
   // ninguna extra) la tira de miniaturas se oculta y la ficha se ve como antes.
   function renderGallery(p, container) {
     var mainImg = container.querySelector('[data-field="imagen"]');
     var thumbsBox = container.querySelector("#gallery-thumbs");
+    setupImageZoom(mainImg);
     if (!thumbsBox) return;
 
     var urls = [];
@@ -371,7 +414,7 @@
       var btn = e.target.closest(".gallery-thumb");
       if (!btn) return;
       var url = btn.getAttribute("data-url");
-      if (mainImg) mainImg.setAttribute("src", url);
+      if (mainImg) swapMainImage(mainImg, url);
       thumbsBox.querySelectorAll(".gallery-thumb").forEach(function (t) {
         var active = t === btn;
         t.classList.toggle("border-brand", active);
