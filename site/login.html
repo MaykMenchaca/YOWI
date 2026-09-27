@@ -17,8 +17,9 @@
 <style id="flujo-enhance">
 :root{--ease-out:cubic-bezier(.23,1,.32,1);}
 button,a[href],[role=button],label[for]{cursor:pointer;}
-button,.product-card,.brand-card,.card-custom{transition:transform .16s var(--ease-out),box-shadow .2s var(--ease-out),background-color .2s var(--ease-out),border-color .2s var(--ease-out);}
-button:active,a[href]:active{transform:scale(.97);}
+button,.product-card,.brand-card,.card-custom{transition:transform .16s var(--ease-out),scale .16s var(--ease-out),box-shadow .2s var(--ease-out),background-color .2s var(--ease-out),border-color .2s var(--ease-out);}
+button:not(:disabled):active,a[href]:active{scale:.97;}
+@media(prefers-reduced-motion:reduce){button:not(:disabled):active,a[href]:active{scale:none;}}
 :focus-visible{outline:2px solid #378ADD;outline-offset:2px;border-radius:4px;}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}}
 </style>
