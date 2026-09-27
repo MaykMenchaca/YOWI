@@ -48,9 +48,29 @@
     });
     drawer.appendChild(ul);
 
+    // Abre deslizándose 8px hacia abajo (200 ms) y cierra más rápido (150 ms); el `hidden`
+    // se pone al terminar de cerrar. Un toque a media animación la cancela y va al nuevo
+    // estado, así el menú nunca queda trabado a medias.
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var abierto = false;
+    var anim = null;
+    var FRAMES = [{ opacity: 0, transform: "translateY(-8px)" }, { opacity: 1, transform: "none" }];
     btn.addEventListener("click", function () {
-      var hidden = drawer.classList.toggle("hidden");
-      btn.setAttribute("aria-expanded", String(!hidden));
+      abierto = !abierto;
+      btn.setAttribute("aria-expanded", String(abierto));
+      if (anim) { anim.cancel(); anim = null; }
+      if (abierto) drawer.classList.remove("hidden");
+      if (reduce || !drawer.animate) {
+        if (!abierto) drawer.classList.add("hidden");
+        return;
+      }
+      anim = abierto
+        ? drawer.animate(FRAMES, { duration: 200, easing: "cubic-bezier(0.23, 1, 0.32, 1)" })
+        : drawer.animate(FRAMES.slice().reverse(), { duration: 150, easing: "ease-out" });
+      if (!abierto) {
+        var closing = anim;
+        closing.onfinish = function () { if (anim === closing) { drawer.classList.add("hidden"); anim = null; } };
+      }
     });
 
     iconGroup.appendChild(btn);
