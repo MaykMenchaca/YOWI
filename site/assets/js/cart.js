@@ -64,14 +64,38 @@
     return persistido;
   }
 
+  var lastBadgeCount = null; // null = primera pintada: no se anima
+  var reduceMotion = global.matchMedia && global.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   function updateCartBadge(items) {
     items = items || getCart();
     var count = items.reduce(function (sum, i) { return sum + i.cantidad; }, 0);
+    var subio = lastBadgeCount !== null && count > lastBadgeCount;
+    lastBadgeCount = count;
     // Selector estable por atributo; fallback al viejo por si algún header no se actualizó.
     var badges = document.querySelectorAll('[data-cart-badge], a[href="pedido.html"] span.absolute');
     badges.forEach(function (badge) {
       badge.textContent = String(count);
+      if (subio && !reduceMotion && badge.animate) {
+        badge.animate(
+          [{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }],
+          { duration: 250, easing: "cubic-bezier(0.23, 1, 0.32, 1)" }
+        );
+      }
     });
+  }
+
+  // "✓ Agregado" por 1.2 s con el botón desactivado: confirma que se agregó y evita que un
+  // segundo toque (por no ver respuesta) meta otra pieza. Si mientras tanto la ficha cambió
+  // el botón (p. ej. otro sabor), no se le pisa el texto.
+  var ADDED_LABEL = "✓ Agregado";
+  function showAddedFeedback(btn, originalLabel) {
+    btn.textContent = ADDED_LABEL;
+    setTimeout(function () {
+      if (btn.textContent !== ADDED_LABEL) return;
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+    }, 1200);
   }
 
   // sabor (opcional): {id, nombre, precio} — cuando el producto tiene sabores, el precio
@@ -437,18 +461,23 @@
         // del catálogo no lo tienen, así que siguen agregando 1 como siempre.
         var qtyEl = document.getElementById("pdp-qty-value");
         var cantidad = qtyEl ? (parseInt(qtyEl.textContent, 10) || 1) : 1;
+        // Se desactiva ya, en el mismo toque: agregar espera la lista de productos, y un
+        // segundo toque en ese lapso sumaría otra pieza.
+        var originalLabel = addBtn.textContent;
+        addBtn.disabled = true;
         global.DSCatalog.fetchProductos().then(function (productos) {
           var wanted = addBtn.getAttribute("data-product-id");
           var p = productos.filter(function (item) { return String(item.id) === String(wanted); })[0];
-          if (p) {
-            var persistido = addItem(p, cantidad, sabor);
-            if (!persistido) {
-              alert("Se agregó \"" + p.nombre + "\" al carrito, pero tu navegador está bloqueando el guardado (¿modo privado?). Puede perderse si cambias de página — te recomendamos completar tu compra ahora.");
-            } else if (qtyEl) {
-              qtyEl.textContent = "1"; // reinicia el stepper tras agregar con éxito
-            }
+          if (!p) { addBtn.disabled = false; return; }
+          var persistido = addItem(p, cantidad, sabor);
+          showAddedFeedback(addBtn, originalLabel);
+          if (!persistido) {
+            alert("Se agregó \"" + p.nombre + "\" al carrito, pero tu navegador está bloqueando el guardado (¿modo privado?). Puede perderse si cambias de página — te recomendamos completar tu compra ahora.");
+          } else if (qtyEl) {
+            qtyEl.textContent = "1"; // reinicia el stepper tras agregar con éxito
           }
         }).catch(function () {
+          addBtn.disabled = false;
           alert("No se pudo agregar el producto. Revisa tu conexión e inténtalo de nuevo.");
         });
       }
