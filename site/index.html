@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-motion="gsap">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -68,7 +68,7 @@ button:active,a[href]:active{transform:scale(.97);}
 
   <!-- Trust bar -->
   <div class="bg-brand py-8 px-4 md:px-12 text-white" style="clip-path:polygon(0 12px,100% 0,100% 100%,0 calc(100% - 12px)); margin-top: -20px; position: relative; z-index: 20;">
-    <div class="max-w-[1280px] mx-auto flex flex-wrap justify-between items-center gap-6">
+    <div data-motion-stagger class="max-w-[1280px] mx-auto flex flex-wrap justify-between items-center gap-6">
       <div class="flex items-center gap-3">
         <span class="material-symbols-outlined text-3xl">local_shipping</span>
         <span class="font-display font-extrabold uppercase tracking-wide text-lg">Envío garantizado</span>
@@ -90,12 +90,12 @@ button:active,a[href]:active{transform:scale(.97);}
 
   <!-- Categorías -->
   <section class="py-24 px-4 md:px-12 max-w-[1280px] mx-auto">
-    <div class="flex flex-col items-center mb-16">
+    <div data-motion-title class="flex flex-col items-center mb-16">
       <h2 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink">Elige tu arma</h2>
       <div class="w-14 h-1.5 bg-lime mt-4"></div>
     </div>
     
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div data-motion-cards class="grid grid-cols-2 md:grid-cols-4 gap-6">
       <a href="catalogo.html" class="group bg-white border border-gray-200 p-8 flex flex-col items-center justify-center hover:border-brand transition">
         <span class="material-symbols-outlined text-5xl text-brand group-hover:scale-110 transition duration-300 mb-4">fitness_center</span>
         <span class="font-display font-extrabold uppercase tracking-wide text-xl text-ink">Proteínas</span>
@@ -118,7 +118,7 @@ button:active,a[href]:active{transform:scale(.97);}
   <!-- Destacados -->
   <section class="py-24 px-4 md:px-12 bg-white border-t border-gray-200">
     <div class="max-w-[1280px] mx-auto">
-      <div class="flex flex-col items-center mb-16">
+      <div data-motion-title class="flex flex-col items-center mb-16">
         <h2 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink">Más vendidos</h2>
         <div class="w-14 h-1.5 bg-lime mt-4"></div>
       </div>
@@ -193,6 +193,9 @@ button:active,a[href]:active{transform:scale(.97);}
 <script src="assets/js/img-fallback.js" defer></script>
 <script src="assets/js/catalog-engine.js" defer></script>
 <script src="assets/js/cart.js" defer></script>
+<script src="assets/vendor/gsap/gsap.min.js" defer></script>
+<script src="assets/vendor/gsap/ScrollTrigger.min.js" defer></script>
+<script src="assets/js/home-motion.js" defer></script>
 <script src="assets/enhance.js" defer></script>
 <script src="assets/experience.js" defer></script>
 <script src="assets/product3d.js" defer></script>

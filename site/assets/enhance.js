@@ -10,7 +10,9 @@
     // --- Reveal con stagger (nunca oculta contenido si algo falla) ---
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var cards = document.querySelectorAll(".product-card, .brand-card");
-    if (reduce || !("IntersectionObserver" in window) || !cards.length) return;
+    // La portada anima con GSAP (assets/js/home-motion.js).
+    var gsapPage = document.documentElement.getAttribute("data-motion") === "gsap";
+    if (gsapPage || reduce || !("IntersectionObserver" in window) || !cards.length) return;
 
     var st = document.createElement("style");
     st.textContent =

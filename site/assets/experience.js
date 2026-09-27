@@ -41,7 +41,9 @@
 
     // 3. Reveal de secciones (titulos h2). Las cards ya las anima enhance.js.
     var targets = document.querySelectorAll("[data-reveal], main section > h2, main section > div > h2");
-    if (reduce || !("IntersectionObserver" in window) || !targets.length) return;
+    // La portada anima con GSAP (assets/js/home-motion.js).
+    var gsapPage = document.documentElement.getAttribute("data-motion") === "gsap";
+    if (gsapPage || reduce || !("IntersectionObserver" in window) || !targets.length) return;
     targets.forEach(function (t) { t.classList.add("ds-reveal"); });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
