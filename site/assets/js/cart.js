@@ -323,6 +323,37 @@
     }
   }
 
+  // Confirmación tras enviar: sin esto la página seguía mostrando los productos y el
+  // formulario del pedido ya enviado (el carrito solo se vaciaba en localStorage), y al
+  // volver de WhatsApp parecía que no se había mandado.
+  var ORDER_SENT_HTML =
+    '<div data-order-sent role="status" class="bg-white border border-gray-200 p-8 flex flex-col items-center text-center gap-4">' +
+      '<svg viewBox="0 0 52 52" class="w-16 h-16 text-lime" aria-hidden="true">' +
+        '<circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="3"/>' +
+        '<path data-check d="M15 27l7 7 15-15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>' +
+      '<h2 class="font-display font-extrabold text-3xl uppercase tracking-tight text-ink">¡Pedido enviado!</h2>' +
+      '<p class="text-gray-600 max-w-sm">Te respondemos por WhatsApp para confirmar existencias, envío y pago.</p>' +
+      '<a href="catalogo.html" class="bg-brand text-white font-extrabold uppercase tracking-widest text-sm px-6 py-3 min-h-[44px] inline-flex items-center hover:opacity-90 transition-opacity">Seguir comprando</a>' +
+    '</div>';
+
+  function renderOrderSent() {
+    var summary = document.getElementById("cart-summary");
+    if (summary) renderSummary(summary);
+    syncCheckoutState();
+    var box = document.getElementById("cart-items");
+    if (!box) return;
+    box.innerHTML = ORDER_SENT_HTML;
+    var panel = box.querySelector("[data-order-sent]");
+    if (reduceMotion || !panel.animate) return;
+    var ease = "cubic-bezier(0.23, 1, 0.32, 1)";
+    panel.animate([{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "none" }], { duration: 300, easing: ease });
+    var check = panel.querySelector("[data-check]");
+    var len = check.getTotalLength();
+    check.style.strokeDasharray = String(len);
+    check.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 400, delay: 150, easing: ease, fill: "backwards" });
+  }
+
   function submitOrder(form) {
     var items = getCart();
     if (!items.length) {
@@ -367,6 +398,7 @@
     if (submitBtn && submitBtn.getAttribute("data-label")) {
       submitBtn.textContent = submitBtn.getAttribute("data-label");
     }
+    renderOrderSent();
 
     // Registrar el pedido en la BD queda en segundo plano: WhatsApp ya está abierto, así
     // que ni un ajuste (línea recortada, producto ya inactivo…) ni un fallo del POST
