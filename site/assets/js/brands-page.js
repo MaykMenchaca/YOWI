@@ -24,11 +24,11 @@
     var href = safeHref(b.enlace);
     var open = href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer"' : "<div";
     var close = href ? "</a>" : "</div>";
-    return open + ' class="brand-card bg-white rounded-lg border border-gray-200 p-6 flex flex-col items-center justify-center text-center aspect-square relative overflow-hidden group">' +
-      '<div class="w-20 h-20 mb-4 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">' +
+    return open + ' class="brand-card bg-white rounded-lg border border-gray-200 p-4 sm:p-6 flex flex-col items-center justify-center text-center min-h-[11rem] relative overflow-hidden group">' +
+      '<div class="w-16 h-16 sm:w-20 sm:h-20 mb-3 sm:mb-4 shrink-0 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden p-2">' +
         '<img class="w-full h-full object-contain" loading="lazy" src="' + src + '" alt="' + esc(b.nombre) + '"/>' +
       '</div>' +
-      '<h3 class="font-display font-extrabold uppercase tracking-wide text-xl text-ink mb-1 truncate w-full">' + esc(b.nombre) + '</h3>' +
+      '<h3 class="font-display font-extrabold uppercase tracking-wide text-lg sm:text-xl leading-tight text-ink mb-1 shrink-0 truncate w-full" title="' + esc(b.nombre) + '">' + esc(b.nombre) + '</h3>' +
       '<p class="font-body text-sm text-gray-500">' + count + '</p>' +
       '<div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors pointer-events-none"></div>' +
     close;
