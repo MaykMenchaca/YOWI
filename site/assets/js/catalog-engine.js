@@ -705,6 +705,26 @@
     });
   }
 
+  // Filas por categoría de la portada: <div data-category-row="Creatina" data-limit="4">
+  // muestra los productos cuya categoría EMPIEZA con ese texto (igual que ?categoria= del
+  // catálogo). Sin productos, se oculta su sección completa.
+  function bootstrapCategoryRows() {
+    var rows = document.querySelectorAll("[data-category-row]");
+    if (!rows.length) return;
+    fetchProductos().then(function (productos) {
+      Array.prototype.forEach.call(rows, function (row) {
+        var pref = normalizeText(row.getAttribute("data-category-row"));
+        var limit = Number(row.getAttribute("data-limit")) || 4;
+        var list = productos.filter(function (p) { return normalizeText(p.categoria).indexOf(pref) === 0; });
+        var section = row.closest("section") || row;
+        if (!list.length) { section.hidden = true; return; }
+        renderGrid(list.slice(0, limit), row);
+      });
+    }).catch(function () {
+      Array.prototype.forEach.call(rows, function (row) { (row.closest("section") || row).hidden = true; });
+    });
+  }
+
   function bootstrapProductDetail() {
     var container = document.getElementById("product-detail");
     if (!container) return;
@@ -716,6 +736,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     bootstrapCatalogo();
     bootstrapFeatured();
+    bootstrapCategoryRows();
     bootstrapProductDetail();
   });
 
