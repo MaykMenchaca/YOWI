@@ -439,6 +439,45 @@
     });
   }
 
+  // Precio anterior tachado, "Ahorras $X" y etiqueta sobre la foto; ocultos sin descuento.
+  function renderDetailDiscount(p) {
+    var pct = discountPct(p);
+    var before = document.getElementById("pdp-price-before");
+    var savings = document.getElementById("pdp-savings");
+    var badge = document.getElementById("pdp-discount-badge");
+    if (before) { before.textContent = pct ? money(p.precio_original) : ""; before.classList.toggle("hidden", !pct); }
+    if (savings) { savings.textContent = pct ? "Ahorras " + money(Number(p.precio_original) - Number(p.precio)) : ""; savings.classList.toggle("hidden", !pct); }
+    if (badge) { badge.textContent = pct ? "Ahorra " + pct + "%" : ""; badge.classList.toggle("hidden", !pct); }
+  }
+
+  // "También te puede interesar": primero la misma categoría, luego las que empiezan con
+  // la misma palabra (CREATINA MONOHIDRATO → CREATINA CON SABOR), luego el resto; sin el
+  // producto actual. Sin otros productos, la sección queda oculta.
+  var RELATED_LIMIT = 4;
+  function renderRelated(p, productos) {
+    var section = document.getElementById("related-section");
+    var box = document.getElementById("related-products");
+    if (!section || !box) return;
+    var cat = normalizeText(p.categoria);
+    var first = cat.split(" ")[0];
+    var rank = function (x) {
+      var c = normalizeText(x.categoria);
+      if (c === cat) return 0;
+      if (first && c.split(" ")[0] === first) return 1;
+      return 2;
+    };
+    var otros = productos.filter(function (x) { return String(x.id) !== String(p.id); });
+    var list = otros
+      .map(function (x, i) { return { x: x, r: rank(x), i: i }; })
+      .sort(function (a, b) { return (a.r - b.r) || (a.i - b.i); })
+      .slice(0, RELATED_LIMIT)
+      .map(function (o) { return o.x; });
+    if (!list.length) { section.hidden = true; return; }
+    renderGrid(list, box);
+    section.hidden = false;
+    if (global.DSFavorites) global.DSFavorites.decorate(box);
+  }
+
   function renderProductDetail(id, container) {
     if (!container) return Promise.resolve(null);
     var idNum = parseInt(id, 10);
@@ -476,6 +515,8 @@
       wireQtyStepper(container, p);
       updateAddToCartState(container, p, null);
       renderGallery(p, container);
+      renderDetailDiscount(p);
+      renderRelated(p, productos);
 
       if (global.DSFavorites) global.DSFavorites.decorate(container);
       return p;

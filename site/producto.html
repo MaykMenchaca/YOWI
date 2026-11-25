@@ -75,6 +75,7 @@ button:not(:disabled):active,a[href]:active{scale:.97;}
     <!-- Left: Image Gallery -->
     <div class="flex flex-col gap-4">
       <div class="bg-white border border-gray-200 aspect-square flex items-center justify-center p-8 relative">
+        <span id="pdp-discount-badge" class="hidden absolute top-4 left-4 z-10 bg-lime text-ink font-extrabold uppercase tracking-wide text-xs px-3 py-1.5"></span>
         <img class="max-w-full max-h-full object-contain transition-opacity duration-200" data-field="imagen" data-fallback="assets/img/producto-placeholder.svg" loading="lazy" src="assets/img/producto-placeholder.svg"/>
       </div>
       <div class="grid grid-cols-4 gap-4 hidden" id="gallery-thumbs"></div>
@@ -86,7 +87,11 @@ button:not(:disabled):active,a[href]:active{scale:.97;}
       <h1 class="font-display font-extrabold text-5xl uppercase tracking-tight text-ink mb-2" data-field="nombre">Nombre del Producto</h1>
       <div class="text-gray-400 font-body text-sm mb-6" data-field="cantidad">Cantidad</div>
       
-      <div class="font-display font-extrabold text-4xl text-brand mb-6" data-field="precio">$0.00 MXN</div>
+      <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-6">
+        <div class="font-display font-extrabold text-4xl text-brand" data-field="precio">$0.00 MXN</div>
+        <s id="pdp-price-before" class="hidden text-lg text-gray-500"></s>
+        <span id="pdp-savings" class="hidden text-sm font-bold text-[#0F7A3A]"></span>
+      </div>
 
       <div class="hidden mb-6" id="flavor-section">
         <div class="text-sm font-bold uppercase tracking-wide text-gray-500 mb-2">Elige un sabor</div>
@@ -118,9 +123,20 @@ button:not(:disabled):active,a[href]:active{scale:.97;}
           <span class="material-symbols-outlined">chat</span>
           Comprar por WhatsApp
         </a>
+        <ul id="pdp-trust" class="mt-2 bg-white border border-gray-200 p-5 flex flex-col gap-3 text-sm text-gray-700">
+          <li class="flex items-center gap-3"><span class="material-symbols-outlined text-brand" aria-hidden="true">verified</span><span><strong class="text-ink">100% original</strong>, con sello del fabricante</span></li>
+          <li class="flex items-center gap-3"><span class="material-symbols-outlined text-brand" aria-hidden="true">local_shipping</span><span><strong class="text-ink">Envío a todo México</strong></span></li>
+          <li class="flex items-center gap-3"><span class="material-symbols-outlined text-brand" aria-hidden="true">chat</span><span>Te respondemos por WhatsApp para <strong class="text-ink">confirmar existencias, envío y pago</strong></span></li>
+        </ul>
       </div>
     </div>
   </div>
+
+  <section id="related-section" class="mt-20" aria-labelledby="t-related" hidden>
+    <h2 id="t-related" class="font-display font-extrabold text-4xl uppercase tracking-tight text-ink">También te puede interesar</h2>
+    <div class="w-14 h-1.5 bg-lime mt-3 mb-8"></div>
+    <div id="related-products" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+  </section>
 </main>
 
 <footer class="bg-ink text-white mt-12 border-t-[8px] border-lime">

@@ -504,9 +504,11 @@
               precio: parseFloat(addBtn.getAttribute("data-sabor-precio")),
             }
           : null;
-        // Cantidad: la ficha de producto trae un stepper (#pdp-qty-value); las tarjetas
-        // del catálogo no lo tienen, así que siguen agregando 1 como siempre.
-        var qtyEl = document.getElementById("pdp-qty-value");
+        // Cantidad: solo el botón de la propia ficha (#product-detail) usa su stepper
+        // (#pdp-qty-value); las tarjetas, también las de "También te puede interesar" en
+        // esa misma página, agregan 1.
+        var detail = addBtn.closest("#product-detail");
+        var qtyEl = detail ? detail.querySelector("#pdp-qty-value") : null;
         var cantidad = qtyEl ? (parseInt(qtyEl.textContent, 10) || 1) : 1;
         // Se desactiva ya, en el mismo toque: agregar espera la lista de productos, y un
         // segundo toque en ese lapso sumaría otra pieza.
