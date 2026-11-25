@@ -553,6 +553,47 @@
     }
   }
 
+  // Orden del catálogo. "relevancia" deja el orden que ya trae (el del buscador, o el de
+  // la base de datos); el resto ordena una copia, con el id como desempate estable.
+  function applySort(productos, modo) {
+    if (!modo || modo === "relevancia") return productos;
+    var key = {
+      precio_asc: function (p) { return Number(p.precio) || 0; },
+      precio_desc: function (p) { return -(Number(p.precio) || 0); },
+      descuento: function (p) { return -discountPct(p); },
+    }[modo];
+    if (!key) return productos;
+    return productos.slice().sort(function (a, b) { return (key(a) - key(b)) || (a.id - b.id); });
+  }
+
+  // ?categoria=Creatina,Omega marca las categorías que EMPIEZAN con cada texto (sin
+  // acentos ni mayúsculas), así un enlace de la portada cubre "CREATINA MONOHIDRATO" y
+  // "CREATINA CON SABOR" a la vez. ?marca= elige la marca si existe tal cual. Valores que
+  // no coinciden con nada se ignoran.
+  function applyUrlFilters(root) {
+    var params = new URLSearchParams(global.location.search);
+    var cats = (params.get("categoria") || "").split(",").map(normalizeText).filter(Boolean);
+    if (cats.length) {
+      root.querySelectorAll('input[name="categoria"]').forEach(function (el) {
+        var v = normalizeText(el.value);
+        if (cats.some(function (c) { return v.indexOf(c) === 0; })) el.checked = true;
+      });
+      updateCatSummary(root);
+    }
+    var marca = normalizeText(params.get("marca") || "");
+    var sel = root.querySelector('select[name="marca"]');
+    if (marca && sel) {
+      Array.prototype.forEach.call(sel.options, function (o) {
+        if (o.value && normalizeText(o.value) === marca) sel.value = o.value;
+      });
+    }
+  }
+
+  function activeFilterCount(root) {
+    var f = readFilters(root);
+    return f.categoria.length + f.marca.length + (f.precioMin != null ? 1 : 0) + (f.precioMax != null ? 1 : 0);
+  }
+
   function bootstrapCatalogo() {
     var grid = document.getElementById("product-grid");
     if (!grid) return;
@@ -560,6 +601,25 @@
     var searchInput = document.getElementById("search-input");
     var filtersRoot = document.querySelector("aside") || document;
     var filtersBuilt = false;
+    var sortSel = document.getElementById("sort-select");
+    var toggle = document.getElementById("filters-toggle");
+    var panel = document.getElementById("filters-panel");
+
+    // Celular: los filtros viven detrás de "Filtrar"; en laptop el panel siempre se ve
+    // (md:flex), así que el botón solo cambia la clase "hidden".
+    if (toggle && panel) {
+      toggle.addEventListener("click", function () {
+        var abrir = panel.classList.contains("hidden");
+        panel.classList.toggle("hidden", !abrir);
+        toggle.setAttribute("aria-expanded", String(abrir));
+      });
+    }
+    function updateToggleLabel() {
+      var label = toggle && toggle.querySelector("[data-filters-label]");
+      if (!label) return;
+      var n = activeFilterCount(filtersRoot);
+      label.textContent = n ? "Filtrar (" + n + ")" : "Filtrar";
+    }
 
     // Solo las tarjetas en pantalla (o casi): animar las 300+ trabaría un celular, y las de
     // más abajo nadie las ve. Van en orden de arriba a abajo, así que se corta en cuanto una
@@ -582,9 +642,11 @@
     // aparición del resultado; esta entrada en cascada con WAAPI cuesta mucho menos.
     function refresh(animate) {
       fetchProductos().then(function (productos) {
-        if (!filtersBuilt) { populateFilters(filtersRoot, productos); filtersBuilt = true; }
+        if (!filtersBuilt) { populateFilters(filtersRoot, productos); applyUrlFilters(filtersRoot); filtersBuilt = true; }
+        updateToggleLabel();
         var result = applyFilters(productos, readFilters(filtersRoot));
         result = applySearch(result, searchInput ? searchInput.value : "");
+        result = applySort(result, sortSel ? sortSel.value : "relevancia");
         renderGrid(result, grid);
         if (animate === true && !reduceMotion && grid.animate) {
           cardsOnScreen().forEach(function (el, i) {
@@ -617,6 +679,7 @@
       if (e.target && (e.target.name === "precio_min" || e.target.name === "precio_max")) refresh();
     });
     if (searchInput) searchInput.addEventListener("input", refresh);
+    if (sortSel) sortSel.addEventListener("change", function () { refresh(true); });
 
     var clearBtn = document.getElementById("clear-filters-btn");
     if (clearBtn) {
