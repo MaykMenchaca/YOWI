@@ -61,35 +61,49 @@
     return u ? (c + " " + u).trim() : c;
   }
 
+  // Porcentaje de descuento entero, o 0 si no hay un precio anterior mayor al actual
+  // (un precio_original menor o igual es un dato mal capturado: no se presume oferta).
+  function discountPct(p) {
+    var antes = Number(p.precio_original), ahora = Number(p.precio);
+    if (!(antes > ahora) || !(ahora > 0)) return 0;
+    return Math.round((1 - ahora / antes) * 100);
+  }
+
   function productCardHTML(p) {
     var detailUrl = "producto.html?id=" + encodeURIComponent(p.id);
     var tieneSabores = !!(p.sabores && p.sabores.length);
-    var precioHTML = money(p.precio);
+    var pct = discountPct(p);
     var botonHTML;
     if (tieneSabores) {
       // Con sabores, no se agrega "a ciegas": el botón lleva a la ficha a elegir uno.
-      botonHTML = '<a href="' + detailUrl + '" class="block text-center bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity">Elegir sabor</a>';
+      botonHTML = '<a href="' + detailUrl + '" class="block text-center bg-lime text-ink font-extrabold uppercase tracking-wide px-2 sm:px-4 py-3 min-h-[44px] w-full text-xs sm:text-sm hover:opacity-90 transition-opacity">Elegir sabor</a>';
     } else {
-      botonHTML = '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-4 py-3 min-h-[44px] w-full text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>';
+      botonHTML = '<button type="button" class="add-to-cart-btn bg-lime text-ink font-extrabold uppercase tracking-wide px-2 sm:px-4 py-3 min-h-[44px] w-full text-xs sm:text-sm hover:opacity-90 transition-opacity" data-product-id="' + esc(p.id) + '">Agregar al carrito</button>';
     }
     return (
-      '<div class="bg-white border border-gray-200 p-4 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
-        '<div class="relative mb-3">' +
+      '<div class="bg-white border border-gray-200 border-b-[3px] border-b-transparent hover:border-b-lime transition flex flex-col h-full" data-product-id="' + esc(p.id) + '">' +
+        '<div class="relative">' +
           '<a href="' + detailUrl + '" class="block">' +
-            '<div class="h-40 bg-gray-100 flex items-center justify-center overflow-hidden p-2">' +
-              '<img class="max-h-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
+            '<div data-card-media class="aspect-square bg-white flex items-center justify-center overflow-hidden p-3 sm:p-5">' +
+              '<img class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-300" loading="lazy" src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '" data-fallback="assets/img/producto-placeholder.svg"/>' +
             '</div>' +
           '</a>' +
-          '<button type="button" class="favorite-btn absolute top-2 right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 shadow hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
+          (pct ? '<span data-discount-badge class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-lime text-ink font-extrabold uppercase tracking-wide text-[10px] sm:text-[11px] px-2 py-1">Ahorra ' + pct + '%</span>' : '') +
+          '<button type="button" class="favorite-btn absolute top-1 right-1 sm:top-2 sm:right-2 flex items-center justify-center h-11 w-11 rounded-full bg-white/90 hover:bg-white transition text-gray-500" data-product-id="' + esc(p.id) + '" aria-label="Agregar a favoritos" aria-pressed="false">' +
             '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 0;">favorite</span>' +
           '</button>' +
         '</div>' +
-        '<div class="text-[11px] uppercase font-extrabold text-gray-500 tracking-wide mb-1">' + esc(p.marca) + '</div>' +
-        '<h3 class="font-bold text-base leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
-        '<div class="font-body text-sm text-gray-400 mb-4">' + esc(qtyLabel(p)) + '</div>' +
-        '<div class="mt-auto flex flex-col gap-3">' +
-          '<div class="text-brand font-extrabold text-lg">' + precioHTML + '</div>' +
-          botonHTML +
+        '<div class="flex flex-col flex-1 p-3 sm:p-4 pt-1 sm:pt-2">' +
+          '<div class="text-[10px] sm:text-[11px] uppercase font-extrabold text-gray-600 tracking-wide mb-1">' + esc(p.marca) + '</div>' +
+          '<h3 class="font-bold text-sm sm:text-base leading-tight mb-1"><a href="' + detailUrl + '" class="hover:text-brand">' + esc(p.nombre) + '</a></h3>' +
+          '<div class="font-body text-xs sm:text-sm text-gray-500 mb-3">' + esc(qtyLabel(p)) + '</div>' +
+          '<div class="mt-auto flex flex-col gap-2 sm:gap-3">' +
+            '<div class="flex flex-wrap items-baseline gap-x-2">' +
+              '<span class="text-brand font-extrabold text-base sm:text-lg">' + money(p.precio) + '</span>' +
+              (pct ? '<s class="text-gray-500 text-xs sm:text-sm">' + money(p.precio_original) + '</s>' : '') +
+            '</div>' +
+            botonHTML +
+          '</div>' +
         '</div>' +
       '</div>'
     );
